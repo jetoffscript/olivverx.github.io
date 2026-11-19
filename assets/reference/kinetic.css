@@ -1,0 +1,4016 @@
+/**
+ * The Cannon — Kinetic Editor layer
+ *
+ * Loads after base.css. Owns the homepage sections (hero, stable, journal,
+ * out in the wild), the route line rail, the finish-line footer, and a few
+ * global type refinements. Everything here degrades to a calm static page
+ * without JavaScript or with reduced motion.
+ */
+
+/* =========================================================
+   Tokens
+   ========================================================= */
+:root {
+	--tc-ink: #151b19;
+	--tc-night: #0e1413;
+	--tc-night-2: #131b1a;
+	--tc-teal-ink: #14584a;
+	--tc-rail-gap: 80px;
+	--tc-home-shell: min(980px, calc(100vw - 48px));
+	--tc-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--tc-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--tc-display: clamp(5rem, 1.2rem + 8.4vw, 9.5rem);
+	--tc-section-title: clamp(2.375rem, 1.35rem + 3.6vw, 4.75rem);
+	--tc-section-pad: clamp(88px, 10vw, 152px);
+	/* Space above and below the Now strip, so it sits evenly between the hero and the stable. */
+	--tc-now-gap: clamp(56px, 7vw, 88px);
+}
+
+@media (min-width: 1100px) {
+	:root {
+		--tc-home-shell: min(980px, calc(100vw - 224px));
+	}
+}
+
+:root[data-theme="dark"] {
+	--tc-teal-ink: #8af2df;
+}
+
+/* =========================================================
+   Global type refinements
+   ========================================================= */
+h1,
+h2,
+h3,
+.wp-block-post-title {
+	text-wrap: balance;
+	font-kerning: normal;
+}
+
+.wp-block-post-content p,
+.tc-home p {
+	text-wrap: pretty;
+}
+
+/* Page, post, and archive mastheads share the homepage's tighter display voice. */
+.tc-page-title.wp-block-post-title,
+.tc-single-header__title.wp-block-post-title,
+.tc-gear-single-title.wp-block-post-title,
+.tc-not-found h1,
+.tc-archive__header h1,
+h1.has-hero-font-size {
+	line-height: 0.98;
+	letter-spacing: -0.04em;
+}
+
+::selection {
+	background: color-mix(in srgb, var(--tc-primary) 32%, transparent);
+	color: inherit;
+}
+
+.tc-arrow {
+	display: inline-block;
+	transition: transform 0.35s var(--tc-ease-spring);
+}
+
+a:hover > .tc-arrow,
+a:focus-visible > .tc-arrow {
+	transform: translateX(4px);
+}
+
+/* =========================================================
+   Homepage shell
+   ========================================================= */
+.tc-landing-main {
+	position: relative;
+}
+
+.tc-home {
+	position: relative;
+	padding-block: var(--tc-section-pad);
+}
+
+/* Sections butt up against each other; the flow layout's block gap would leave seams. */
+.tc-landing-main > .tc-home {
+	margin-block: 0;
+}
+
+.tc-home__shell {
+	width: var(--tc-home-shell);
+	margin-inline: auto;
+}
+
+.tc-home .wp-block-group,
+.tc-home .wp-block-query {
+	margin-block: 0;
+}
+
+.tc-home__head {
+	position: relative;
+	margin-block-end: clamp(2.5rem, 4.5vw, 4rem) !important;
+}
+
+.tc-home .tc-home__title {
+	margin: 0;
+	font-size: var(--tc-section-title);
+	font-weight: 900;
+	line-height: 0.95;
+	letter-spacing: -0.035em;
+	max-width: 14ch;
+}
+
+.tc-home__head .tc-eyebrow {
+	margin: 0.9rem 0 0 !important;
+	font-size: 0.8125rem;
+	letter-spacing: 0.16em;
+}
+
+.tc-home__more {
+	margin: clamp(2rem, 4vw, 3rem) 0 0;
+}
+
+.tc-link-arrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.9375rem;
+	font-weight: 800;
+	letter-spacing: -0.005em;
+	color: var(--tc-on-surface) !important;
+	text-decoration: none !important;
+	border-bottom: 2px solid var(--tc-primary);
+	padding-bottom: 2px;
+	min-height: 0;
+	transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.tc-link-arrow:hover,
+.tc-link-arrow:focus-visible {
+	border-color: var(--tc-accent);
+}
+
+/* =========================================================
+   Route checkpoints
+   ========================================================= */
+.tc-cp {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	margin: 1.1rem 0 0 !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.6875rem;
+	font-weight: 800;
+	line-height: 1;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--tc-teal-ink);
+}
+
+.tc-cp__dot {
+	position: relative;
+	width: 12px;
+	height: 12px;
+	flex: none;
+	border-radius: 50%;
+	background: var(--tc-surface);
+	box-shadow: 0 0 0 3px var(--tc-primary);
+	transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.45s var(--tc-ease-spring);
+}
+
+.tc-cp.is-passed .tc-cp__dot {
+	background: var(--tc-accent);
+	box-shadow: 0 0 0 3px var(--tc-ink);
+	transform: scale(1.12);
+}
+
+:root[data-theme="dark"] .tc-cp.is-passed .tc-cp__dot {
+	box-shadow: 0 0 0 3px var(--tc-surface);
+}
+
+/* The finish marker only makes sense where the route exists. */
+.tc-cp--finish {
+	display: none;
+}
+
+.tc-has-route .tc-cp--finish {
+	display: inline-flex;
+}
+
+/* Desktop: checkpoints leave the text column and sit on the rail. */
+@media (min-width: 1100px) {
+	.tc-has-route .tc-cp {
+		position: absolute;
+		top: 0;
+		left: calc(-1 * var(--tc-rail-gap));
+		margin: 0 !important;
+		transform: translateX(-50%);
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.tc-has-route .tc-home__head .tc-cp,
+	.tc-has-route .tc-home-hero .tc-cp {
+		top: 0.35em;
+	}
+
+	.tc-has-route .tc-cp__dot {
+		visibility: hidden;
+	}
+
+	/* Labels read bottom-to-top just left of the rail, ending level with the checkpoint. */
+	.tc-has-route .tc-cp__label {
+		position: absolute;
+		right: calc(100% + 10px);
+		bottom: -2px;
+		writing-mode: vertical-rl;
+		transform: rotate(180deg);
+		white-space: nowrap;
+		opacity: 0.55;
+		transition: opacity 0.4s ease, color 0.4s ease;
+	}
+
+	.tc-has-route .tc-cp.is-passed .tc-cp__label {
+		opacity: 1;
+	}
+
+	.tc-has-route .tc-home-hero__copy {
+		position: relative;
+	}
+}
+
+/* =========================================================
+   Route rail (SVG drawn by route-line.js)
+   ========================================================= */
+.tc-route {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 3;
+	margin: 0 !important;
+	overflow: visible;
+	pointer-events: none;
+}
+
+.tc-route__ghost {
+	fill: none;
+	stroke: color-mix(in srgb, var(--tc-primary) 45%, transparent);
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-dasharray: 1 9;
+}
+
+.tc-route__glow {
+	fill: none;
+	stroke: color-mix(in srgb, var(--tc-primary) 22%, transparent);
+	stroke-width: 12;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.tc-route__line {
+	fill: none;
+	stroke: var(--tc-primary);
+	stroke-width: 3.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.tc-route__cp {
+	fill: var(--tc-surface);
+	stroke: var(--tc-primary);
+	stroke-width: 3;
+	transform-box: fill-box;
+	transform-origin: center;
+	transition: fill 0.3s ease, stroke 0.3s ease, transform 0.5s var(--tc-ease-spring);
+}
+
+.tc-route__cp.is-passed {
+	fill: var(--tc-accent);
+	stroke: var(--tc-ink);
+	transform: scale(1.2);
+}
+
+:root[data-theme="dark"] .tc-route__cp.is-passed {
+	stroke: var(--tc-surface);
+}
+
+.tc-route__rider-halo {
+	fill: color-mix(in srgb, var(--tc-surface) 85%, transparent);
+	stroke: color-mix(in srgb, var(--tc-primary) 35%, transparent);
+	stroke-width: 1;
+}
+
+.tc-route__rider {
+	transition: opacity 0.3s ease;
+}
+
+.tc-route__wheel circle {
+	fill: none;
+	stroke: var(--tc-ink);
+	stroke-width: 1.8;
+}
+
+.tc-route__spokes {
+	stroke: var(--tc-ink);
+	stroke-width: 0.9;
+	opacity: 0.55;
+}
+
+.tc-route__frame {
+	fill: none;
+	stroke: var(--tc-accent);
+	stroke-width: 2.2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+:root[data-theme="dark"] .tc-route__wheel circle,
+:root[data-theme="dark"] .tc-route__spokes {
+	stroke: #f5fbfa;
+}
+
+/* =========================================================
+   Hero
+   ========================================================= */
+.tc-home-hero {
+	padding-block: clamp(40px, 6vw, 88px) var(--tc-now-gap);
+	isolation: isolate;
+}
+
+.tc-home-hero__grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+	align-items: center;
+	gap: clamp(2rem, 5vw, 5rem);
+}
+
+.tc-home .tc-home-hero__title {
+	margin: 0 0 0 -0.05em;
+	font-size: var(--tc-display);
+	font-weight: 900;
+	line-height: 0.82;
+	letter-spacing: -0.045em;
+	color: var(--tc-on-surface);
+}
+
+.tc-home-hero__eyebrow {
+	margin: clamp(1rem, 2vw, 1.5rem) 0 0 !important;
+	font-size: 0.875rem;
+	letter-spacing: 0.2em;
+}
+
+.tc-home-hero__lede {
+	margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+	max-width: 30ch;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: clamp(1.25rem, 1rem + 0.8vw, 1.625rem);
+	font-weight: 500;
+	line-height: 1.38;
+	letter-spacing: -0.015em;
+	color: var(--tc-on-surface);
+}
+
+.tc-home-hero__lede strong {
+	font-weight: 900;
+	background: linear-gradient(transparent 62%, color-mix(in srgb, var(--tc-accent) 70%, transparent) 62%, color-mix(in srgb, var(--tc-accent) 70%, transparent) 92%, transparent 92%);
+	padding-inline: 0.08em;
+}
+
+.tc-home-hero__body {
+	margin: 1.25rem 0 0;
+	max-width: 44ch;
+	font-size: 1.0625rem;
+	line-height: 1.65;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-home-hero__ctas {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+}
+
+.tc-home-hero__ctas .tc-cta-pill {
+	min-height: 48px;
+	padding: 12px 22px;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.9375rem;
+	letter-spacing: -0.005em;
+}
+
+/* Visual: portrait card over a tilted watercolor wash, finished with a sticker. */
+.tc-home-hero__visual {
+	position: relative;
+	justify-self: center;
+	--tc-hero-visual-w: min(100%, 440px);
+	width: var(--tc-hero-visual-w);
+	aspect-ratio: 4 / 5;
+}
+
+/* The tilted paper card hangs about a tenth of the width below the box; reserve it so the Now gap measures from the card. */
+.tc-home .tc-home-hero__visual {
+	margin-block-end: calc(var(--tc-hero-visual-w) / 10);
+}
+
+.tc-home-hero__portrait {
+	position: absolute;
+	margin: 0 !important;
+	overflow: hidden;
+}
+
+/* A quiet paper card behind the portrait; the painted texture lives in the page background. */
+.tc-home-hero__visual::before {
+	content: "";
+	position: absolute;
+	inset: 6% -10% -4% 8%;
+	border-radius: 36px;
+	background: rgba(255, 255, 255, 0.72);
+	transform: rotate(6deg);
+	box-shadow: 0 24px 50px rgba(24, 28, 29, 0.1);
+}
+
+:root[data-theme="dark"] .tc-home-hero__visual::before {
+	background: rgba(255, 255, 255, 0.06);
+	box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+}
+
+.tc-home-hero__portrait {
+	inset: 0 8% 6% 0;
+	border-radius: 30px;
+	transform: rotate(-1.5deg);
+	box-shadow:
+		0 1px 0 rgba(255, 255, 255, 0.7) inset,
+		0 28px 60px rgba(24, 28, 29, 0.22),
+		0 6px 16px rgba(24, 28, 29, 0.12);
+	outline: 8px solid var(--tc-white);
+	outline-offset: -1px;
+}
+
+:root[data-theme="dark"] .tc-home-hero__portrait {
+	outline-color: #1d2626;
+	box-shadow: 0 28px 60px rgba(0, 0, 0, 0.5);
+}
+
+.tc-home-hero__portrait img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.tc-home-hero__portrait img {
+	object-position: 50% 30%;
+	transition: transform 1.2s var(--tc-ease-out);
+}
+
+.tc-home-hero__visual:hover .tc-home-hero__portrait img {
+	transform: scale(1.03);
+}
+
+.tc-sticker {
+	position: absolute;
+	z-index: 2;
+	display: grid;
+	place-items: center;
+	align-content: center;
+	gap: 0.15rem;
+	width: clamp(108px, 9.5vw, 136px);
+	aspect-ratio: 1;
+	margin: 0 !important;
+	border-radius: 50%;
+	background: var(--tc-accent);
+	color: var(--tc-ink);
+	font-family: var(--wp--preset--font-family--inter);
+	text-align: center;
+	line-height: 1;
+	box-shadow:
+		0 0 0 4px var(--tc-white),
+		0 0 0 7px var(--tc-ink),
+		0 18px 30px rgba(24, 28, 29, 0.28);
+	transform: rotate(-9deg);
+	transition: transform 0.6s var(--tc-ease-spring), box-shadow 0.4s ease;
+	cursor: pointer;
+	border: 0;
+	padding: 0;
+	overflow: hidden;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+/* A slow shine crosses the sticker on hover, like light catching vinyl. */
+.tc-sticker::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.55) 48%, transparent 66%);
+	transform: translateX(-120%);
+	transition: transform 0.9s var(--tc-ease-out);
+	pointer-events: none;
+}
+
+.tc-sticker:hover::after,
+.tc-sticker:focus-visible::after {
+	transform: translateX(120%);
+}
+
+.tc-sticker:hover:active,
+.tc-sticker:active {
+	transform: rotate(-4deg) scale(0.94);
+}
+
+.tc-sticker.is-firing {
+	animation: tc-recoil 0.55s var(--tc-ease-spring);
+}
+
+@keyframes tc-recoil {
+	0% { transform: rotate(-9deg) scale(1); }
+	25% { transform: rotate(-16deg) scale(0.9) translate(6px, 6px); }
+	100% { transform: rotate(-9deg) scale(1); }
+}
+
+.tc-sticker:hover {
+	transform: rotate(-4deg) scale(1.05);
+}
+
+/* Entrance choreography */
+@media (prefers-reduced-motion: no-preference) {
+	.tc-home-hero__title,
+	.tc-home-hero__eyebrow,
+	.tc-home-hero__lede,
+	.tc-home-hero__body,
+	.tc-home-hero__ctas {
+		animation: tc-rise 0.9s var(--tc-ease-out) both;
+	}
+
+	.tc-home-hero__eyebrow { animation-delay: 0.08s; }
+	.tc-home-hero__lede { animation-delay: 0.16s; }
+	.tc-home-hero__body { animation-delay: 0.22s; }
+	.tc-home-hero__ctas { animation-delay: 0.28s; }
+
+	.tc-home-hero__portrait {
+		animation: tc-deal-portrait 1.1s var(--tc-ease-out) 0.1s both;
+	}
+
+	.tc-home-hero__visual::before {
+		animation: tc-deal-wash 1.2s var(--tc-ease-out) both;
+	}
+}
+
+@keyframes tc-rise {
+	from {
+		opacity: 0;
+		transform: translateY(0.6em);
+	}
+}
+
+@keyframes tc-deal-portrait {
+	from {
+		opacity: 0;
+		transform: translateY(40px) rotate(4deg) scale(0.96);
+	}
+}
+
+@keyframes tc-deal-wash {
+	from {
+		opacity: 0;
+		transform: translateY(24px) rotate(-2deg);
+	}
+}
+
+@keyframes tc-slap {
+	from {
+		opacity: 0;
+		transform: rotate(-40deg) scale(1.8);
+	}
+}
+
+/* Gentle scroll parallax where scroll timelines exist. */
+@supports (animation-timeline: scroll()) {
+	@media (prefers-reduced-motion: no-preference) and (min-width: 900px) {
+		.tc-home-hero__visual {
+			animation: tc-hero-drift linear both;
+			animation-timeline: scroll(root);
+			animation-range: 0 100vh;
+		}
+	}
+}
+
+@keyframes tc-hero-drift {
+	to {
+		transform: translateY(-56px) rotate(-1.5deg);
+	}
+}
+
+/* =========================================================
+   CP 1 — The stable
+   ========================================================= */
+.tc-home-stable {
+	--tc-stable-bg: var(--tc-white);
+	background: var(--tc-stable-bg);
+	/* The hero's bottom padding already supplies the gap above the Now strip. */
+	padding-block-start: 0;
+}
+
+/* Fade the fixed watercolor into the stable instead of cutting it off. */
+.tc-home-stable::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 100%;
+	height: var(--tc-now-gap);
+	background: linear-gradient(180deg, transparent, var(--tc-stable-bg));
+	pointer-events: none;
+}
+
+:root[data-theme="dark"] .tc-home-stable {
+	--tc-stable-bg: #121a19;
+}
+
+.tc-home-journal {
+	background: var(--tc-surface);
+}
+
+.tc-home-stable .tc-bike-fleet-cards {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(1rem, 2vw, 1.75rem);
+	margin: 0;
+	counter-reset: tc-bike;
+}
+
+.tc-home-stable .tc-bike-card {
+	counter-increment: tc-bike;
+	background: var(--tc-surface);
+	border: 1px solid color-mix(in srgb, var(--tc-on-surface) 8%, transparent);
+	border-radius: 28px;
+	transition: transform 0.5s var(--tc-ease-out), box-shadow 0.5s var(--tc-ease-out), border-color 0.3s ease;
+}
+
+.tc-home-stable .tc-bike-card:hover,
+.tc-home-stable .tc-bike-card:focus-within {
+	transform: translateY(-6px);
+	border-color: color-mix(in srgb, var(--tc-primary) 40%, transparent);
+	box-shadow: 0 26px 50px rgba(24, 28, 29, 0.12);
+	outline: none;
+}
+
+.tc-home-stable .tc-bike-card:focus-within {
+	outline: 3px solid var(--tc-primary);
+	outline-offset: 3px;
+}
+
+.tc-home-stable .tc-bike-card__image {
+	position: relative;
+	aspect-ratio: 5 / 4;
+	display: grid;
+	place-items: center;
+	padding: clamp(1rem, 2vw, 1.75rem);
+	background:
+		radial-gradient(ellipse 62% 30% at 50% 78%, color-mix(in srgb, var(--tc-primary) 22%, transparent), transparent 72%),
+		#ffffff;
+	overflow: hidden;
+}
+
+:root[data-theme="dark"] .tc-home-stable .tc-bike-card__image {
+	background:
+		radial-gradient(ellipse 62% 30% at 50% 78%, rgba(55, 221, 191, 0.26), transparent 72%),
+		#eef3f2;
+}
+
+.tc-home-stable .tc-bike-card__image::before {
+	content: counter(tc-bike, decimal-leading-zero);
+	position: absolute;
+	top: 1rem;
+	left: 1.25rem;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	color: var(--tc-outline);
+}
+
+/* Speed lines that slide in behind the bike on hover. */
+.tc-home-stable .tc-bike-card__image::after {
+	content: "";
+	position: absolute;
+	left: 6%;
+	top: 38%;
+	width: 26%;
+	height: 26%;
+	background:
+		linear-gradient(90deg, transparent, var(--tc-primary)) 0 0 / 100% 3px no-repeat,
+		linear-gradient(90deg, transparent, var(--tc-primary)) 30% 50% / 70% 3px no-repeat,
+		linear-gradient(90deg, transparent, var(--tc-accent)) 10% 100% / 85% 3px no-repeat;
+	opacity: 0;
+	transform: translateX(-24px) scaleX(0.4);
+	transform-origin: right;
+	transition: opacity 0.35s ease, transform 0.5s var(--tc-ease-out);
+}
+
+.tc-home-stable .tc-bike-card__image img {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 16 / 9;
+	object-fit: contain;
+	/* The illustrations sit on a flat #f5f6f6 plate. Nudging brightness pushes the
+	   plate to pure white, and multiply then drops it out so the bike floats. */
+	filter: brightness(1.045) contrast(1.02);
+	mix-blend-mode: multiply;
+	transition: transform 0.7s var(--tc-ease-out);
+}
+
+.tc-home-stable .tc-bike-card:hover .tc-bike-card__image img,
+.tc-home-stable .tc-bike-card:focus-within .tc-bike-card__image img {
+	transform: translateX(12px) rotate(-1deg);
+}
+
+.tc-home-stable .tc-bike-card:hover .tc-bike-card__image::after,
+.tc-home-stable .tc-bike-card:focus-within .tc-bike-card__image::after {
+	opacity: 0.8;
+	transform: translateX(0) scaleX(1);
+}
+
+.tc-home-stable .tc-bike-card__body {
+	padding: 1.4rem 1.5rem 1.6rem;
+	gap: 0;
+}
+
+.tc-home-stable .tc-bike-card__name {
+	order: 1;
+	margin: 0;
+	font-size: clamp(1.25rem, 1rem + 0.6vw, 1.5rem);
+	font-weight: 900;
+	font-style: normal;
+	line-height: 1.1;
+	letter-spacing: -0.025em;
+	color: var(--tc-on-surface);
+}
+
+.tc-home-stable .tc-bike-card__label {
+	order: 2;
+	margin: 0.6rem 0 0;
+	font-size: 0.6875rem;
+	letter-spacing: 0.16em;
+	color: var(--tc-teal-ink);
+}
+
+.tc-home-stable .tc-bike-card__excerpt {
+	order: 3;
+	margin: 0.75rem 0 0;
+	font-size: 0.9375rem;
+	line-height: 1.55;
+}
+
+.tc-home-stable .tc-bike-card__eyebrow {
+	position: absolute;
+	top: 0.8rem;
+	right: 1rem;
+	z-index: 2;
+	margin: 0;
+	height: 26px;
+	padding: 0 12px;
+	box-shadow: 0 0 0 2px var(--tc-ink);
+	transform: rotate(3deg);
+}
+
+.tc-home-stable .tc-bike-card__kit {
+	display: none;
+}
+
+.tc-home-stable .tc-bike-card--featured {
+	border-color: color-mix(in srgb, var(--tc-accent) 70%, transparent);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--tc-accent) 50%, transparent), 0 20px 44px rgba(120, 223, 183, 0.18);
+}
+
+.tc-home-stable .tc-bike-card--featured .tc-bike-card__image {
+	background:
+		radial-gradient(ellipse 62% 30% at 50% 78%, color-mix(in srgb, var(--tc-accent) 40%, transparent), transparent 72%),
+		#fffaf0;
+}
+
+.tc-home-stable .tc-bike-card:nth-child(2) { --tc-reveal-delay: 80ms; }
+.tc-home-stable .tc-bike-card:nth-child(3) { --tc-reveal-delay: 160ms; }
+
+/* Feed zone — the Ice Cream Endurance banner. */
+.tc-feedzone {
+	--ice-cyan: #0ec5ff;
+	--ice-lavender: #d8c0ff;
+	position: relative;
+	isolation: isolate;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: clamp(1.25rem, 3vw, 2.75rem);
+	margin-top: clamp(3rem, 6vw, 5rem) !important;
+	padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.5rem, 3.5vw, 3rem);
+	border-radius: 32px;
+	background:
+		radial-gradient(circle at 12% 50%, rgba(232, 160, 208, 0.28), transparent 42%),
+		radial-gradient(circle at 92% 20%, rgba(14, 197, 255, 0.22), transparent 38%),
+		linear-gradient(120deg, #0f1729 0%, #1c1040 58%, #0a1e30 100%);
+	border: 1px solid rgba(216, 192, 255, 0.22);
+	box-shadow: 0 30px 60px rgba(13, 18, 41, 0.3);
+	color: var(--ice-lavender);
+}
+
+.tc-feedzone::before {
+	content: "";
+	position: absolute;
+	inset: -1px;
+	z-index: -1;
+	border-radius: inherit;
+	padding: 1px;
+	background: linear-gradient(90deg, #e8a0d0, #a878f0, #0ec5ff);
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	opacity: 0.6;
+}
+
+.tc-feedzone .tc-cp {
+	color: var(--ice-cyan);
+}
+
+.tc-feedzone .tc-cp {
+	position: absolute;
+	top: -0.9rem;
+	left: 2rem;
+	margin: 0 !important;
+	padding: 0.45rem 0.8rem;
+	border-radius: 999px;
+	background: #0f1729;
+	border: 1px solid rgba(14, 197, 255, 0.4);
+}
+
+@media (min-width: 1100px) {
+	.tc-has-route .tc-feedzone .tc-cp {
+		top: 50%;
+		left: calc(-1 * var(--tc-rail-gap));
+		padding: 0;
+		border: 0;
+		background: none;
+		transform: translate(-50%, -1.2rem);
+	}
+}
+
+.tc-feedzone__logo {
+	margin: 0 !important;
+}
+
+.tc-feedzone__logo img {
+	width: clamp(84px, 9vw, 120px);
+	height: auto;
+	filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
+	transition: transform 0.6s var(--tc-ease-spring);
+}
+
+.tc-feedzone:hover .tc-feedzone__logo img {
+	transform: rotate(-8deg) scale(1.05);
+}
+
+.tc-feedzone__body > * {
+	margin: 0 !important;
+}
+
+.tc-feedzone .tc-feedzone__name {
+	font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.25rem);
+	font-weight: 900;
+	letter-spacing: -0.03em;
+	line-height: 1;
+	color: var(--ice-lavender);
+}
+
+.tc-feedzone__desc {
+	margin-top: 0.8rem !important;
+	max-width: 44ch;
+	font-size: 1rem;
+	line-height: 1.55;
+	color: rgba(216, 192, 255, 0.75);
+}
+
+.tc-feedzone__cta {
+	margin: 0 !important;
+}
+
+.tc-feedzone__button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: 48px;
+	padding: 0 1.4rem;
+	border-radius: 999px;
+	background: linear-gradient(90deg, #e8a0d0 0%, #a878f0 50%, #0ec5ff 100%);
+	color: #0d1229 !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 800;
+	font-size: 0.9375rem;
+	text-decoration: none !important;
+	white-space: nowrap;
+	transition: transform 0.3s var(--tc-ease-spring), box-shadow 0.3s ease;
+}
+
+.tc-feedzone__button:hover,
+.tc-feedzone__button:focus-visible {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 30px rgba(168, 120, 240, 0.5);
+}
+
+/* =========================================================
+   CP 2 — The journal
+   ========================================================= */
+.tc-journal-lead .wp-block-post-template,
+.tc-journal-index .wp-block-post-template {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.tc-journal-lead__card {
+	display: grid;
+	grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+	align-items: center;
+	gap: clamp(1.5rem, 4vw, 4rem);
+}
+
+.tc-journal-lead__card:not(:has(.tc-journal-lead__media)) {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.tc-journal-lead__media {
+	margin: 0 !important;
+	border-radius: 28px;
+	overflow: hidden;
+	box-shadow: 0 30px 60px rgba(24, 28, 29, 0.16);
+}
+
+.tc-journal-lead__media a {
+	display: block;
+	min-height: 0 !important;
+	padding: 0 !important;
+}
+
+.tc-journal-lead__media img {
+	transition: transform 1s var(--tc-ease-out);
+}
+
+.tc-journal-lead__card:hover .tc-journal-lead__media img {
+	transform: scale(1.04);
+}
+
+.tc-journal-lead__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.9rem;
+}
+
+.tc-journal-lead__content > * {
+	margin: 0 !important;
+}
+
+.tc-journal__num {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: clamp(3.5rem, 2rem + 4vw, 6rem);
+	font-weight: 900;
+	line-height: 0.8;
+	letter-spacing: -0.06em;
+	color: transparent;
+	-webkit-text-stroke: 2px var(--tc-primary);
+}
+
+.tc-home .tc-journal-lead__title {
+	font-size: clamp(1.875rem, 1.1rem + 2.2vw, 3rem);
+	font-weight: 900;
+	line-height: 1;
+	letter-spacing: -0.035em;
+}
+
+.tc-journal-lead__title a,
+.tc-journal-row__title a {
+	color: var(--tc-on-surface) !important;
+	text-decoration: none !important;
+	background-image: linear-gradient(var(--tc-primary), var(--tc-primary));
+	background-size: 0 3px;
+	background-position: 0 100%;
+	background-repeat: no-repeat;
+	transition: background-size 0.5s var(--tc-ease-out), color 0.2s ease;
+}
+
+.tc-journal-lead__title a:hover,
+.tc-journal-lead__title a:focus-visible,
+.tc-journal-row:hover .tc-journal-row__title a {
+	background-size: 100% 3px;
+}
+
+.tc-journal-lead__excerpt p {
+	margin: 0;
+	font-size: 1.0625rem;
+	line-height: 1.65;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-journal__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 1.25rem;
+	padding-top: 0.25rem;
+}
+
+.tc-journal__meta .wp-block-post-date {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--tc-outline);
+}
+
+.tc-journal__meta .wp-block-read-more {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.9375rem;
+	font-weight: 800;
+	color: var(--tc-on-surface) !important;
+	text-decoration: none !important;
+	border-bottom: 2px solid var(--tc-primary);
+}
+
+.tc-journal__meta .wp-block-read-more:hover {
+	border-color: var(--tc-accent);
+}
+
+/* Numbered index */
+.tc-journal-index {
+	margin-top: clamp(3rem, 6vw, 5rem) !important;
+}
+
+.tc-journal-index__list {
+	counter-reset: tc-journal 1;
+	border-top: 2px solid var(--tc-on-surface);
+}
+
+.tc-journal-index__list > li {
+	counter-increment: tc-journal;
+	margin: 0 !important;
+	border-bottom: 1px solid color-mix(in srgb, var(--tc-on-surface) 14%, transparent);
+}
+
+.tc-journal-row {
+	position: relative;
+	display: grid;
+	grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 1rem;
+	padding: clamp(1.1rem, 2vw, 1.6rem) 0.25rem;
+	transition: padding 0.45s var(--tc-ease-out), background-color 0.3s ease;
+}
+
+.tc-journal-row::before {
+	content: counter(tc-journal, decimal-leading-zero);
+	grid-column: 1;
+	grid-row: 1;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.875rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	color: var(--tc-outline);
+	transition: color 0.3s ease;
+}
+
+.tc-journal-row:hover {
+	padding-inline: 1rem 0.75rem;
+	background: color-mix(in srgb, var(--tc-primary) 6%, transparent);
+}
+
+.tc-journal-row:hover::before {
+	color: var(--tc-teal-ink);
+}
+
+.tc-journal-row__main {
+	grid-column: 2;
+	grid-row: 1;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.4rem 0.6rem;
+	min-width: 0;
+}
+
+.tc-journal-row__main > .tc-journal-row__title {
+	flex-basis: 100%;
+}
+
+.tc-journal-row__main .tc-format-label,
+.tc-journal-lead__content .tc-format-label {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.6875rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--tc-outline);
+}
+
+
+.tc-journal-row__main > * {
+	margin: 0 !important;
+}
+
+.tc-home .tc-journal-row__title {
+	font-size: clamp(1.25rem, 0.95rem + 1vw, 1.875rem);
+	font-weight: 900;
+	line-height: 1.12;
+	letter-spacing: -0.025em;
+}
+
+.tc-journal-row__title a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.tc-journal-row__year {
+	grid-column: 3;
+	grid-row: 1;
+	margin: 0 !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.875rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	color: var(--tc-outline);
+}
+
+/* Floating peek image — positioned by kinetic.js on fine pointers. */
+.tc-journal-row__peek {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 4;
+	width: 240px;
+	margin: 0 !important;
+	border-radius: 18px;
+	overflow: hidden;
+	pointer-events: none;
+	opacity: 0;
+	transform: translate3d(var(--peek-x, 60%), var(--peek-y, 0), 0) translate(-50%, -50%) rotate(var(--peek-r, -4deg)) scale(0.85);
+	box-shadow: 0 24px 48px rgba(24, 28, 29, 0.26);
+	outline: 6px solid var(--tc-white);
+	transition: opacity 0.25s ease, transform 0.45s var(--tc-ease-out);
+}
+
+.tc-journal-row.is-peeking .tc-journal-row__peek {
+	opacity: 1;
+	transform: translate3d(var(--peek-x, 60%), var(--peek-y, 0), 0) translate(-50%, -50%) rotate(var(--peek-r, -4deg)) scale(1);
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 781px) {
+	.tc-journal-row {
+		grid-template-columns: 2.75rem minmax(0, 1fr) 64px;
+	}
+
+	.tc-journal-row__peek {
+		position: static;
+		grid-column: 3;
+		grid-row: 1;
+		width: 64px;
+		border-radius: 12px;
+		opacity: 1;
+		transform: none;
+		outline: 0;
+		box-shadow: none;
+	}
+
+	.tc-journal-row__year {
+		display: none;
+	}
+
+	.tc-journal-row:hover {
+		padding-inline: 0.25rem;
+	}
+}
+
+/* =========================================================
+   CP 3 — Out in the wild
+   ========================================================= */
+.tc-home-wild,
+.is-style-section-night {
+	--tc-contour: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='560' viewBox='0 0 560 560' fill='none' stroke='%2337ddbf' stroke-width='1'%3E%3Cpath d='M-20 80c60-40 120 30 190 0s110-60 190-20 130 40 220 0'/%3E%3Cpath d='M-20 130c70-40 120 40 200 6s120-66 200-22 120 44 200 4'/%3E%3Cpath d='M-20 190c50-30 140 40 210 10s100-56 190-26 110 40 200 8'/%3E%3Cpath d='M-20 260c80-50 120 30 200 4s130-70 210-26 110 40 190 10'/%3E%3Cpath d='M-20 330c60-26 130 40 200 10s110-60 200-24 120 44 200 6'/%3E%3Cpath d='M-20 400c70-40 120 30 190 4s120-64 200-20 130 44 210 6'/%3E%3Cpath d='M-20 470c60-30 140 36 210 8s100-58 190-22 110 40 200 8'/%3E%3Cpath d='M-20 540c80-44 120 30 200 4s130-66 210-24 110 40 190 10'/%3E%3Ccircle cx='390' cy='250' r='40'/%3E%3Ccircle cx='390' cy='250' r='70'/%3E%3Ccircle cx='390' cy='250' r='104'/%3E%3C/svg%3E");
+	background:
+		radial-gradient(ellipse 60% 50% at 15% 0%, rgba(28, 193, 163, 0.22), transparent 60%),
+		radial-gradient(ellipse 34% 30% at 96% 96%, rgba(120, 223, 183, 0.07), transparent 70%),
+		var(--tc-night);
+	color: #eef6f4;
+	overflow: hidden;
+}
+
+.tc-home-wild::before,
+.is-style-section-night::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: var(--tc-contour) 0 0 / 560px 560px repeat;
+	opacity: 0.09;
+	pointer-events: none;
+	mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+	-webkit-mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+}
+
+.tc-home-wild .tc-home__shell,
+.is-style-section-night .tc-home__shell {
+	position: relative;
+}
+
+.tc-home-wild .tc-home__title,
+.is-style-section-night .tc-home__title {
+	color: #f5fbfa;
+}
+
+.tc-home-wild .tc-cp,
+.is-style-section-night .tc-cp {
+	color: #8af2df;
+}
+
+.tc-home-wild .tc-cp__dot,
+.is-style-section-night .tc-cp__dot {
+	background: var(--tc-night);
+}
+
+.tc-home-wild__grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+	gap: clamp(2rem, 5vw, 4.5rem);
+	align-items: stretch;
+}
+
+.tc-ride-log,
+.tc-home-wild__photos {
+	display: flex;
+	flex-direction: column;
+}
+
+.tc-ride-log__cta,
+.tc-home-wild .around-web-instagram-meta {
+	margin-top: auto !important;
+	padding-top: 1.75rem;
+}
+
+.tc-home-wild__photos {
+	--tc-reveal-delay: 120ms;
+}
+
+.tc-ride-log .thecannon-intervals-feed {
+	gap: 1rem;
+}
+
+.tc-ride-log .thecannon-intervals-feed__header-label {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.6875rem;
+	font-weight: 800;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: rgba(238, 246, 244, 0.6);
+}
+
+.tc-ride-log .thecannon-intervals-feed__cards {
+	gap: 0;
+	border-top: 1px solid rgba(238, 246, 244, 0.16);
+}
+
+.tc-ride-log .intervals-card {
+	position: relative;
+	display: block;
+	padding: 1.35rem 0.25rem;
+	border-bottom: 1px solid rgba(238, 246, 244, 0.16);
+	color: inherit !important;
+	text-decoration: none !important;
+	transition: padding 0.45s var(--tc-ease-out), background-color 0.3s ease;
+}
+
+.tc-ride-log .intervals-card:hover,
+.tc-ride-log .intervals-card:focus-visible {
+	padding-inline: 1rem 0.75rem;
+	background: rgba(55, 221, 191, 0.07);
+}
+
+.tc-ride-log .intervals-card__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 0.9rem;
+}
+
+.tc-ride-log .intervals-card__name {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 1.0625rem;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+	color: #f5fbfa;
+}
+
+.tc-ride-log .intervals-card__badge {
+	flex: none;
+	padding: 0.3rem 0.6rem;
+	border-radius: 999px;
+	border: 1px solid rgba(55, 221, 191, 0.5);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.625rem;
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	color: #8af2df;
+	background: transparent;
+}
+
+.tc-ride-log .intervals-card__stats-row {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 1rem;
+}
+
+.tc-ride-log .intervals-card__stat {
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 0.3rem;
+}
+
+.tc-ride-log .intervals-card__stat-label {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.625rem;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: rgba(238, 246, 244, 0.5);
+}
+
+.tc-ride-log .intervals-card__stat-value {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.25rem);
+	font-weight: 900;
+	line-height: 1;
+	letter-spacing: -0.04em;
+	font-variant-numeric: tabular-nums;
+	color: #f5fbfa;
+}
+
+.tc-ride-log .intervals-card__stat:first-child .intervals-card__stat-value {
+	color: #37ddbf;
+}
+
+.tc-ride-log .thecannon-intervals-feed__attribution,
+.tc-ride-log .thecannon-intervals-feed__empty {
+	margin: 0;
+	color: rgba(238, 246, 244, 0.55);
+}
+
+.tc-ride-log__cta {
+	margin-bottom: 0 !important;
+}
+
+.tc-home-wild .tc-link-arrow {
+	color: #f5fbfa !important;
+}
+
+.tc-link-arrow--strava {
+	border-color: var(--tc-strava) !important;
+}
+
+.tc-link-arrow--strava svg {
+	color: var(--tc-strava);
+}
+
+/* Polaroids */
+.tc-home-wild .polaroid-collage {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: clamp(0.9rem, 1.6vw, 1.25rem);
+	padding: 0.5rem;
+}
+
+.tc-home-wild .polaroid {
+	display: block;
+	padding: 10px 10px 34px;
+	border-radius: 6px;
+	background: #fbfaf5;
+	box-shadow: 0 24px 40px rgba(0, 0, 0, 0.45);
+	transform: rotate(var(--tilt, -2deg));
+	transition: transform 0.6s var(--tc-ease-spring), box-shadow 0.4s ease;
+}
+
+.tc-home-wild .polaroid--1 {
+	--tilt: -3deg;
+	grid-row: span 2;
+	align-self: center;
+}
+
+.tc-home-wild .polaroid--2 { --tilt: 3deg; }
+.tc-home-wild .polaroid--3 { --tilt: -1.5deg; margin-top: -8px; }
+
+.tc-home-wild .polaroid:hover,
+.tc-home-wild .polaroid:focus-visible {
+	transform: rotate(0deg) scale(1.04);
+	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+	z-index: 2;
+	position: relative;
+}
+
+.tc-home-wild .polaroid__frame {
+	overflow: hidden;
+	border-radius: 2px;
+	aspect-ratio: 1;
+}
+
+.tc-home-wild .polaroid--1 .polaroid__frame {
+	aspect-ratio: 3 / 4;
+}
+
+.tc-home-wild .polaroid__frame img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+
+
+.tc-home-wild .around-web-cta {
+	margin: 0;
+}
+
+.tc-home-wild .around-web-cta a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: 0;
+	padding: 0 0 2px;
+	background: none !important;
+	box-shadow: none !important;
+	border-radius: 0;
+	border-bottom: 2px solid var(--tc-primary);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.9375rem;
+	font-weight: 800;
+	color: #f5fbfa !important;
+	text-decoration: none !important;
+}
+
+.tc-home-wild .around-web-cta a:hover {
+	transform: none;
+	background: none;
+	border-color: var(--tc-accent);
+}
+
+.tc-home-wild .around-web-cta svg {
+	width: 18px;
+	height: 18px;
+	color: var(--tc-primary);
+}
+
+/* =========================================================
+   Finish-line footer (global)
+   ========================================================= */
+.site-footer.tc-finish {
+	position: relative;
+	isolation: isolate;
+	gap: 0;
+	padding: clamp(72px, 9vw, 120px) 24px clamp(40px, 5vw, 56px);
+	background: var(--tc-ink);
+	color: #eef6f4;
+	text-align: center;
+}
+
+:root[data-theme="dark"] .site-footer.tc-finish {
+	background: #070b0b;
+}
+
+.tc-finish__line {
+	position: absolute;
+	top: -14px;
+	left: 0;
+	right: 0;
+	width: auto;
+	max-width: none !important;
+	margin: 0 !important;
+	height: 14px;
+	background: repeating-conic-gradient(transparent 0 25%, var(--tc-ink) 0 50%) 0 0 / 14px 14px;
+	opacity: 0.9;
+}
+
+:root[data-theme="dark"] .tc-finish__line {
+	background: repeating-conic-gradient(transparent 0 25%, #070b0b 0 50%) 0 0 / 14px 14px;
+}
+
+.tc-finish .tc-cp--finish {
+	color: #8af2df;
+	margin: 0 auto 1.5rem !important;
+}
+
+.tc-finish .tc-cp__dot {
+	background: var(--tc-ink);
+}
+
+@media (min-width: 1100px) {
+	.tc-has-route .tc-finish .tc-cp--finish {
+		top: clamp(72px, 9vw, 120px);
+		left: calc(50% - var(--tc-home-shell) / 2 - var(--tc-rail-gap));
+	}
+}
+
+.tc-finish__title {
+	margin: 0 auto !important;
+	max-width: 16ch;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: clamp(2.25rem, 1.3rem + 3.6vw, 4.5rem);
+	font-weight: 900;
+	line-height: 0.95;
+	letter-spacing: -0.045em;
+	color: #f5fbfa;
+	text-wrap: balance;
+}
+
+.tc-finish__note {
+	margin: 1.25rem auto 0 !important;
+	max-width: 40ch;
+	font-size: 1.0625rem;
+	line-height: 1.6;
+	color: rgba(238, 246, 244, 0.68);
+}
+
+.tc-finish .site-footer__social {
+	margin-top: 2.25rem !important;
+}
+
+.tc-finish .wp-block-social-links.has-icon-background-color .wp-social-link,
+:root[data-theme="dark"] .tc-finish .wp-block-social-links.has-icon-background-color .wp-social-link {
+	background-color: rgba(255, 255, 255, 0.08) !important;
+	color: #f5fbfa !important;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+	transition: transform 0.4s var(--tc-ease-spring), background-color 0.2s ease;
+}
+
+.tc-finish .wp-block-social-links .wp-social-link:hover,
+:root[data-theme="dark"] .tc-finish .wp-block-social-links.has-icon-background-color .wp-social-link:hover {
+	transform: translateY(-3px) rotate(-6deg);
+	background-color: var(--tc-primary) !important;
+	color: #06201b !important;
+}
+
+.tc-finish .wp-block-social-links .wp-social-link svg {
+	fill: currentColor;
+}
+
+.tc-finish .site-footer__meta {
+	margin-top: clamp(3rem, 6vw, 4.5rem) !important;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(238, 246, 244, 0.12);
+}
+
+.tc-finish .site-footer__mark {
+	color: #f5fbfa;
+	font-size: 1.25rem;
+	letter-spacing: -0.04em;
+}
+
+.tc-finish .site-footer__mark sup {
+	color: var(--tc-accent);
+	font-size: 0.6em;
+	vertical-align: super;
+	line-height: 0;
+}
+
+.tc-finish .site-footer__muted,
+.tc-finish .wp-block-thecannon-current-year {
+	color: rgba(238, 246, 244, 0.5);
+}
+
+/* =========================================================
+   Posts — the reading route
+   ========================================================= */
+.tc-read-route {
+	/* Clear the browser edge so the checkpoints aren't clipped, staying above the nav pill. */
+	--tc-read-route-inset: 10px;
+	position: fixed;
+	top: var(--tc-read-route-inset);
+	margin: 0 !important;
+	left: 0;
+	right: 0;
+	z-index: 130;
+	height: 14px;
+	pointer-events: none;
+}
+
+/* On phones the nav pill sits 14px down; give it room under the route bar. */
+body:has(.tc-read-route) .site-header-band {
+	padding-top: clamp(1.75rem, 2.2vw, 1.875rem);
+}
+
+.admin-bar .tc-read-route {
+	top: calc(32px + var(--tc-read-route-inset));
+}
+
+@media (max-width: 782px) {
+	.admin-bar .tc-read-route {
+		top: calc(46px + var(--tc-read-route-inset));
+	}
+}
+
+.tc-read-route__track,
+.tc-read-route__fill {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+.tc-read-route__track {
+	top: 5px;
+	height: 2px;
+	background: linear-gradient(90deg, color-mix(in srgb, var(--tc-primary) 55%, transparent) 50%, transparent 0) 0 0 / 8px 2px repeat-x;
+	opacity: 0.7;
+}
+
+.tc-read-route__fill {
+	top: 4px;
+	height: 4px;
+	border-radius: 0 4px 4px 0;
+	background: var(--tc-primary);
+	transform: scaleX(0);
+	transform-origin: left center;
+	box-shadow: 0 0 10px color-mix(in srgb, var(--tc-primary) 45%, transparent);
+}
+
+.tc-read-route__rider {
+	position: absolute;
+	top: 1px;
+	left: 0;
+	margin-left: -5px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--tc-accent);
+	box-shadow: 0 0 0 2px var(--tc-white), 0 2px 6px rgba(24, 28, 29, 0.3);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.tc-read-route.is-started .tc-read-route__rider {
+	opacity: 1;
+}
+
+.tc-read-route.is-finished .tc-read-route__rider {
+	opacity: 0;
+}
+
+.tc-read-route__cp {
+	position: absolute;
+	top: 2px;
+	width: 8px;
+	height: 8px;
+	margin-left: -4px;
+	padding: 0;
+	border: 0;
+	appearance: none;
+	border-radius: 50%;
+	background: var(--tc-surface);
+	box-shadow: 0 0 0 2px var(--tc-primary);
+	pointer-events: auto;
+	cursor: pointer;
+	transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.45s var(--tc-ease-spring);
+}
+
+/* Bigger hit area than the dot itself. */
+.tc-read-route__cp::before {
+	content: "";
+	position: absolute;
+	inset: -8px;
+}
+
+.tc-read-route__cp::after {
+	content: attr(data-label);
+	position: absolute;
+	top: 18px;
+	left: 50%;
+	padding: 0.4rem 0.65rem;
+	border-radius: 8px;
+	background: var(--tc-ink);
+	color: #f5fbfa;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.75rem;
+	font-weight: 700;
+	white-space: nowrap;
+	opacity: 0;
+	transform: translate(-50%, -4px);
+	transition: opacity 0.2s ease, transform 0.25s var(--tc-ease-out);
+	pointer-events: none;
+}
+
+.tc-read-route__cp:focus-visible {
+	outline: 2px solid var(--tc-ink);
+	outline-offset: 3px;
+}
+
+.tc-read-route__cp:hover::after,
+.tc-read-route__cp:focus-visible::after {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+.tc-read-route__cp.is-passed {
+	background: var(--tc-accent);
+	box-shadow: 0 0 0 2px var(--tc-ink);
+	transform: scale(1.15);
+}
+
+.tc-read-route__finish {
+	position: absolute;
+	top: 1px;
+	right: 4px;
+	width: 14px;
+	height: 10px;
+	border-radius: 2px;
+	background: repeating-conic-gradient(var(--tc-ink) 0 25%, #f5fbfa 0 50%) 0 0 / 7px 5px;
+	box-shadow: 0 0 0 1px var(--tc-ink);
+	transform-origin: center;
+	transition: transform 0.5s var(--tc-ease-spring);
+}
+
+.tc-read-route.is-finished .tc-read-route__finish {
+	transform: scale(1.5) rotate(-8deg);
+}
+
+:root[data-theme="dark"] .tc-read-route__rider {
+	box-shadow: 0 0 0 2px #0f1515, 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="dark"] .tc-read-route__cp.is-passed {
+	box-shadow: 0 0 0 2px #f5fbfa;
+}
+
+:root[data-theme="dark"] .tc-read-route__cp::after {
+	background: #f5fbfa;
+	color: var(--tc-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tc-read-route__cp,
+	.tc-read-route__finish,
+	.tc-read-route__rider {
+		transition: none;
+	}
+}
+
+/* Jumping to a checkpoint lands the heading clear of the floating header. */
+.single-post main .wp-block-post-content h2 {
+	scroll-margin-top: calc(var(--tc-header-height, 96px) + 1.5rem);
+}
+
+/* Section headings carry the same checkpoint the route bar shows. */
+@media (min-width: 1100px) {
+	.single-post main .wp-block-post-content > h2 {
+		position: relative;
+	}
+
+	.single-post main .wp-block-post-content > h2::before {
+		content: "";
+		position: absolute;
+		top: 0.42em;
+		left: -2.25rem;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--tc-surface);
+		box-shadow: 0 0 0 2.5px var(--tc-primary);
+		transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.single-post main .wp-block-post-content > h2.is-passed::before {
+		background: var(--tc-accent);
+		box-shadow: 0 0 0 2.5px var(--tc-ink);
+	}
+
+	:root[data-theme="dark"] .single-post main .wp-block-post-content > h2.is-passed::before {
+		box-shadow: 0 0 0 2.5px #f5fbfa;
+	}
+}
+
+/* Standard posts open with a slightly larger first paragraph, like a magazine lede. */
+.single-format-standard main .wp-block-post-content > p:first-child {
+	font-size: clamp(1.125rem, 1rem + 0.4vw, 1.3125rem);
+	line-height: 1.6;
+	color: var(--tc-on-surface);
+}
+
+/* Previous / next as editorial cards. */
+.tc-post-nav {
+	flex-wrap: wrap;
+	align-items: stretch;
+	gap: 1rem;
+}
+
+.tc-post-nav .wp-block-post-navigation-link {
+	flex: 1 1 240px;
+	max-width: calc(50% - 0.5rem);
+}
+
+.tc-post-nav .post-navigation-link-next {
+	margin-left: auto;
+	text-align: right;
+}
+
+.tc-post-nav .wp-block-post-navigation-link a {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45rem;
+	height: 100%;
+	min-height: 0;
+	padding: 1.15rem 1.35rem 1.3rem;
+	border-radius: 20px;
+	background: var(--tc-surface-low);
+	border: 1px solid var(--tc-outline-variant);
+	color: var(--tc-on-surface);
+	transition: transform 0.4s var(--tc-ease-spring), border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.3s ease;
+}
+
+.tc-post-nav .post-navigation-link-previous a {
+	align-items: flex-start;
+	justify-content: flex-start;
+	text-align: left;
+}
+
+.tc-post-nav .post-navigation-link-next a {
+	align-items: flex-end;
+	justify-content: flex-start;
+	text-align: right;
+}
+
+.tc-post-nav .wp-block-post-navigation-link a:hover,
+.tc-post-nav .wp-block-post-navigation-link a:focus-visible {
+	background: var(--tc-white);
+	color: var(--tc-on-surface);
+	border-color: color-mix(in srgb, var(--tc-primary) 55%, transparent);
+	box-shadow: 0 14px 30px rgba(24, 28, 29, 0.1);
+	transform: translateY(-2px);
+}
+
+.tc-post-nav .post-navigation-link__label {
+	font-size: 0.6875rem;
+	font-weight: 800;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--tc-teal-ink);
+}
+
+.tc-post-nav .post-navigation-link-previous .post-navigation-link__label::before {
+	content: "← ";
+}
+
+.tc-post-nav .post-navigation-link-next .post-navigation-link__label::after {
+	content: " →";
+}
+
+.tc-post-nav .post-navigation-link__title {
+	font-size: 1.125rem;
+	font-weight: 900;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+}
+
+:root[data-theme="dark"] .tc-post-nav .wp-block-post-navigation-link a {
+	background: #172120;
+	border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .tc-post-nav .wp-block-post-navigation-link a:hover,
+:root[data-theme="dark"] .tc-post-nav .wp-block-post-navigation-link a:focus-visible {
+	background: #1d2928;
+	border-color: color-mix(in srgb, var(--tc-primary) 55%, transparent);
+}
+
+@media (max-width: 600px) {
+	.tc-post-nav .wp-block-post-navigation-link {
+		max-width: none;
+	}
+}
+
+/* =========================================================
+   404 — off route
+   ========================================================= */
+.tc-offroute {
+	width: min(100%, 560px);
+	margin: 0 auto clamp(1.5rem, 3vw, 2.5rem) !important;
+}
+
+.tc-offroute svg {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+}
+
+.tc-offroute__planned {
+	stroke: color-mix(in srgb, var(--tc-primary) 55%, transparent);
+	stroke-width: 3;
+	stroke-linecap: round;
+	stroke-dasharray: 0.004 0.02;
+}
+
+.tc-offroute__ridden {
+	stroke: var(--tc-primary);
+	stroke-width: 5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-dasharray: 1;
+	stroke-dashoffset: 0;
+}
+
+.tc-offroute__start,
+.tc-offroute__finish {
+	fill: var(--tc-surface);
+	stroke: var(--tc-primary);
+	stroke-width: 3;
+}
+
+.tc-offroute__finish {
+	stroke: var(--tc-outline);
+	stroke-dasharray: 3 3;
+}
+
+.tc-offroute__pin circle {
+	fill: var(--tc-accent);
+	stroke: var(--tc-ink);
+	stroke-width: 3;
+}
+
+.tc-offroute__pin text {
+	fill: var(--tc-ink);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 13px;
+	font-weight: 900;
+	letter-spacing: -0.02em;
+}
+
+:root[data-theme="dark"] .tc-offroute__pin circle {
+	stroke: var(--tc-surface);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.tc-offroute__ridden {
+		animation: tc-offroute-draw 1.6s var(--tc-ease-out) 0.2s both;
+	}
+
+	.tc-offroute__pin {
+		animation: tc-offroute-pin 0.6s var(--tc-ease-spring) 1.5s both;
+	}
+
+	.tc-offroute__pin circle {
+		animation: tc-offroute-wobble 2.6s ease-in-out 2.2s infinite;
+		transform-box: fill-box;
+		transform-origin: center;
+	}
+}
+
+@keyframes tc-offroute-draw {
+	from {
+		stroke-dashoffset: 1;
+	}
+}
+
+@keyframes tc-offroute-pin {
+	from {
+		opacity: 0;
+		transform: translate(430px, 40px) scale(0.2);
+	}
+}
+
+@keyframes tc-offroute-wobble {
+	0%,
+	100% {
+		transform: rotate(0deg);
+	}
+
+	25% {
+		transform: rotate(-8deg);
+	}
+
+	75% {
+		transform: rotate(8deg);
+	}
+}
+
+/* =========================================================
+   Header tone — the glass pill darkens over dark sections
+   ========================================================= */
+.nav-pill {
+	transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.nav-pill .wp-block-navigation-item__content,
+.nav-pill .tc-theme-toggle,
+.nav-pill .wp-block-navigation__responsive-container-open,
+.nav-pill .tc-site-logo .custom-logo {
+	transition: color 0.3s ease, filter 0.3s ease;
+}
+
+:root:not([data-theme="dark"]) .is-over-dark .nav-pill {
+	border-color: rgba(255, 255, 255, 0.12);
+	background:
+		linear-gradient(115deg, rgba(31, 44, 43, 0.78) 0%, rgba(15, 22, 22, 0.56) 48%, rgba(30, 43, 42, 0.72) 100%),
+		linear-gradient(180deg, rgba(26, 37, 36, 0.78) 0%, rgba(12, 18, 18, 0.64) 100%);
+	box-shadow:
+		0 10px 28px rgba(0, 0, 0, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+:root:not([data-theme="dark"]) .is-over-dark .nav-pill .wp-block-navigation__responsive-container:not(.is-menu-open) .wp-block-navigation-item__content,
+:root:not([data-theme="dark"]) .is-over-dark .nav-pill .wp-block-navigation__responsive-container-open,
+:root:not([data-theme="dark"]) .is-over-dark .nav-pill .tc-theme-toggle {
+	color: #f5fbfa !important;
+}
+
+:root:not([data-theme="dark"]) .is-over-dark .nav-pill .tc-site-logo .custom-logo {
+	filter: brightness(0) invert(1);
+}
+
+/* =========================================================
+   Cross-document view transitions
+   ========================================================= */
+@view-transition {
+	navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	@view-transition {
+		navigation: none;
+	}
+}
+
+::view-transition-old(root) {
+	animation: 0.22s ease both tc-vt-out;
+}
+
+::view-transition-new(root) {
+	animation: 0.42s var(--tc-ease-out) both tc-vt-in;
+}
+
+::view-transition-group(*) {
+	animation-duration: 0.5s;
+	animation-timing-function: var(--tc-ease-out);
+}
+
+@keyframes tc-vt-out {
+	to {
+		opacity: 0;
+		transform: translateY(-12px);
+	}
+}
+
+@keyframes tc-vt-in {
+	from {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+}
+
+/* =========================================================
+   Dark mode
+   ========================================================= */
+:root[data-theme="dark"] .tc-home-stable .tc-bike-card {
+	background: #172120;
+	border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .tc-home-stable .tc-bike-card--featured {
+	border-color: color-mix(in srgb, var(--tc-accent) 60%, transparent);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--tc-accent) 40%, transparent), 0 20px 44px rgba(120, 223, 183, 0.12);
+}
+
+:root[data-theme="dark"] .tc-home-stable .tc-bike-card--featured .tc-bike-card__image {
+	background:
+		radial-gradient(ellipse 62% 30% at 50% 78%, rgba(120, 223, 183, 0.45), transparent 72%),
+		#f6f1e6;
+}
+
+:root[data-theme="dark"] .tc-journal-row__peek {
+	outline-color: #1d2626;
+}
+
+:root[data-theme="dark"] .tc-sticker {
+	box-shadow:
+		0 0 0 4px #0f1515,
+		0 0 0 7px var(--tc-accent),
+		0 18px 30px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="dark"] .tc-home-wild,
+:root[data-theme="dark"] .is-style-section-night {
+	background:
+		radial-gradient(ellipse 60% 50% at 15% 0%, rgba(28, 193, 163, 0.18), transparent 60%),
+		radial-gradient(ellipse 40% 40% at 95% 100%, rgba(120, 223, 183, 0.1), transparent 60%),
+		#0a100f;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 1099px) {
+	.tc-home-stable .tc-bike-fleet-cards {
+		grid-template-columns: repeat(3, minmax(240px, 1fr));
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		padding: 0.5rem 24px 1.5rem;
+		margin-inline: calc((100vw - var(--tc-home-shell)) / -2);
+		scroll-padding-inline: 24px;
+		scrollbar-width: none;
+	}
+
+	.tc-home-stable .tc-bike-fleet-cards::-webkit-scrollbar {
+		display: none;
+	}
+
+	.tc-home-stable .tc-bike-card {
+		scroll-snap-align: start;
+	}
+}
+
+@media (max-width: 900px) {
+	.tc-home-hero__grid,
+	.tc-journal-lead__card,
+	.tc-home-wild__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.tc-home-hero__visual {
+		--tc-hero-visual-w: min(78%, 360px);
+		margin-top: 1rem;
+	}
+
+	.tc-feedzone {
+		grid-template-columns: auto minmax(0, 1fr);
+		padding-top: 2.25rem;
+	}
+
+	.tc-feedzone__cta {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 600px) {
+	.tc-home .tc-home-hero__title {
+		letter-spacing: -0.055em;
+	}
+
+	.tc-home-hero__visual {
+		--tc-hero-visual-w: 82%;
+	}
+
+	.tc-home-stable .tc-bike-fleet-cards {
+		grid-template-columns: repeat(3, 78%);
+	}
+
+	.tc-feedzone {
+		grid-template-columns: minmax(0, 1fr);
+		text-align: left;
+	}
+
+	.tc-feedzone__logo img {
+		width: 84px;
+	}
+
+	.tc-ride-log .intervals-card__stats-row {
+		gap: 0.5rem;
+	}
+
+	.tc-home-wild .polaroid-collage {
+		padding-inline: 0.25rem;
+	}
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+	.tc-route__rider-halo {
+		animation: none;
+	}
+
+	.tc-arrow,
+	.tc-sticker,
+	.tc-home-stable .tc-bike-card,
+	.tc-home-stable .tc-bike-card__image img,
+	.tc-home-hero__portrait img,
+	.tc-journal-row,
+	.tc-ride-log .intervals-card,
+	.tc-home-wild .polaroid {
+		transition: none;
+	}
+}
+
+/* =========================================================
+   Cohesion layer
+   One grid, one category style, one button family, one link
+   style, one card language — applied site-wide so the older
+   templates speak the same visual language as the homepage.
+   ========================================================= */
+
+/* --- Categories: quiet uppercase labels, never pills --- */
+
+.tc-format-label {
+	margin: 0 !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.6875rem !important;
+	font-weight: 800 !important;
+	letter-spacing: 0.14em !important;
+	text-transform: uppercase;
+	color: var(--tc-outline) !important;
+}
+
+/* Journal lead and archive cards: number, then one meta line, then the title. */
+
+.tc-journal-lead__content {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: 0.6rem;
+}
+
+.tc-journal-lead__content > :not(.tc-term-pills):not(.tc-format-label) {
+	flex-basis: 100%;
+}
+
+.tc-journal-lead__content > .tc-journal__num {
+	margin-bottom: 0.4rem !important;
+}
+
+/* --- Buttons: teal primary with ink text, soft-gold secondary, underline tertiary --- */
+.tc-cta-pill,
+.wp-element-button,
+.wp-block-button__link {
+	min-height: 48px;
+	padding: 12px 22px;
+	border-radius: 999px;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.9375rem;
+	font-weight: 800;
+	letter-spacing: -0.005em;
+	text-decoration: none !important;
+	transition: transform 0.35s var(--tc-ease-spring), background-color 0.2s ease, color 0.2s ease, box-shadow 0.3s ease;
+}
+
+.tc-cta-pill--primary,
+.wp-block-button:not(.is-style-outline):not(.is-style-soft):not(.tc-bio__team) > .wp-block-button__link,
+.wp-element-button:not(.wp-block-button__link) {
+	background: var(--tc-primary) !important;
+	color: var(--tc-ink) !important;
+	border: 0;
+	box-shadow: 0 10px 22px color-mix(in srgb, var(--tc-primary) 30%, transparent);
+}
+
+.tc-cta-pill--primary:hover,
+.tc-cta-pill--primary:focus-visible,
+.wp-block-button:not(.is-style-outline) > .wp-block-button__link:hover,
+.wp-block-button:not(.is-style-outline) > .wp-block-button__link:focus-visible,
+.wp-element-button:not(.wp-block-button__link):hover {
+	background: var(--tc-ink) !important;
+	color: #f5fbfa !important;
+	box-shadow: 0 12px 26px rgba(24, 28, 29, 0.22);
+	transform: translateY(-2px);
+}
+
+.tc-cta-pill--ghost,
+.wp-block-button.is-style-outline > .wp-block-button__link {
+	background: color-mix(in srgb, var(--tc-accent) 42%, var(--tc-white)) !important;
+	color: var(--tc-ink) !important;
+	border: 0 !important;
+	box-shadow: 0 8px 18px rgba(24, 28, 29, 0.08);
+}
+
+.tc-cta-pill--ghost:hover,
+.tc-cta-pill--ghost:focus-visible,
+.wp-block-button.is-style-outline > .wp-block-button__link:hover,
+.wp-block-button.is-style-outline > .wp-block-button__link:focus-visible {
+	background: var(--tc-accent) !important;
+	color: var(--tc-ink) !important;
+	transform: translateY(-2px);
+}
+
+:root[data-theme="dark"] .tc-cta-pill--primary:hover,
+:root[data-theme="dark"] .wp-block-button:not(.is-style-outline) > .wp-block-button__link:hover {
+	background: #f5fbfa !important;
+	color: var(--tc-ink) !important;
+}
+
+/* The feed-zone button keeps the team's own gradient; the site-wide pill doesn't reach it. */
+
+/* --- Text links that lead somewhere: one underline style everywhere --- */
+.wp-block-read-more,
+.tc-archive-card .latest-card-footer .wp-block-read-more,
+.tc-journal__meta .wp-block-read-more {
+	display: inline-flex;
+	align-items: center;
+	min-height: 0 !important;
+	padding: 0 0 2px !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.875rem !important;
+	font-weight: 800 !important;
+	letter-spacing: -0.005em !important;
+	color: var(--tc-on-surface) !important;
+	text-decoration: none !important;
+	border-bottom: 2px solid var(--tc-primary);
+	transition: border-color 0.2s ease;
+}
+
+.wp-block-read-more:hover,
+.wp-block-read-more:focus-visible {
+	color: var(--tc-on-surface) !important;
+	border-color: var(--tc-accent);
+}
+
+/* --- Cards: hairline border, generous radius, shadow only on hover --- */
+.tc-archive-card {
+	border-radius: 24px !important;
+	border: 1px solid color-mix(in srgb, var(--tc-on-surface) 9%, transparent);
+	box-shadow: none !important;
+	background: var(--tc-white) !important;
+	transition: transform 0.5s var(--tc-ease-out), box-shadow 0.5s var(--tc-ease-out), border-color 0.3s ease !important;
+}
+
+.tc-archive-card:hover {
+	transform: translateY(-4px);
+	border-color: color-mix(in srgb, var(--tc-primary) 40%, transparent);
+	box-shadow: 0 24px 48px rgba(24, 28, 29, 0.1) !important;
+}
+
+.tc-archive-card:not(:has(.wp-block-post-featured-image img)) {
+	border-top: 1px solid color-mix(in srgb, var(--tc-on-surface) 9%, transparent);
+}
+
+.tc-archive-card .wp-block-post-title {
+	font-size: clamp(1.25rem, 1rem + 0.6vw, 1.5rem) !important;
+	letter-spacing: -0.025em !important;
+	line-height: 1.12 !important;
+}
+
+.tc-archive-card .wp-block-post-title a:hover {
+	color: var(--tc-on-surface) !important;
+	text-decoration: underline !important;
+	text-decoration-color: var(--tc-primary) !important;
+	text-decoration-thickness: 3px !important;
+	text-underline-offset: 0.12em;
+}
+
+.tc-archive-card .wp-block-post-excerpt {
+	font-size: 0.9375rem !important;
+	color: var(--tc-on-surface-secondary) !important;
+}
+
+.tc-archive-card .latest-card-divider {
+	display: none;
+}
+
+.tc-archive-card .latest-card-footer {
+	padding-top: 0.4rem;
+}
+
+.tc-archive-card .latest-card-footer .wp-block-post-date {
+	font-size: 0.6875rem !important;
+	font-weight: 700 !important;
+	letter-spacing: 0.12em !important;
+	text-transform: uppercase;
+	color: var(--tc-outline) !important;
+}
+
+:root[data-theme="dark"] .tc-archive-card {
+	background: #172120 !important;
+	border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Bike cards look the same on the homepage and on /gear/. */
+.tc-bike-card {
+	background: var(--tc-surface);
+	border: 1px solid color-mix(in srgb, var(--tc-on-surface) 8%, transparent);
+	border-radius: 24px;
+	transition: transform 0.5s var(--tc-ease-out), box-shadow 0.5s var(--tc-ease-out), border-color 0.3s ease;
+}
+
+.tc-bike-card:hover,
+.tc-bike-card:focus-within {
+	transform: translateY(-4px);
+	border-color: color-mix(in srgb, var(--tc-primary) 40%, transparent);
+	box-shadow: 0 22px 44px rgba(24, 28, 29, 0.1);
+}
+
+.tc-bike-card__image {
+	display: grid;
+	place-items: center;
+	padding: 1rem 1.25rem;
+	background:
+		radial-gradient(ellipse 62% 30% at 50% 78%, color-mix(in srgb, var(--tc-primary) 20%, transparent), transparent 72%),
+		#ffffff;
+}
+
+.tc-bike-card__image img {
+	height: auto;
+	aspect-ratio: 16 / 9;
+	filter: brightness(1.045) contrast(1.02);
+	mix-blend-mode: multiply;
+}
+
+.tc-bike-card__name,
+.tc-bike-card--featured .tc-bike-card__name {
+	font-size: 1.25rem;
+	font-weight: 900;
+	font-style: normal;
+	letter-spacing: -0.025em;
+	color: var(--tc-on-surface);
+}
+
+.tc-bike-card__label {
+	font-size: 0.6875rem;
+	font-weight: 800;
+	letter-spacing: 0.16em;
+	color: var(--tc-teal-ink);
+}
+
+.tc-bike-card--featured {
+	border-color: color-mix(in srgb, var(--tc-accent) 70%, transparent);
+}
+
+.tc-bike-card--featured .tc-bike-card__image {
+	background:
+		radial-gradient(ellipse 62% 30% at 50% 78%, color-mix(in srgb, var(--tc-accent) 40%, transparent), transparent 72%),
+		#fffaf0;
+}
+
+:root[data-theme="dark"] .tc-bike-card {
+	background: #172120;
+	border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* The Card section style is white in theme.json; give every card the dark surface the note and timeline cards already use. */
+:root[data-theme="dark"] .is-style-card {
+	background: #193c33;
+	color: #f5fbfa;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .tc-bike-card__image {
+	background:
+		radial-gradient(ellipse 62% 30% at 50% 78%, rgba(55, 221, 191, 0.26), transparent 72%),
+		#eef3f2;
+}
+
+/* --- Page mastheads: title, eyebrow, lede on one rhythm --- */
+.tc-archive__header .tc-archive__description {
+	margin-top: 1.25rem !important;
+	max-width: 52ch;
+	font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+	line-height: 1.55;
+	color: var(--tc-on-surface-secondary);
+}
+
+.section-gear-hero .tc-eyebrow,
+.tc-archive__header .tc-eyebrow {
+	margin-top: 0.75rem !important;
+}
+
+.tc-archive__header {
+	border-bottom: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+/* --- Post sidebar: a quiet column, not a glass panel --- */
+.tc-sidebar-panel {
+	background: none !important;
+	border: 0 !important;
+	border-left: 1px solid color-mix(in srgb, var(--tc-on-surface) 10%, transparent) !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+	padding-left: 1.75rem;
+}
+
+.tc-sidebar-section {
+	padding: 0 !important;
+	gap: 0.9rem !important;
+}
+
+.tc-sidebar-divider {
+	margin: 2rem 0 !important;
+	opacity: 0;
+}
+
+.tc-sidebar-label.wp-block-heading {
+	margin: 0 !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.6875rem !important;
+	font-weight: 800;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--tc-outline);
+}
+
+.tc-sidebar-recent .wp-block-latest-posts,
+.tc-sidebar-categories .wp-block-categories {
+	width: 100%;
+	max-width: none !important;
+}
+
+.tc-sidebar-recent .wp-block-latest-posts li,
+.tc-sidebar-categories .wp-block-categories li {
+	margin: 0 !important;
+	padding: 0.75rem 0 !important;
+	border-bottom: 1px solid color-mix(in srgb, var(--tc-on-surface) 9%, transparent);
+}
+
+.tc-sidebar-recent .wp-block-latest-posts li:first-child,
+.tc-sidebar-categories .wp-block-categories li:first-child {
+	padding-top: 0 !important;
+}
+
+.tc-sidebar-recent .wp-block-latest-posts li:last-child,
+.tc-sidebar-categories .wp-block-categories li:last-child {
+	border-bottom: 0;
+}
+
+.tc-sidebar-recent .wp-block-latest-posts a {
+	display: block;
+	min-height: 0 !important;
+	padding: 0 !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.9375rem;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+	line-height: 1.3;
+	color: var(--tc-on-surface);
+}
+
+.tc-sidebar-recent .wp-block-latest-posts a:hover {
+	color: var(--tc-teal-ink);
+}
+
+.tc-sidebar-recent .wp-block-latest-posts__post-date {
+	margin-top: 0.3rem;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--tc-outline);
+}
+
+.tc-sidebar-categories .wp-block-categories li {
+	display: flex;
+	justify-content: space-between;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.8125rem;
+	color: var(--tc-outline);
+}
+
+.tc-sidebar-categories .wp-block-categories a {
+	min-height: 0 !important;
+	padding: 0 !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.8125rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--tc-teal-ink);
+}
+
+@media (max-width: 781px) {
+	.tc-sidebar-panel {
+		border-left: 0 !important;
+		border-top: 1px solid color-mix(in srgb, var(--tc-on-surface) 10%, transparent) !important;
+		padding-left: 0;
+		padding-top: 2rem;
+	}
+}
+
+/* --- Comments: left-aligned like every other section heading --- */
+.tc-comments-header,
+.tc-comments-header > * {
+	align-items: flex-start;
+	text-align: left !important;
+	margin-left: 0 !important;
+}
+
+.tc-comments .tc-comments-title,
+.tc-comments .comment-reply-title {
+	font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem) !important;
+	letter-spacing: -0.03em;
+}
+
+/* --- Eyebrows: one size and tracking everywhere --- */
+.tc-eyebrow {
+	font-size: 0.8125rem;
+	letter-spacing: 0.16em;
+}
+
+.tc-archive-card {
+	gap: 0 !important;
+}
+
+.tc-comments .comment-respond,
+.tc-comments .wp-block-post-comments-form {
+	margin-top: clamp(2.5rem, 5vw, 3.5rem) !important;
+}
+
+/* =========================================================
+   Delight, with manners
+   ========================================================= */
+
+/* "Howdy" rises in letter by letter, then waves when you hover it. */
+.tc-home-hero__title.is-split {
+	animation: none !important;
+	white-space: nowrap;
+}
+
+.tc-visually-hidden {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+.tc-letter {
+	display: inline-block;
+	will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.tc-home-hero__title.is-split .tc-letter {
+		animation: tc-letter-rise 0.9s var(--tc-ease-out) both;
+		animation-delay: calc(var(--i) * 55ms);
+	}
+
+	.tc-home-hero__title.is-ready .tc-letter {
+		animation: none;
+	}
+
+	.tc-home-hero__title.is-ready.is-waving .tc-letter {
+		animation: tc-wave 0.7s var(--tc-ease-spring) both;
+		animation-delay: calc(var(--i) * 60ms);
+	}
+}
+
+/* Transform only: the letters are painted from the first frame, so "Howdy"
+   still counts as the page's largest paint instead of waiting on the entrance. */
+@keyframes tc-letter-rise {
+	from {
+		transform: translateY(0.28em) rotate(5deg);
+	}
+}
+
+@keyframes tc-wave {
+	0%, 100% { transform: translateY(0) rotate(0deg); }
+	40% { transform: translateY(-0.09em) rotate(-3deg); }
+	70% { transform: translateY(0.02em) rotate(1deg); }
+}
+
+/* Confetti canvas for the cannon. */
+.tc-confetti {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 200;
+	pointer-events: none;
+}
+
+/* The odometer at the finish line. */
+/* The line is reserved in the footer markup, so filling it in never shifts the footer. */
+.tc-odometer {
+	min-height: 1.5em;
+	line-height: 1.5;
+	margin: 0.9rem auto 0 !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	font-variant-numeric: tabular-nums;
+	color: color-mix(in srgb, var(--tc-accent) 80%, #f5fbfa);
+	opacity: 0;
+	transform: translateY(4px);
+	transition: opacity 0.5s ease, transform 0.5s var(--tc-ease-out);
+}
+
+.tc-odometer.is-visible {
+	opacity: 1;
+	transform: none;
+}
+
+@media (max-width: 559px) {
+	.tc-odometer {
+		min-height: 3em;
+	}
+}
+
+/* Buttons and pills give a little under your finger. */
+.tc-cta-pill:active,
+.wp-block-button__link:active,
+.wp-element-button:active,
+.tc-feedzone__button:active {
+	transform: translateY(0) scale(0.97) !important;
+	transition-duration: 0.08s;
+}
+
+/* The theme switch is a circle growing out of the toggle, not a crossfade. */
+html.tc-theme-switching::view-transition-old(root),
+html.tc-theme-switching::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+html.tc-theme-switching [style*="view-transition-name"] {
+	view-transition-name: none !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+}
+
+/* Dark mode secondary buttons: translucent gold with light text, solid on hover. */
+:root[data-theme="dark"] .tc-cta-pill--ghost,
+:root[data-theme="dark"] .wp-block-button.is-style-outline > .wp-block-button__link {
+	background: rgba(120, 223, 183, 0.14) !important;
+	color: #c8f4dc !important;
+	box-shadow: inset 0 0 0 1px rgba(120, 223, 183, 0.46) !important;
+}
+
+:root[data-theme="dark"] .tc-cta-pill--ghost:hover,
+:root[data-theme="dark"] .tc-cta-pill--ghost:focus-visible,
+:root[data-theme="dark"] .wp-block-button.is-style-outline > .wp-block-button__link:hover,
+:root[data-theme="dark"] .wp-block-button.is-style-outline > .wp-block-button__link:focus-visible {
+	background: var(--tc-accent) !important;
+	color: var(--tc-ink) !important;
+}
+
+/* =========================================================
+   Contrast (WCAG AA)
+   Bright teal is for fills, rules and dark surfaces. Teal text on a
+   light surface uses the deep teal ink so it reads at 6:1, not 2:1.
+   ========================================================= */
+:root:not([data-theme="dark"]) .has-primary-color,
+:root:not([data-theme="dark"]) .tc-bikepacking-kit__eyebrow {
+	color: var(--tc-primary-dark) !important;
+}
+
+:root:not([data-theme="dark"]) :is(.tc-home-wild, .section-gear-devstack, .is-style-section-night, .has-on-surface-background-color, .has-surface-dark-background-color) .has-primary-color {
+	color: var(--tc-primary) !important;
+}
+
+/* Current page number: ink on teal (7.5:1) in both themes. */
+.wp-block-query-pagination-numbers .page-numbers.current,
+.tc-archive__pagination .wp-block-query-pagination-numbers .page-numbers.current,
+.tc-comments-pagination .page-numbers.current {
+	color: var(--tc-ink) !important;
+}
+
+/* The gold "Daily driver" tag keeps dark text when the page goes dark. */
+:root[data-theme="dark"] .tc-bike-card__eyebrow {
+	color: var(--tc-ink);
+}
+
+/* The Instagram link is a text link on the dark wild section in both themes;
+   the dark-mode primary pill styles from base.css must not reach it. */
+:root[data-theme="dark"] .tc-home-wild .around-web-cta a {
+	background: none !important;
+	color: #f5fbfa !important;
+}
+
+/* =========================================================
+   Landing-page texture: the painted wash in full color, with a light green and
+   warm yellow bloom, fading out below the hero. It scrolls with the page
+   here instead of staying pinned like on reading pages.
+   ========================================================= */
+body.tc-landing::before {
+	position: absolute;
+	height: clamp(760px, 64vw, 980px);
+	background:
+		radial-gradient(ellipse 44% 48% at 20% 18%, rgba(168, 232, 196, 0.62), transparent 70%),
+		radial-gradient(ellipse 40% 44% at 80% 26%, rgba(255, 214, 122, 0.5), transparent 70%),
+		var(--tc-cover-art-image) center 30% / cover no-repeat;
+	filter: saturate(1.15) brightness(1.04);
+	opacity: 0.52;
+	mix-blend-mode: multiply;
+	mask-image: linear-gradient(180deg, #000 0%, #000 42%, rgba(0, 0, 0, 0.4) 72%, transparent 100%);
+	-webkit-mask-image: linear-gradient(180deg, #000 0%, #000 42%, rgba(0, 0, 0, 0.4) 72%, transparent 100%);
+}
+
+:root[data-theme="dark"] body.tc-landing::before {
+	background:
+		radial-gradient(ellipse 44% 48% at 20% 18%, rgba(55, 221, 191, 0.3), transparent 70%),
+		radial-gradient(ellipse 40% 44% at 80% 26%, rgba(120, 223, 183, 0.22), transparent 70%),
+		var(--tc-cover-art-image-dark) center 30% / cover no-repeat;
+	filter: saturate(0.9);
+	opacity: 0.22;
+	mix-blend-mode: screen;
+}
+
+/* =========================================================
+   Now strip: synced facts at the top of the fleet section.
+   Values come from Block Bindings (thecannon/ride, /gear, /journey);
+   an item with nothing to say hides itself instead of guessing.
+   ========================================================= */
+.tc-now {
+	gap: 12px 28px !important;
+	margin: 0 0 var(--tc-now-gap) !important;
+	padding: 12px 18px 12px 12px;
+	border-radius: 999px;
+	background: var(--tc-white);
+	box-shadow: 0 0 0 1px rgba(24, 28, 29, 0.07), 0 10px 30px rgba(24, 28, 29, 0.07);
+}
+
+.tc-now > * {
+	margin: 0 !important;
+}
+
+/* Center the strip on the boundary between the hero and stable. */
+.tc-home-stable .tc-now {
+	position: relative;
+	z-index: 1;
+	translate: 0 -50%;
+}
+
+.tc-now__chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	height: 48px;
+	padding: 0 18px;
+	border-radius: 999px;
+	background: var(--tc-ink);
+	color: #f5fbfa;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+}
+
+.tc-now__chip::before {
+	content: "";
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--tc-primary);
+	box-shadow: 0 0 0 4px rgba(28, 193, 163, 0.25);
+}
+
+.tc-now__item {
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 2px;
+	padding-left: 28px;
+	border-left: 1px solid rgba(24, 28, 29, 0.12);
+}
+
+.tc-now__chip + .tc-now__item {
+	padding-left: 0;
+	border-left: 0;
+}
+
+.tc-now__item > * {
+	margin: 0 !important;
+}
+
+.tc-now__label.is-style-label {
+	font-size: 0.625rem;
+	color: var(--tc-outline);
+}
+
+.tc-now__value {
+	font-weight: 700;
+	font-size: 1rem;
+	line-height: 1.3;
+}
+
+.tc-now__item:has(.tc-now__value:empty) {
+	display: none;
+}
+
+.tc-now__more {
+	margin-left: auto !important;
+	font-weight: 700;
+	font-size: 0.9375rem;
+}
+
+.tc-now__more a {
+	color: var(--tc-teal-ink);
+	text-decoration: none;
+}
+
+.tc-now__more a:hover {
+	color: var(--tc-ink);
+}
+
+:root[data-theme="dark"] .tc-now {
+	background: #193c33;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .tc-now__chip {
+	background: #f5fbfa;
+	color: #0f1515;
+}
+
+:root[data-theme="dark"] .tc-now__item {
+	border-left-color: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 781px) {
+	.tc-home-hero {
+		padding-bottom: calc(var(--tc-now-gap) + 64px);
+	}
+
+	.tc-now {
+		border-radius: 24px;
+		padding: 16px;
+		gap: 14px !important;
+	}
+
+	.tc-now__chip {
+		height: 34px;
+		padding: 0 14px;
+	}
+
+	.tc-now__item {
+		flex-basis: 100%;
+		padding-left: 0;
+		border-left: 0;
+	}
+
+	.tc-now__more {
+		margin-left: 0 !important;
+	}
+}
+
+/* Journal rows say what a post is and how long it is (thecannon/post bindings). */
+.tc-journal__kind.is-style-label,
+.tc-journal-row__kind.is-style-label {
+	margin: 0 !important;
+}
+
+.tc-journal-row__kind.is-style-label {
+	margin-top: 0.35rem !important;
+	font-size: 0.625rem;
+}
+
+.tc-journal-row__facts {
+	display: flex;
+	align-items: baseline;
+	gap: 1.25rem;
+}
+
+.tc-journal-row__facts > * {
+	margin: 0 !important;
+}
+
+.tc-journal-row__length,
+.tc-journal__length {
+	margin: 0 !important;
+	font-size: 0.875rem;
+	color: var(--tc-outline);
+	white-space: nowrap;
+}
+
+.tc-journal__meta .tc-journal__length::before {
+	content: "·";
+	margin-right: 0.5rem;
+}
+
+.tc-journal__meta > * {
+	margin: 0 !important;
+}
+
+.tc-journal__meta .tc-journal__length {
+	margin-right: auto !important;
+}
+
+/* =========================================================
+   Post formats: shared byline, trip facts, notes, video
+   ========================================================= */
+.tc-byline {
+	gap: 0.5rem 0.9rem !important;
+	margin-top: 1.25rem !important;
+	font-size: 1rem;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-byline > * {
+	margin: 0 !important;
+}
+
+.tc-byline__avatar img {
+	border-radius: 50% !important;
+	object-fit: cover;
+	box-shadow: 0 0 0 2px var(--tc-white), 0 0 0 3px rgba(24, 28, 29, 0.1);
+}
+
+.tc-byline__name {
+	font-weight: 700;
+	color: var(--tc-on-surface);
+}
+
+.tc-byline > :not(.tc-byline__avatar):not(.tc-byline__name)::before {
+	content: "·";
+	margin-right: 0.9rem;
+	color: var(--tc-primary);
+}
+
+.tc-byline__length:empty {
+	display: none;
+}
+
+.tc-byline .wp-block-post-date {
+	font-size: inherit;
+	letter-spacing: 0;
+	text-transform: none;
+	color: inherit;
+}
+
+/* Trip facts: bound to post meta; unset facts disappear. */
+.tc-trip-facts {
+	gap: 24px !important;
+	margin-block: 1.5rem 0 !important;
+	padding: 24px 0;
+	border-block: 1px solid rgba(24, 28, 29, 0.1);
+}
+
+.tc-trip-facts__item {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.tc-trip-facts__item > * {
+	margin: 0 !important;
+}
+
+.tc-trip-facts__item:has(.tc-trip-facts__value:empty) {
+	display: none;
+}
+
+.tc-trip-facts__value {
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 800;
+	font-size: 1.375rem;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+}
+
+.tc-trip-facts__label.is-style-label {
+	font-size: 0.6875rem;
+	color: var(--tc-outline);
+}
+
+.tc-format--trip .tc-format-hero {
+	margin-top: clamp(2.5rem, 5vw, 4rem) !important;
+}
+
+.tc-format--trip .tc-format-hero img {
+	border-radius: 24px;
+	max-height: 680px;
+	object-fit: cover;
+}
+
+:root[data-theme="dark"] .tc-trip-facts {
+	border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Notes: a dated index card, no hero image. */
+.tc-format--note {
+	padding-block: clamp(2rem, 6vw, 5rem);
+}
+
+.tc-note-card {
+	position: relative;
+	overflow: visible !important;
+	padding: clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 5vw, 4rem) !important;
+	border-left: 3px solid rgba(28, 193, 163, 0.45);
+}
+
+.tc-note-card::before {
+	content: "";
+	position: absolute;
+	top: -12px;
+	left: 50%;
+	width: 120px;
+	height: 26px;
+	transform: translateX(-50%) rotate(-2deg);
+	background: rgba(120, 223, 183, 0.55);
+	border-radius: 3px;
+}
+
+.tc-note-card__title {
+	margin-top: 0.75rem !important;
+	font-size: clamp(2rem, 1.4rem + 2vw, 3rem) !important;
+	line-height: 1.05 !important;
+}
+
+.tc-note-card__content p {
+	font-size: 1.125rem;
+	line-height: 1.75;
+}
+
+:root[data-theme="dark"] .tc-note-card {
+	background-color: #193c33 !important;
+	color: #f5fbfa;
+}
+
+/* Video: the stage is dark so the player is the brightest thing on the page. */
+.tc-video-stage {
+	padding-block: clamp(3rem, 7vw, 6rem) clamp(2rem, 4vw, 3rem) !important;
+}
+
+.tc-video-stage .tc-byline {
+	color: #bfd0cc;
+}
+
+.tc-video-stage .tc-byline__name {
+	color: #f5fbfa;
+}
+
+.tc-video-content > .wp-block-embed:first-child,
+.tc-video-content > .wp-block-video:first-child {
+	margin-top: calc(-1 * clamp(1rem, 3vw, 2rem)) !important;
+}
+
+/* Trip reports line everything up on the 980px column, header included. */
+.tc-format--trip .tc-single-header > * {
+	max-width: 980px !important;
+	margin-inline: auto !important;
+}
+
+.tc-format--video .tc-single-header > * {
+	max-width: 980px !important;
+	margin-inline: auto !important;
+}
+
+.tc-video-stage .wp-block-post-title,
+.tc-video-stage .tc-single-header__title {
+	color: #f5fbfa !important;
+}
+
+.tc-video-stage {
+	margin-block: 0 !important;
+}
+
+/* =========================================================
+   Blog timeline, filter pills, search
+   ========================================================= */
+.tc-filter-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 1.75rem;
+}
+
+.tc-filter-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 0 18px;
+	border-radius: 999px;
+	background: var(--tc-white);
+	box-shadow: inset 0 0 0 1px rgba(24, 28, 29, 0.14);
+	color: var(--tc-on-surface) !important;
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 700;
+	font-size: 0.875rem;
+	text-decoration: none !important;
+	transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tc-filter-pill:hover {
+	box-shadow: inset 0 0 0 1px var(--tc-primary);
+}
+
+.tc-filter-pill__count {
+	color: var(--tc-outline);
+	font-weight: 600;
+}
+
+.tc-filter-pill.is-current {
+	background: var(--tc-ink);
+	color: #f5fbfa !important;
+	box-shadow: none;
+}
+
+.tc-filter-pill.is-current .tc-filter-pill__count {
+	color: #bfd0cc;
+}
+
+:root[data-theme="dark"] .tc-filter-pill {
+	background: #193c33;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme="dark"] .tc-filter-pill.is-current {
+	background: #f5fbfa;
+	color: #0f1515 !important;
+}
+
+/* The current pill turns light in dark mode, so its count goes dark too. */
+:root[data-theme="dark"] .tc-filter-pill.is-current .tc-filter-pill__count {
+	color: #4f5c59;
+}
+
+.tc-timeline-query {
+	margin-top: clamp(2.5rem, 5vw, 4rem) !important;
+}
+
+.tc-timeline {
+	position: relative;
+	gap: 24px !important;
+}
+
+.tc-timeline > .tc-timeline__year,
+.tc-timeline > .tc-timeline__end {
+	grid-column: 1 / -1;
+	list-style: none;
+}
+
+.tc-timeline__year {
+	margin-top: 1.5rem;
+}
+
+.tc-timeline__year:first-child {
+	margin-top: 0;
+}
+
+.tc-timeline__year-label {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin: 0;
+	font-size: clamp(2.25rem, 1.6rem + 1.6vw, 3.25rem) !important;
+	letter-spacing: -0.04em;
+}
+
+.tc-timeline__year-label::after {
+	content: "";
+	flex: 1;
+	height: 4px;
+	border-radius: 4px;
+	background: var(--tc-primary);
+}
+
+.tc-timeline__year-label::before {
+	content: "";
+	order: 2;
+	width: 14px;
+	height: 14px;
+	flex: none;
+	border-radius: 50%;
+	background: var(--tc-white);
+	box-shadow: 0 0 0 3px var(--tc-ink);
+}
+
+.tc-timeline__end p {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin: 1rem 0 0;
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 800;
+	font-size: 1.25rem;
+	letter-spacing: -0.02em;
+}
+
+.tc-timeline__end p::before {
+	content: "";
+	width: 24px;
+	height: 24px;
+	flex: none;
+	background: repeating-conic-gradient(#151b19 0 25%, #ffffff 0 50%) 0 0 / 12px 12px;
+	box-shadow: 0 0 0 2px #151b19;
+}
+
+.tc-timeline-card {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.tc-timeline-card__media {
+	margin: 0 !important;
+}
+
+.tc-timeline-card__media img {
+	border-radius: 0 !important;
+}
+
+.tc-timeline-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 22px 24px 24px;
+	flex: 1;
+}
+
+.tc-timeline-card__body > * {
+	margin: 0 !important;
+}
+
+.tc-timeline-card__title {
+	font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.75rem) !important;
+	line-height: 1.08 !important;
+	letter-spacing: -0.035em !important;
+}
+
+.tc-timeline-card__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.tc-timeline-card__meta {
+	gap: 4px 12px !important;
+}
+
+.tc-timeline-card__meta > * {
+	margin: 0 !important;
+}
+
+.tc-timeline-card__meta .wp-block-post-date {
+	color: var(--tc-outline);
+}
+
+.tc-timeline-card__excerpt p {
+	margin: 0;
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-timeline-card__length {
+	margin-top: auto !important;
+	padding-top: 6px;
+	font-size: 0.8125rem;
+	color: var(--tc-outline);
+}
+
+.tc-timeline-card__length:empty {
+	display: none;
+}
+
+:root[data-theme="dark"] .tc-timeline-card {
+	background: #193c33 !important;
+	color: #f5fbfa;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+:root[data-theme="dark"] .tc-timeline__year-label::before {
+	background: #0f1515;
+	box-shadow: 0 0 0 3px #f5fbfa;
+}
+
+/* Search */
+.tc-search {
+	margin-top: 1.5rem !important;
+}
+
+.tc-search .wp-block-search__label {
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 700;
+	font-size: 0.875rem;
+}
+
+.tc-search .wp-block-search__input {
+	min-height: 56px;
+	padding: 0 20px;
+	border-radius: 999px;
+	border: 1px solid rgba(24, 28, 29, 0.18);
+	font-size: 1.125rem;
+}
+
+.tc-search .wp-block-search__button {
+	min-height: 56px;
+	padding: 0 24px;
+	border-radius: 999px;
+	margin-left: 8px;
+}
+
+.tc-archive--search .tc-search__summary {
+	margin-top: 2rem !important;
+	font-size: 1.125rem !important;
+	font-weight: 700 !important;
+	letter-spacing: -0.01em !important;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-search-list {
+	margin-top: 2rem !important;
+	list-style: none;
+	padding: 0;
+}
+
+.tc-search-row {
+	display: grid;
+	grid-template-columns: 96px minmax(0, 1fr);
+	gap: 20px;
+	padding: 24px 0;
+	border-top: 1px solid rgba(24, 28, 29, 0.1);
+}
+
+.tc-search-row > * {
+	margin: 0 !important;
+}
+
+/* Rows without a photo use the full width. */
+.tc-search-row:not(:has(.tc-search-row__thumb)) .tc-search-row__body {
+	grid-column: 1 / -1;
+}
+
+/* Pages are timeless; their publish date says nothing useful. */
+.type-page .tc-search-row .wp-block-post-date {
+	display: none;
+}
+
+.tc-search-row__thumb img {
+	border-radius: 16px !important;
+}
+
+.tc-search-row__body > * {
+	margin: 0 0 8px !important;
+}
+
+.tc-search-row__title {
+	font-size: 1.5rem !important;
+	letter-spacing: -0.03em !important;
+}
+
+.tc-search-row__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.tc-search-row__excerpt p {
+	margin: 0;
+	color: var(--tc-on-surface-secondary);
+}
+
+@media (max-width: 781px) {
+	.tc-timeline {
+		grid-template-columns: minmax(0, 1fr) !important;
+	}
+
+	.tc-search-row {
+		grid-template-columns: 64px minmax(0, 1fr);
+	}
+}
+
+.tc-timeline {
+	padding-left: 0 !important;
+}
+
+.tc-timeline::before {
+	display: none !important;
+}
+
+.tc-timeline-card > * {
+	margin: 0 !important;
+}
+
+.tc-timeline .tc-timeline__year-label {
+	color: var(--tc-on-surface) !important;
+}
+
+/* =========================================================
+   Now page and link in bio
+   ========================================================= */
+.tc-now-page {
+	padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.tc-now-page__updated {
+	gap: 0.35em !important;
+	margin-top: 1.25rem !important;
+	font-size: 1.125rem;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-now-page__updated > * {
+	margin: 0 !important;
+}
+
+.tc-now-page__updated .wp-block-post-date {
+	font-size: inherit;
+	color: var(--tc-on-surface);
+	font-weight: 700;
+}
+
+.tc-now-list {
+	position: relative;
+	margin-top: clamp(2.5rem, 5vw, 3.5rem) !important;
+	padding-left: 40px;
+}
+
+.tc-now-list::before {
+	content: "";
+	position: absolute;
+	left: 11px;
+	top: 10px;
+	bottom: 10px;
+	width: 3px;
+	border-radius: 3px;
+	background: var(--tc-primary);
+}
+
+.tc-now-list__item {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding-bottom: 32px;
+}
+
+.tc-now-list__item > * {
+	margin: 0 !important;
+}
+
+.tc-now-list__item::before {
+	content: "";
+	position: absolute;
+	left: -36px;
+	top: 6px;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--tc-white);
+	box-shadow: 0 0 0 3px var(--tc-ink);
+}
+
+.tc-now-list__item.is-passed::before {
+	background: var(--tc-accent);
+}
+
+.tc-now-list__item:has(.tc-now-list__value:empty) {
+	display: none;
+}
+
+.tc-now-list__value {
+	font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem) !important;
+	line-height: 1.1 !important;
+	letter-spacing: -0.03em !important;
+}
+
+.tc-now-list__note {
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-now-list__note:empty {
+	display: none;
+}
+
+:root[data-theme="dark"] .tc-now-list__item::before {
+	background: #0f1515;
+	box-shadow: 0 0 0 3px #f5fbfa;
+}
+
+:root[data-theme="dark"] .tc-now-list__item.is-passed::before {
+	background: #78dfb7;
+}
+
+.tc-bio {
+	padding-block: clamp(2rem, 5vw, 4rem);
+	text-align: left;
+}
+
+.tc-bio > * + * {
+	margin-top: 1.25rem !important;
+}
+
+.tc-bio__portrait {
+	margin-bottom: 0.5rem !important;
+}
+
+.tc-bio__portrait img {
+	border-radius: 30px !important;
+}
+
+.tc-bio__name {
+	font-size: 2.5rem !important;
+	letter-spacing: -0.04em !important;
+}
+
+.tc-bio__lede {
+	margin-top: 0.5rem !important;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-bio__card-body {
+	padding: 18px 20px 20px;
+}
+
+.tc-bio__card-body > * {
+	margin: 0 0 6px !important;
+}
+
+.tc-bio__card-title {
+	font-size: 1.5rem !important;
+	letter-spacing: -0.03em !important;
+}
+
+.tc-bio__card-title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.tc-bio__card-length {
+	font-size: 0.875rem;
+	color: var(--tc-outline);
+}
+
+.tc-bio__card .wp-block-post-featured-image {
+	margin: 0 !important;
+}
+
+.tc-bio__card .wp-block-post-featured-image img {
+	border-radius: 0 !important;
+}
+
+.tc-bio__now {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 18px 20px;
+	border-radius: 24px;
+	background: var(--tc-white);
+	box-shadow: 0 0 0 1px rgba(24, 28, 29, 0.07);
+}
+
+.tc-bio__now > * {
+	margin: 0 !important;
+}
+
+.tc-bio__now .tc-now__item {
+	padding-left: 0;
+	border-left: 0;
+}
+
+.tc-bio__now-chip {
+	align-self: flex-start;
+	padding: 6px 12px;
+	border-radius: 999px;
+	background: var(--tc-ink);
+	color: #f5fbfa;
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 800;
+	font-size: 0.6875rem;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+}
+
+.tc-bio__links {
+	gap: 10px !important;
+}
+
+.tc-bio__links .wp-block-button__link {
+	min-height: 52px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1rem !important;
+}
+
+.tc-bio .tc-bio__team > .wp-block-button__link {
+	background: linear-gradient(90deg, #e8a0d0 0%, #a878f0 50%, #0ec5ff 100%) !important;
+	color: #0d1229 !important;
+}
+
+/* Soft gold buttons (block style): keep the pill feel of the primary button. */
+.wp-block-button.is-style-soft > .wp-block-button__link {
+	background: var(--wp--preset--color--accent-soft);
+	color: var(--wp--preset--color--on-surface);
+}
+
+.wp-block-button.is-style-soft > .wp-block-button__link:hover,
+.wp-block-button.is-style-soft > .wp-block-button__link:focus-visible {
+	background: #b4f1d4;
+	color: var(--wp--preset--color--on-surface);
+}
+
+:root[data-theme="dark"] .wp-block-button.is-style-soft > .wp-block-button__link {
+	background: rgba(120, 223, 183, 0.14);
+	box-shadow: inset 0 0 0 1px rgba(120, 223, 183, 0.46);
+	color: #c8f4dc;
+}
+
+.tc-bio__social {
+	margin-top: 2rem !important;
+}
+
+:root[data-theme="dark"] .tc-bio__now {
+	background: #193c33;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .tc-bio__now-chip {
+	background: #f5fbfa;
+	color: #0f1515;
+}
+
+.tc-now-page__updated {
+	margin-top: 0.25rem !important;
+	font-size: 1rem;
+}
+
+/* Core only prints a modified date once the page has been edited since publishing. */
+.tc-now-page__updated:not(:has(.wp-block-post-date)) {
+	display: none !important;
+}
+
+/* =========================================================
+   About: a landing page in the homepage's language
+   ========================================================= */
+.tc-home .tc-about-hero__title {
+	font-size: clamp(3.25rem, 1.2rem + 6.4vw, 7rem);
+	line-height: 0.86;
+}
+
+.tc-about-notebook__copy {
+	max-width: 62ch;
+}
+
+.tc-home .tc-about-notebook__copy p {
+	margin: 0;
+	font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+	line-height: 1.7;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-home .tc-about-notebook__copy p + p {
+	margin-top: 1.25rem;
+}
+
+.tc-home .tc-about-notes {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(1rem, 2vw, 1.5rem);
+	margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.tc-home .tc-about-note {
+	padding: clamp(1.25rem, 2.4vw, 1.75rem);
+}
+
+.tc-home .tc-about-note h3 {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 900;
+	letter-spacing: -0.02em;
+	line-height: 1.15;
+}
+
+.tc-home .tc-about-note p {
+	margin: 0.6rem 0 0;
+	color: var(--tc-on-surface-secondary);
+	line-height: 1.55;
+}
+
+/* About: dates anchor the journey without another card inside the route. */
+.tc-about-journey .about-journey-rail {
+	position: static;
+	max-width: none;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+.tc-about-journey .about-journey-rail .tc-timeline--alternating {
+	gap: 0;
+}
+
+.tc-about-journey .about-journey-rail .tc-timeline--alternating::before,
+.tc-about-journey .about-journey-rail .tc-timeline__marker {
+	display: none;
+}
+
+.tc-about-journey .about-journey-rail .tc-timeline--alternating .tc-timeline__item {
+	padding: 0;
+	border-top: 1px solid currentColor;
+}
+
+.tc-about-journey .about-journey-rail .tc-timeline--alternating .tc-timeline__content {
+	display: grid;
+	grid-template-columns: minmax(110px, 0.32fr) minmax(0, 1fr);
+	column-gap: clamp(1.5rem, 5vw, 4rem);
+	margin: 0;
+	padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+	background: none;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	transform: none;
+}
+
+.tc-about-journey .about-journey-rail .tc-timeline__year {
+	grid-row: 1 / span 2;
+	margin: 0;
+	color: var(--wp--preset--color--primary-dark);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: clamp(1.4rem, 2.6vw, 2.3rem);
+	font-weight: 900;
+	letter-spacing: -0.04em;
+	line-height: 1.1;
+}
+
+.tc-about-journey .about-journey-rail .tc-timeline__label {
+	font-size: clamp(1.2rem, 2vw, 1.6rem);
+	font-weight: 900;
+	line-height: 1.2;
+}
+
+.tc-about-journey .about-journey-rail .tc-timeline__desc {
+	grid-column: 2;
+	max-width: 58ch;
+	margin: 0.55rem 0 0;
+	font-size: 1rem;
+	line-height: 1.6;
+}
+
+:root[data-theme="dark"] .tc-about-journey .about-journey-rail {
+	background: none;
+	box-shadow: none;
+}
+
+:root[data-theme="dark"] .tc-about-journey .about-journey-rail .tc-timeline__year {
+	color: var(--wp--preset--color--primary);
+}
+
+@media (max-width: 600px) {
+	.tc-about-journey .about-journey-rail .tc-timeline--alternating .tc-timeline__content {
+		grid-template-columns: 1fr;
+		gap: 0;
+	}
+
+	.tc-about-journey .about-journey-rail .tc-timeline__year {
+		grid-row: auto;
+		margin-bottom: 0.6rem;
+	}
+
+	.tc-about-journey .about-journey-rail .tc-timeline__desc {
+		grid-column: 1;
+	}
+}
+
+.tc-home .tc-workbench__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+/* Label-style headings, lifted for the night background. */
+.tc-home .tc-workbench__group h3 {
+	margin: 0 0 1rem;
+	color: #8af2df;
+}
+
+@media (max-width: 900px) {
+	.tc-home .tc-about-notes,
+	.tc-home .tc-workbench__grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* =========================================================
+   Reading pages: the homepage eyebrow above the post title
+   ========================================================= */
+.tc-single-header__eyebrow.wp-block-post-terms {
+	margin: 0 0 0.85rem;
+}
+
+.tc-single-header__eyebrow a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.tc-single-header__eyebrow a:hover,
+.tc-single-header__eyebrow a:focus-visible {
+	text-decoration: underline;
+	text-underline-offset: 0.25em;
+}
+
+:root[data-theme="dark"] .tc-single-header__eyebrow,
+.is-style-section-deep .tc-single-header__eyebrow,
+.is-style-section-night .tc-single-header__eyebrow {
+	color: var(--wp--preset--color--primary-on-dark);
+}
+
+/* =========================================================
+   Landing heroes without a picture: Gear, Now, Blog
+   ========================================================= */
+.tc-landing-hero .tc-home-hero__grid {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.tc-landing-hero .tc-home-hero__lede {
+	max-width: 36ch;
+}
+
+/* Gear and the blog get a quick hero, so the first section starts closer. */
+.tc-landing-hero + .tc-home:not(.tc-home-stable) {
+	padding-block-start: clamp(24px, 3vw, 40px);
+}
+
+.tc-home .tc-workbench__grid--two {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tc-home .tc-gear-kit {
+	margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.tc-home .tc-now-page__updated {
+	margin-top: 1.25rem;
+	gap: 0.4em;
+	color: var(--tc-on-surface-secondary);
+}
+
+.tc-home .tc-now-page__updated p {
+	margin: 0;
+}
+
+.tc-now-section__list {
+	max-width: 720px;
+}
+
+/* Year dividers on the blog index carry the route's checkpoints. */
+.tc-has-route .tc-blog-timeline .tc-timeline__year {
+	position: relative;
+}
+
+@media (max-width: 1099px) {
+	.tc-blog-timeline .tc-timeline__year .tc-cp {
+		display: none;
+	}
+}
+
+/* On desktop the page's route line already runs beside the Now list, so the
+   list drops its own connector and keeps its dots as markers. */
+@media (min-width: 1100px) {
+	.tc-has-route .tc-now-list::before {
+		display: none;
+	}
+}
+
+/* The social pattern's icon background is on-surface, which turns light in
+   dark mode while the glyphs stay white; flip the glyphs (the footer has its own). */
+:root[data-theme="dark"] main .tc-social.has-icon-background-color .wp-social-link {
+	color: #0e1413;
+}
+
+/* Label rows: two labels on one line (gear context · discipline, note
+   category · date), with a dot between them only when both render. */
+.tc-label-row {
+	gap: 0 !important;
+	margin: 0 0 0.85rem !important;
+}
+
+.tc-label-row > * {
+	margin: 0 !important;
+}
+
+.tc-label-row > * + *::before {
+	content: "·" / "";
+	margin-inline: 0.4em;
+}
+
+.tc-label-row a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.tc-label-row a:hover,
+.tc-label-row a:focus-visible {
+	text-decoration: underline;
+	text-underline-offset: 0.25em;
+}
+
+/* =========================================================
+   Utility pages: archives, search and 404 share the homepage's section
+   title, one display head at the top and quiet below it.
+   ========================================================= */
+main .tc-archive__header h1,
+main.tc-not-found h1 {
+	font-size: var(--tc-section-title) !important;
+	line-height: 0.95;
+	letter-spacing: -0.035em;
+}

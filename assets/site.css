@@ -1,0 +1,138 @@
+/* Jet Li adaptations; reference styling is retained in assets/reference. */
+html{scroll-behavior:smooth}body{margin:0}button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}figure{margin:0}a{text-underline-offset:.2em}.skip-link{position:fixed;left:16px;top:-100px;z-index:200;padding:12px 20px;color:var(--tc-surface);background:var(--tc-on-surface);border-radius:999px}.skip-link:focus{top:12px}.site-header-band{max-width:980px;margin-inline:auto}
+.jet-monogram{flex:none;display:block;width:60px;height:80px;margin-top:-7px;font-family:Inter,sans-serif;font-size:86px;font-weight:900;line-height:.95;font-style:italic;letter-spacing:-.13em;text-decoration:none;color:#000!important;transform:rotate(-10deg);transition:transform .35s var(--tc-ease-spring)}.jet-monogram:hover{transform:rotate(0) translateY(-2px)}.jet-monogram__dot{font-size:44px;margin-left:5px}:root[data-theme=dark] .jet-monogram{color:#f5fbfa!important}.tc-header-nav{margin-left:auto}.tc-header-nav .wp-block-navigation__container{display:flex;align-items:center;list-style:none;padding:0;margin:0}.tc-header-nav li{list-style:none;margin:0}.tc-header-nav a{display:block;text-decoration:none;white-space:nowrap}.tc-header-nav a[aria-current=location]{background:color-mix(in srgb,var(--tc-primary) 12%,transparent);border-radius:999px}
+.tc-home-hero__eyebrow{color:var(--tc-teal-ink);font-weight:800}.tc-home-hero__lede{line-height:1.58}.tc-home-hero__body{line-height:1.8}.tc-home-hero__portrait img{object-position:50% 42%}.tc-home__title{font-family:Inter,"MiSans","PingFang SC","Microsoft YaHei",sans-serif}
+.jet-project{display:grid;grid-template-columns:minmax(180px,.42fr) minmax(0,1fr);gap:clamp(24px,5vw,64px);border-top:1px solid color-mix(in srgb,var(--tc-teal-ink) 48%,transparent);padding:clamp(28px,2.7vw,32px) 0}.jet-project:last-child{border-bottom:1px solid color-mix(in srgb,var(--tc-teal-ink) 48%,transparent)}.jet-project__heading h3{margin:0;font-size:clamp(25px,2.8vw,36px);font-weight:900;line-height:1.06;letter-spacing:-.04em}.jet-project__heading p{font-size:13px;color:var(--tc-teal-ink);margin:14px 0 0;font-weight:650;line-height:1.65}.jet-project__copy>p{margin:0;color:var(--tc-on-surface-secondary);font-size:16px;line-height:1.75}.jet-project__copy>p+p{margin-top:14px}.jet-project__details{margin-top:22px}.jet-project__details>summary{display:inline-flex;align-items:center;gap:14px;padding-bottom:2px;list-style:none;cursor:pointer;font-size:14px;font-weight:750;border-bottom:2px solid var(--tc-primary);color:var(--tc-on-surface)}.jet-project__details>summary::-webkit-details-marker{display:none}.jet-project__details>summary span{transition:transform .25s ease}.jet-project__details[open]>summary span{transform:rotate(90deg)}.jet-project__body{padding-top:10px}.jet-project__body h4{font-size:17px;font-weight:750;margin:24px 0 10px;color:var(--tc-on-surface)}.jet-project__body p{margin:0 0 16px;font-size:15px;line-height:1.75;color:var(--tc-on-surface-secondary)}
+.tc-about-journey .tc-timeline--alternating .tc-timeline__item{display:block}.tc-about-journey .about-journey-rail .tc-timeline__content{width:100%}.tc-about-journey .about-journey-rail .tc-timeline__year{font-size:clamp(20px,2.35vw,30px)}.tc-about-journey .about-journey-rail .tc-timeline__desc p{margin:0}.tc-about-journey .tc-timeline__item{color:color-mix(in srgb,var(--tc-teal-ink) 58%,transparent)}.tc-about-journey .tc-timeline__label{color:var(--tc-on-surface)}
+.jet-life{background:#e7eee7;color:#203c33;overflow:hidden}.jet-life .tc-home__title{color:#203c33;max-width:none}.jet-life .tc-cp{color:#45675a}.jet-life .tc-workbench__group>h3{font-size:16px;font-weight:750}.jet-life .tc-workbench__group>p{color:#304b3e;line-height:1.75;font-size:16px;margin:0}.jet-travel-photo{margin-top:clamp(44px,6vw,76px);border-radius:20px;overflow:hidden;transform:rotate(-1deg);border:5px solid rgba(245,251,250,.9)}.jet-travel-photo img{width:100%;height:auto;display:block;aspect-ratio:1.96;object-fit:cover}
+[id]{scroll-margin-top:120px}
+@media(max-width:899px){.tc-home-hero__visual{max-width:360px}}
+@media(max-width:600px){.site-header{padding-inline:14px}.nav-pill{gap:8px;padding-inline:16px!important}.jet-monogram{width:37px;height:60px;font-size:63px}.jet-monogram__dot{font-size:30px;margin-left:3px}.site-header .tc-header-nav .wp-block-navigation__container{gap:0}.site-header .wp-block-navigation a{padding:9px 7px;font-size:11px}.tc-theme-toggle{flex:none;width:30px;height:32px}.tc-home-hero__lede{max-width:none;font-size:18px;line-height:1.8}.tc-home-hero__body{font-size:15px}.tc-home-hero__visual{width:min(78%,310px)}.jet-project{grid-template-columns:1fr;gap:22px}.jet-project__heading p{margin-top:8px}.jet-project__copy>p{font-size:15px}.tc-home .tc-workbench__grid{grid-template-columns:1fr;gap:32px}.jet-travel-photo{border-width:3px;border-radius:14px}.jet-travel-photo img{aspect-ratio:1.4;object-position:57% center}.site-footer__meta{flex-wrap:wrap}[id]{scroll-margin-top:100px}}
+@media(max-width:360px){.site-header .wp-block-navigation a{padding-inline:5px;font-size:10px}.nav-pill{padding-inline:12px!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* Match the reference header-to-hero block gap; supply explicit CJK fallbacks. */
+:root{--wp--preset--font-family--inter:Inter,"MiSans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--wp--preset--font-family--instrument-sans:"Instrument Sans","MiSans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+.tc-landing-main{margin-top:32px}.tc-home-hero__lede{font-family:var(--wp--preset--font-family--inter)}
+
+/* Homepage route: the finish must be positioned within the footer, not the root. */
+.tc-finish{position:relative}
+
+/* Editorial content updates, 2026-11-17. */
+.tc-about-journey .about-journey-rail .tc-timeline__year.jet-date--months{font-size:clamp(17px,1.7vw,21px);line-height:1.5;white-space:nowrap;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.tc-about-journey .about-journey-rail .tc-timeline__label{line-height:1.45;text-wrap:pretty}
+.tc-about-journey .about-journey-rail .tc-timeline__desc p+p{margin-top:8px}
+.jet-internships{margin-top:18px;padding-top:14px;border-top:1px solid color-mix(in srgb,var(--tc-on-surface) 12%,transparent)}
+.jet-internships p{display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;font-size:14px}
+.jet-internships time{font-variant-numeric:tabular-nums;color:var(--tc-teal-ink);white-space:nowrap}
+/* Give personal life a light sage field before the deep-green closing note. */
+.jet-life{padding-bottom:clamp(52px,6vw,80px)}
+.jet-life .tc-workbench__group>h3{color:#193d2d}
+.jet-life .tc-cp__dot{background:#e7eee7;border-color:#45675a}
+.jet-life .jet-travel-photo{border-color:#fcfdf9}
+.jet-footer{position:relative;isolation:isolate;padding:clamp(80px,7.2vw,96px) 0 32px;background:#101c18;color:#f5fbfa;text-align:center;overflow:visible}
+.jet-footer__title{margin:0 auto!important;max-width:18ch;font-family:Inter,sans-serif;font-size:clamp(32px,calc(20.8px + 3.6vw),64px);font-weight:900;line-height:1.08;letter-spacing:-.045em;text-wrap:balance;color:#f5fbfa}
+
+.jet-footer__tip{max-width:60em;margin:26px auto 0;font-family:MiSans,"PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;line-height:1.9;font-weight:400;color:#75cbb5;text-wrap:pretty}
+.jet-footer__contact{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:24px;margin-top:32px}
+.jet-footer__bottom{position:relative;display:flex;align-items:center;justify-content:center;gap:14px;max-width:600px;margin:44px auto 0;padding-top:24px;border-top:1px solid #34433d;color:#9caaa4;font-size:12px;line-height:1.6}
+.jet-footer__name{font-family:Inter,sans-serif;font-size:20px;font-weight:800;letter-spacing:-.04em;color:#f5fbfa;text-decoration:none}
+.jet-footer__name span{color:#56dfbd}
+@media(min-width:1100px){.tc-has-route .jet-footer .tc-cp--finish{top:clamp(80px,7.2vw,96px)}}
+@media(max-width:1099px){.jet-footer .tc-cp--finish{display:none}}
+@media(max-width:600px){.jet-footer{padding-top:64px;padding-bottom:28px}.jet-footer__tip{max-width:25em;margin-top:18px;font-size:12px;text-wrap:balance}.jet-footer__contact{margin-top:28px}.jet-footer__bottom{margin-top:36px}}
+
+/* Chinese typography: lighter headings and room for full-width characters. */
+.tc-home .tc-home__title{font-size:clamp(36px,5vw,60px);font-weight:700;letter-spacing:0;line-height:1.18}
+.tc-front-page-main .tc-home-hero__lede{max-width:none;font-size:clamp(18px,1.9vw,23px);font-weight:400;letter-spacing:0;line-height:1.55}
+.tc-home-hero__lede strong{font-weight:650}
+.tc-front-page-main .tc-home-hero__body{font-weight:400;letter-spacing:0;line-height:1.75}
+.jet-project__heading p{font-weight:500;letter-spacing:0;line-height:1.8}
+.jet-project__copy>p,.jet-project__body p,.jet-life .tc-workbench__group>p{font-weight:400;letter-spacing:0}
+.jet-project__details>summary{font-weight:600;letter-spacing:0}
+.jet-project__body h4{font-weight:600;letter-spacing:0;line-height:1.6}
+.tc-about-journey .about-journey-rail .tc-timeline__label{font-weight:600;letter-spacing:0;line-height:1.55}
+.tc-about-journey .about-journey-rail .tc-timeline__desc{font-weight:400;letter-spacing:0;line-height:1.75}
+.jet-life .tc-workbench__group>h3{font-weight:600;letter-spacing:0;line-height:1.5}
+.jet-footer__name{font-weight:600}
+
+@media(max-width:600px){.tc-front-page-main .tc-home-hero__lede{font-size:17px}}
+
+/* Keep years in the timeline rail and months beside the employer. */
+.jet-timeline-heading{grid-column:2;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px 20px}
+.jet-timeline-months{margin-left:auto;font-size:14px;font-weight:400;line-height:1.8;color:var(--tc-teal-ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(max-width:600px){.jet-timeline-heading{grid-column:1}}
+
+.tc-route__plane{filter:drop-shadow(1px 2px 1px rgb(0 0 0 / .22))}
+.tc-route__jet-body{fill:#fafcfb;stroke:var(--tc-primary);stroke-width:12;stroke-linejoin:round;paint-order:stroke fill}
+
+/* Chinese rhythm: retain the Latin display scale, tighten text-led sections. */
+.tc-front-page-main{--tc-section-pad:clamp(64px,7vw,88px)}
+.tc-home__head{margin-block-end:clamp(28px,3vw,36px)!important}
+.tc-front-page-main .tc-home-hero{padding-bottom:64px}
+.tc-front-page-main .tc-home-hero__body{margin-top:18px}
+.tc-about-journey .about-journey-rail .tc-timeline__label{font-size:clamp(20px,2vw,26px)}
+@media(max-width:600px){
+ .tc-front-page-main{--tc-section-pad:52px}
+ .tc-home .tc-home__title{font-size:36px}
+ .tc-front-page-main .tc-home-hero{padding-bottom:48px}
+ .tc-front-page-main .tc-home-hero__lede{font-size:18px;line-height:1.6}
+ .tc-home__head{margin-block-end:24px!important}
+ .jet-project{gap:16px;padding-block:26px}
+}
+
+/* Use one face for Latin, numbers, and Chinese within the personal story. */
+.tc-about-journey .about-journey-rail .tc-timeline__desc{font-family:MiSans,"PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;font-weight:400;font-variant-numeric:proportional-nums;letter-spacing:0;line-height:1.85}
+
+.jet-footer .tc-cp--finish{color:#8af2df}
+
+@media(min-width:1100px){.tc-has-route .jet-footer .tc-cp__label{right:auto;left:calc(100% + 12px)}}
+
+/* Keep the sage chapter textured and the chapter boundaries clean. */
+#life{overflow:visible;background-color:#164c43;background-image:url('images/field-grain.svg'),linear-gradient(105deg,rgba(49,118,99,.6),rgba(10,43,38,.85)),url('images/field-waves.svg');background-position:left top,center,center;background-size:120px 120px,cover,cover;background-repeat:repeat,no-repeat,no-repeat}
+#life .tc-home__title{color:#edf7ef}
+#life .tc-workbench__group>h3{color:#f5fbfa}
+#life .tc-workbench__group>p{color:#c4ddd3}
+#life .tc-cp{color:#8af2df}
+#life .tc-cp__dot{background:#164c43;border-color:#8af2df}
+.jet-footer__contact{gap:24px}
+.jet-social-icon{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:36px;height:36px;padding:7px;border:1px solid #53615a;border-radius:50%;background:rgba(245,251,250,.07);color:#edf8f3;text-decoration:none;transition:background .2s,transform .2s,border-color .2s}
+.jet-social-icon svg{display:block;width:20px;height:20px;flex:none}.jet-social-icon::before{content:"";position:absolute;inset:-4px;border-radius:50%}
+.jet-social-icon:not(:disabled):hover{background:rgba(138,242,223,.14);border-color:#8af2df;transform:translateY(-3px)}
+.jet-social-icon:disabled{cursor:default}
+.jet-social-icon:focus-visible{outline:2px solid #8af2df;outline-offset:5px}
+
+/* Cut the next chapter's own background into squares; gaps reveal the previous chapter. */
+#work,#journey{overflow:visible}
+:root[data-theme] .jet-chapter-join{z-index:1;pointer-events:none;background:inherit;opacity:1;mask-image:repeating-conic-gradient(transparent 0 25%,#000 0 50%);mask-size:14px 14px;mask-repeat:repeat}
+@media(min-width:900px){.jet-footer__tip{white-space:nowrap}}
+
+/* One moving capsule connects the active chapter across the navigation. */
+.tc-header-nav{position:relative;isolation:isolate}
+.jet-nav-indicator{position:absolute;top:0;left:0;z-index:-1;pointer-events:none;border-radius:999px;opacity:0}
+.jet-nav-surface{display:block;width:100%;height:100%;border-radius:inherit;background:#14584a;box-shadow:0 3px 10px rgb(20 88 74 / .22),inset 0 1px 0 rgb(255 255 255 / .18);transform-origin:center}
+.jet-nav-ready .jet-nav-indicator{opacity:1}
+.site-header .tc-header-nav a{transition:color .2s ease;position:relative}
+.site-header .tc-header-nav a[aria-current=location]{background:transparent;color:#f5fbfa;border-radius:999px}
+.site-header .tc-header-nav a:focus-visible{outline:2px solid #14584a;outline-offset:3px;border-radius:999px}
+:root[data-theme=dark] .jet-nav-surface{background:#b4f1d4;box-shadow:0 3px 12px rgb(120 223 183 / .2)}
+:root[data-theme=dark] .site-header .tc-header-nav a[aria-current=location]{color:#10241f}
+@media(prefers-reduced-motion:reduce){.jet-nav-ready .jet-nav-indicator{transition:none}}
+
+/* Quiet chapter covers open into the full story. */
+#journey .tc-home__head,#life .tc-home__head{margin-bottom:0!important}
+#journey .tc-home__title,#life .tc-home__title{max-width:none}
+.jet-fold-toggle{display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;line-height:inherit;text-align:left;cursor:pointer}
+.jet-fold-icon{display:grid;place-items:center;flex:none;width:44px;height:44px;opacity:.7;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .2s}
+.jet-fold-icon::before{content:"";width:14px;height:14px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-4px) rotate(45deg);border-radius:1px}
+.jet-fold-toggle[aria-expanded=true] .jet-fold-icon{transform:rotate(180deg)}
+.jet-fold-toggle:hover .jet-fold-icon{opacity:1}
+.jet-fold-toggle:focus-visible{outline:2px solid currentColor;outline-offset:12px;border-radius:4px}
+.jet-fold-panel{display:grid;grid-template-rows:1fr;opacity:1;transition:grid-template-rows .42s cubic-bezier(.4,0,.2,1)}
+.jet-fold-clip{min-height:0;overflow:hidden}
+.jet-fold-body{padding-top:36px;padding-bottom:16px}
+[data-expanded=false] .jet-fold-panel{grid-template-rows:0fr}
+@media(max-width:600px){.jet-fold-toggle{gap:16px}.jet-fold-icon{width:34px;height:34px}.jet-fold-icon::before{width:12px;height:12px}.jet-fold-body{padding-top:28px}}
+@media(prefers-reduced-motion:reduce){.jet-fold-panel,.jet-fold-icon,.jet-fold-icon::after{transition:none}}
+
+#journey,#life{overflow-anchor:none}

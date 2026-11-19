@@ -1,0 +1,623 @@
+/*
+Theme Name: The Cannon
+Theme URI: https://ryanray.blog
+Author: Ryan Ray
+Author URI: https://ryanray.blog
+Description: A personal block theme for ryanray.blog — The Cannon. Editorial and human-centric, built for a Happiness Engineer, cyclist, and world traveler.
+Version: 1.3.2
+Requires at least: 6.7
+Tested up to: 6.9
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: thecannon
+Tags: full-site-editing, block-patterns, custom-colors, custom-logo, blog, portfolio
+*/
+
+/* Green field journal: a diagonal cover and a more graphic editorial rhythm. */
+:root {
+	--tc-field-paper: #f7f6f0;
+	--tc-field-ink: #151b19;
+	--tc-field-forest: #14584a;
+	--tc-field-mint: #b4f1d4;
+	--tc-field-teal: #35b7a7;
+}
+.site-header .nav-pill {
+	border-radius: 0;
+	box-shadow: none;
+	border-bottom: 1px solid currentColor;
+}
+.tc-home-hero {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	background: var(--tc-field-paper);
+	padding-block-start: clamp(24px, 3vw, 48px);
+}
+.tc-home-hero::before {
+	content: "";
+	position: absolute;
+	z-index: -1;
+	inset: -30% -12% -30% 48%;
+	background: linear-gradient(135deg, var(--tc-field-mint), var(--tc-field-teal));
+	transform: skewX(-36deg);
+	pointer-events: none;
+}
+.tc-home-hero .tc-home-hero__grid {
+	min-height: 0;
+	align-items: center;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+}
+.tc-home .tc-home-hero__title {
+	font-size: clamp(6rem, 15vw, 14rem);
+	letter-spacing: -.085em;
+	line-height: .8;
+	color: var(--tc-field-ink);
+}
+.tc-home-hero__lede { color: var(--tc-field-forest); font-size: clamp(1.3rem, 2vw, 1.8rem); }
+.tc-home-hero__visual::before { display: none; }
+.tc-home-hero__portrait { border-radius: 0; box-shadow: none; transform: rotate(3deg); }
+.tc-home-hero__portrait img { border-radius: 0; }
+
+.tc-home-stable { background: var(--tc-field-mint); }
+.tc-home-stable::before { display: none; }
+.tc-home .tc-home__title { font-size: clamp(3rem, 6.8vw, 7rem); letter-spacing: -.02em; line-height: 1.05; }
+.tc-home-stable .tc-bike-fleet-cards { gap: 1px; background: var(--tc-field-forest); border: 1px solid var(--tc-field-forest); }
+.tc-home-stable .tc-bike-card { border-radius: 0; box-shadow: none; }
+.tc-home-journal { background: var(--tc-field-paper); }
+.tc-journal-lead__card { border-radius: 0; }
+.tc-home-wild { background: var(--tc-field-forest); }
+.tc-home-wild::before { opacity: .12; }
+.site-footer:not(.tc-finish) { border-top: 1px solid currentColor; }
+@media (max-width: 782px) {
+	.tc-home-hero::before { inset: 20% -65% -10% 45%; }
+	.tc-home-hero .tc-home-hero__grid { min-height: 0; grid-template-columns: 1fr; }
+	.tc-home .tc-home-hero__title { font-size: clamp(5rem, 22vw, 9rem); }
+	.tc-home-hero__visual { max-width: 70%; margin-left: auto; }
+}
+
+/* Field journal — the same ink and paper relationships in both modes. */
+:root[data-theme="dark"] {
+	--tc-field-paper: #10241f;
+	--tc-field-ink: #f2f7f0;
+	--tc-field-forest: #b4f1d4;
+	--tc-field-mint: #173b31;
+	--tc-field-teal: #176e60;
+	--tc-accent: #78dfb7;
+	--wp--preset--color--accent: #78dfb7;
+	--wp--preset--color--accent-alt: #78dfb7;
+}
+body::before, body::after, .wp-site-blocks::before { display: none; }
+.site-header .nav-pill { background: var(--tc-field-paper); border: 0; border-bottom: 1px solid var(--tc-field-forest); backdrop-filter: none; }
+.tc-home-hero { color: var(--tc-field-ink); }
+.tc-home .tc-home-hero__title { letter-spacing: -.025em; }
+.tc-home .tc-home-hero__body { color: var(--tc-on-surface-secondary); }
+.tc-home .tc-landing-hero .tc-home-hero__title,
+.tc-home.tc-about-hero .tc-home-hero__title { font-size: clamp(3.5rem, 8vw, 7rem); line-height: .95; }
+.tc-landing-hero .tc-home-hero__grid { min-height: 0; }
+.tc-home-hero__portrait { padding: 0; border: 0; }
+.tc-home-stable, .tc-home-journal { color: var(--tc-on-surface); }
+.tc-home-stable .tc-home__title, .tc-home-journal .tc-home__title { color: var(--tc-on-surface); }
+.tc-home-stable .tc-bike-fleet-cards { background: var(--tc-field-forest); }
+.tc-home-stable .tc-bike-card { background: var(--tc-surface); }
+.tc-home-stable .tc-bike-card__image { border-radius: 0; }
+.tc-home .tc-feedzone {
+	--ice-cyan: #b4f1d4;
+	--ice-lavender: #f2f7f0;
+	background: #103d32;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	color: #f2f7f0;
+}
+.tc-home .tc-feedzone::before { display: none; }
+.tc-home .tc-feedzone .tc-feedzone__name { color: #f2f7f0; }
+.tc-home .tc-feedzone .tc-feedzone__desc { color: #d5e9df; }
+.tc-home .tc-feedzone .tc-cp { background: #103d32; color: #b4f1d4; border-color: #b4f1d4; }
+.tc-home .tc-feedzone .tc-feedzone__button { background: #b4f1d4; color: #10241f !important; border-radius: var(--tc-radius-pill); box-shadow: none; }
+.tc-home-journal .tc-journal-lead__media img { border-radius: 0; }
+.tc-home-journal .tc-journal-lead__content { border-left: 1px solid var(--tc-field-forest); padding-left: clamp(1.5rem, 3vw, 3rem); }
+.tc-home-wild { color: #f2f7f0; }
+.tc-home-wild .tc-home__title { color: #f2f7f0; }
+.tc-home .tc-about-notes { gap: 1px; background: var(--tc-field-forest); border: 1px solid var(--tc-field-forest); }
+.tc-home .tc-about-note { border-radius: 0; box-shadow: none; }
+.tc-about-notebook, .tc-now-section, .tc-blog-timeline { background: var(--tc-field-paper); }
+.tc-about-journey, .tc-now-howdy { background: var(--tc-field-mint); }
+.tc-timeline-card, .tc-archive-card, .tc-search-row, .tc-sidebar-panel { border-radius: 0; }
+.tc-page-title.wp-block-post-title, .tc-single-header__title.wp-block-post-title,
+.tc-archive__header h1, .tc-not-found h1 {
+	letter-spacing: -.025em;
+	line-height: 1.05;
+}
+.tc-single-header, .tc-archive__header { border-bottom: 1px solid var(--tc-field-forest); padding-bottom: 2rem; }
+@media (min-width: 901px) {
+	.tc-home .tc-about-notes { grid-template-columns: 1.35fr 1fr 1fr; }
+	.tc-home-stable .tc-bike-fleet-cards { grid-template-columns: 1.2fr 1fr 1fr; }
+}
+@media (max-width: 782px) {
+	.tc-home .tc-home-hero__title { font-size: clamp(4.5rem, 20vw, 7rem); }
+	.tc-home .tc-landing-hero .tc-home-hero__title,
+	.tc-home.tc-about-hero .tc-home-hero__title { font-size: clamp(3.5rem, 15vw, 5rem); }
+	.tc-home-journal .tc-journal-lead__content { border-left: 0; border-top: 1px solid var(--tc-field-forest); padding: 1.5rem 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.tc-home-hero__portrait { transition: none; }
+}
+
+/* The social landing page uses the same sharp field-journal vocabulary. */
+.tc-bio .tc-bio__card, .tc-bio .tc-bio__now { border-radius: 0; box-shadow: none; }
+.tc-bio .tc-bio__links .wp-block-button__link { border-radius: var(--tc-radius-pill); box-shadow: none; }
+.tc-bio .tc-bio__team > .wp-block-button__link {
+	background: linear-gradient(100deg, #b4f1d4, #35b7a7) !important;
+	color: #10241f !important;
+}
+.tc-bio .tc-bio__portrait, .tc-bio .tc-bio__portrait img { border-radius: 0; }
+
+/* A lead story breaks the archive grid before the dated index begins. */
+@media (min-width: 782px) {
+	.tc-blog-timeline .tc-timeline > .tc-timeline__year:first-child + .wp-block-post { grid-column: 1 / -1; }
+	.tc-blog-timeline .tc-timeline > .tc-timeline__year:first-child + .wp-block-post .tc-timeline-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+	}
+	.tc-blog-timeline .tc-timeline > .tc-timeline__year:first-child + .wp-block-post .tc-timeline-card__media,
+	.tc-blog-timeline .tc-timeline > .tc-timeline__year:first-child + .wp-block-post .tc-timeline-card__media a { height: 100%; }
+	.tc-blog-timeline .tc-timeline > .tc-timeline__year:first-child + .wp-block-post .tc-timeline-card__media img { height: 100%; object-fit: cover; }
+	.tc-blog-timeline .tc-timeline > .tc-timeline__year:first-child + .wp-block-post .tc-timeline-card__body { justify-content: center; padding: clamp(2rem, 4vw, 4rem); }
+	.tc-blog-timeline .tc-timeline > .tc-timeline__year:first-child + .wp-block-post .tc-timeline-card__title { font-size: clamp(2rem, 3.5vw, 3.5rem) !important; }
+}
+.tc-now-list__item.is-passed::before,
+:root[data-theme="dark"] .tc-now-list__item.is-passed::before { background: #78dfb7; }
+:root[data-theme="dark"] .wp-block-button.is-style-soft > .wp-block-button__link {
+	background: rgba(120, 223, 183, .14);
+	box-shadow: inset 0 0 0 1px rgba(120, 223, 183, .46);
+}
+.tc-bio .tc-bio__portrait img { border-radius: 0 !important; }
+
+/* Grain and flowing ribbons soften the field-journal covers. */
+.tc-home-hero::before {
+	inset: -12% -6% -12% 39%;
+	background: url('../images/field-waves.svg') center / cover no-repeat;
+	transform: none;
+	mask-image: linear-gradient(90deg, transparent, #000 25%);
+	-webkit-mask-image: linear-gradient(90deg, transparent, #000 25%);
+}
+:root[data-theme="dark"] .tc-home-hero::before { opacity: .6; }
+@media (max-width: 782px) {
+	.tc-home-hero::before { inset: 16% -45% -4% 29%; opacity: .75; }
+	:root[data-theme="dark"] .tc-home-hero::before { opacity: .4; }
+}
+
+/* Grainy currents carry the cover motif through the rest of the journal. */
+.tc-home-hero::before {
+	inset: -14% -5% -14% 24%;
+	mask-image: linear-gradient(90deg, transparent, #000 19%);
+	-webkit-mask-image: linear-gradient(90deg, transparent, #000 19%);
+}
+:root[data-theme="dark"] .tc-home-hero::before { opacity: .8; }
+.tc-home-stable,
+.tc-about-journey,
+.tc-now-howdy {
+	background-image: linear-gradient(90deg, rgba(180, 241, 212, .92), rgba(180, 241, 212, .66)), url('../images/field-waves.svg');
+	background-position: center, right center;
+	background-size: cover, min(100%, 1050px) auto;
+	background-repeat: no-repeat;
+}
+:root[data-theme="dark"] .tc-home-stable,
+:root[data-theme="dark"] .tc-about-journey,
+:root[data-theme="dark"] .tc-now-howdy {
+	background-image: linear-gradient(90deg, rgba(23, 59, 49, .97), rgba(23, 59, 49, .78)), url('../images/field-waves.svg');
+}
+.tc-home-wild,
+.tc-workbench,
+.tc-about-workbench {
+	background: #103d32;
+	isolation: isolate;
+}
+.tc-home-wild::before,
+.tc-workbench::before,
+.tc-about-workbench::before {
+	inset: 0;
+	background: linear-gradient(90deg, rgba(10, 43, 35, .93), rgba(10, 43, 35, .64)), url('../images/field-waves.svg') center / cover no-repeat;
+	opacity: 1;
+	mask-image: none;
+	-webkit-mask-image: none;
+	transform: scaleX(-1);
+	z-index: -1;
+}
+@media (max-width: 782px) {
+	.tc-home-hero::before { inset: 4% -45% -5% 12%; opacity: .85; }
+	:root[data-theme="dark"] .tc-home-hero::before { opacity: .6; }
+	.tc-home-stable, .tc-about-journey, .tc-now-howdy { background-size: cover, auto 100%; }
+	.tc-home-wild::before, .tc-workbench::before, .tc-about-workbench::before { background-position: center, center; }
+}
+
+/* The route is marked by a simple turning cog. */
+.tc-route__cog-teeth { fill: none; stroke: var(--tc-primary-dark); stroke-width: 5; stroke-dasharray: 3 3; }
+.tc-route__cog-ring { fill: var(--tc-field-paper); stroke: var(--tc-primary-dark); stroke-width: 3; }
+:root[data-theme="dark"] .tc-route__cog-teeth,
+:root[data-theme="dark"] .tc-route__cog-ring { stroke: #b4f1d4; }
+
+/* Keep the cover word clear of the portrait on wide screens. */
+@media (min-width: 783px) {
+	.tc-front-page-main .tc-home-hero__title { font-size: clamp(6rem, 10vw, 9rem); }
+}
+
+/* Fine paper grain and softly blended currents run through the reading surfaces. */
+body,
+:root[data-theme="dark"] body {
+	background-image: url('../images/field-grain.svg');
+	background-size: 180px 180px;
+	background-repeat: repeat;
+}
+.tc-home-journal, .tc-about-notebook, .tc-now-section, .tc-blog-timeline {
+	background-image: url('../images/field-grain.svg'), linear-gradient(100deg, rgba(247, 246, 240, .98) 20%, rgba(247, 246, 240, .84)), url('../images/field-waves.svg');
+	background-size: 180px 180px, cover, min(100%, 1050px) auto;
+	background-position: left top, center, right center;
+	background-repeat: repeat, no-repeat, no-repeat;
+}
+:root[data-theme="dark"] .tc-home-journal,
+:root[data-theme="dark"] .tc-about-notebook,
+:root[data-theme="dark"] .tc-now-section,
+:root[data-theme="dark"] .tc-blog-timeline {
+	background-image: url('../images/field-grain.svg'), linear-gradient(100deg, rgba(16, 36, 31, .98) 20%, rgba(16, 36, 31, .88)), url('../images/field-waves.svg');
+}
+.tc-home-stable, .tc-about-journey, .tc-now-howdy {
+	background-image: url('../images/field-grain.svg'), linear-gradient(90deg, rgba(180, 241, 212, .90), rgba(180, 241, 212, .62)), url('../images/field-waves.svg');
+	background-size: 180px 180px, cover, min(100%, 1050px) auto;
+	background-position: left top, center, right center;
+	background-repeat: repeat, no-repeat, no-repeat;
+}
+:root[data-theme="dark"] .tc-home-stable,
+:root[data-theme="dark"] .tc-about-journey,
+:root[data-theme="dark"] .tc-now-howdy {
+	background-image: url('../images/field-grain.svg'), linear-gradient(90deg, rgba(23, 59, 49, .96), rgba(23, 59, 49, .75)), url('../images/field-waves.svg');
+}
+@media (max-width: 782px) {
+	.tc-home-journal, .tc-about-notebook, .tc-now-section, .tc-blog-timeline,
+	.tc-home-stable, .tc-about-journey, .tc-now-howdy { background-size: 180px 180px, cover, auto 100%; }
+}
+
+/* Fine, consistently scaled grain reaches the header; the stable stays clean. */
+body, :root[data-theme="dark"] body { background-size: 120px 120px; }
+.site-header .nav-pill {
+	background-image: url('../images/field-grain.svg');
+	background-size: 120px 120px;
+	background-repeat: repeat;
+}
+.tc-home-hero::before {
+	background-image: url('../images/field-grain.svg'), url('../images/field-waves.svg');
+	background-position: left top, center;
+	background-size: 120px 120px, cover;
+	background-repeat: repeat, no-repeat;
+}
+.tc-home-journal, .tc-about-notebook, .tc-now-section, .tc-blog-timeline,
+.tc-about-journey, .tc-now-howdy { background-size: 120px 120px, cover, min(100%, 1050px) auto; }
+.tc-home-wild::before,
+.tc-workbench::before,
+.tc-about-workbench::before {
+	background-image: url('../images/field-grain.svg'), linear-gradient(90deg, rgba(10, 43, 35, .93), rgba(10, 43, 35, .64)), url('../images/field-waves.svg');
+	background-position: left top, center, center;
+	background-size: 120px 120px, cover, cover;
+	background-repeat: repeat, no-repeat, no-repeat;
+}
+.tc-home.tc-home-stable,
+:root[data-theme="dark"] .tc-home.tc-home-stable { background-image: none; background-color: var(--tc-field-mint); }
+.tc-route__cog-teeth { fill: var(--tc-primary-dark); stroke: none; }
+.tc-route__cog-ring { fill: var(--tc-field-paper); stroke: none; }
+:root[data-theme="dark"] .tc-route__cog-teeth { fill: #b4f1d4; stroke: none; }
+:root[data-theme="dark"] .tc-route__cog-ring { stroke: none; }
+@media (max-width: 782px) {
+	.tc-home-journal, .tc-about-notebook, .tc-now-section, .tc-blog-timeline,
+	.tc-about-journey, .tc-now-howdy { background-size: 120px 120px, cover, auto 100%; }
+}
+:root[data-theme="dark"] .site-header .nav-pill {
+	background-color: var(--tc-field-paper);
+	background-image: url('../images/field-grain.svg');
+}
+:root:not([data-theme="dark"]) .is-over-dark .nav-pill {
+	background-image: url('../images/field-grain.svg'), linear-gradient(115deg, rgba(31, 44, 43, .92), rgba(15, 22, 22, .92));
+	background-size: 120px 120px, cover;
+	background-repeat: repeat, no-repeat;
+}
+
+
+/* One continuous backdrop connects the masthead to the cover. */
+.wp-site-blocks:has(.tc-home-hero)::before {
+	display: block;
+	content: "";
+	position: absolute;
+	z-index: -1;
+	inset: 0 0 auto;
+	height: calc(var(--tc-header-height, 120px) + 100vh);
+	background: url('../images/field-grain.svg') left top / 180px 180px repeat,
+		linear-gradient(90deg, #f7f6f0 0%, rgba(247, 246, 240, .93) 26%, rgba(247, 246, 240, .02) 77%),
+		url('../images/field-waves.svg') right top / 100% 100% no-repeat, #f7f6f0;
+	pointer-events: none;
+}
+:root[data-theme="dark"] .wp-site-blocks:has(.tc-home-hero)::before {
+	background: url('../images/field-grain.svg') left top / 180px 180px repeat,
+		linear-gradient(90deg, #10241f 0%, rgba(16, 36, 31, .93) 26%, rgba(16, 36, 31, .27) 77%),
+		url('../images/field-waves.svg') right top / 100% 100% no-repeat, #10241f;
+}
+.wp-site-blocks:has(.tc-home-hero) .tc-home-hero { background: transparent; }
+.wp-site-blocks:has(.tc-home-hero) .tc-home-hero::before { display: none; }
+.wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill,
+:root[data-theme="dark"] .wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill {
+	background: transparent;
+	backdrop-filter: none;
+}
+:root:not([data-theme="dark"]) .wp-site-blocks:has(.tc-home-hero) .is-over-dark .nav-pill {
+	background: rgba(15, 34, 29, .94);
+}
+/* Extend beneath tall mobile covers; following sections paint over the surplus. */
+.wp-site-blocks:has(.tc-home-hero)::before { height: calc(var(--tc-header-height, 120px) + 100vh + 40rem); }
+/* Keep the dark-mode navigation legible where a pale wave meets the masthead. */
+:root[data-theme="dark"] .wp-site-blocks:has(.tc-home-hero)::before {
+	background: url('../images/field-grain.svg') left top / 180px 180px repeat,
+		linear-gradient(180deg, rgba(16, 36, 31, .65), transparent 180px),
+		linear-gradient(90deg, #10241f 0%, rgba(16, 36, 31, .93) 26%, rgba(16, 36, 31, .27) 77%),
+		url('../images/field-waves.svg') right top / 100% 100% no-repeat, #10241f;
+}
+
+/* A floating field-journal masthead stays readable over every section. */
+.site-header .nav-pill,
+.wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill,
+:root[data-theme="dark"] .wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill {
+	background: var(--tc-field-paper) url('../images/field-grain.svg') left top / 120px 120px repeat;
+	border: 1px solid var(--tc-field-forest);
+	border-radius: 999px;
+	box-shadow: 0 4px 14px rgba(16, 36, 31, .12);
+}
+:root:not([data-theme="dark"]) .is-over-dark .nav-pill,
+:root:not([data-theme="dark"]) .wp-site-blocks:has(.tc-home-hero) .is-over-dark .nav-pill {
+	background: #10241f url('../images/field-grain.svg') left top / 120px 120px repeat;
+	border-color: #b4f1d4;
+}
+@media (max-width: 768px) {
+	.site-header .nav-pill { border-radius: var(--tc-radius-pill); }
+}
+.site-header .tc-site-logo:not([style*="width"]) { width: 56px; }
+.site-header .tc-site-logo .custom-logo-link { display: flex; }
+@media (max-width: 768px) {
+	.wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill,
+	:root[data-theme="dark"] .wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill { border-radius: var(--tc-radius-pill); }
+	.site-header .wp-block-navigation__responsive-container.is-menu-open { background: var(--tc-field-paper); color: var(--tc-field-ink); }
+	.site-header .wp-block-navigation__responsive-container.is-menu-open a,
+	.site-header .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__responsive-container-close { color: var(--tc-field-ink); }
+}
+@media (max-width: 768px) {
+	.site-header .wp-block-navigation__responsive-container.is-menu-open { background: var(--tc-field-paper) !important; }
+	.site-header .wp-block-navigation__responsive-container.is-menu-open a,
+	.site-header .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__responsive-container-close { color: var(--tc-field-ink) !important; }
+}
+
+/* Give the mobile menu and its close control room from the screen edge. */
+@media (max-width: 768px) {
+	.site-header .is-menu-open .wp-block-navigation__responsive-container-content {
+		padding: 80px 28px 32px;
+	}
+	.site-header .is-menu-open .wp-block-navigation__responsive-container-close {
+		top: 16px;
+		right: 20px;
+		width: 44px;
+		height: 44px;
+	}
+}
+@media (max-width: 768px) {
+	.site-header .is-menu-open .wp-block-navigation__responsive-container-content { padding-top: 88px !important; }
+	.site-header .nav-pill:has(.is-menu-open) > .tc-theme-toggle { visibility: hidden; }
+}
+@media (max-width: 768px) {
+	.site-header .is-menu-open .wp-block-navigation__responsive-container-content,
+	.site-header .is-menu-open .wp-block-navigation__container {
+		align-items: flex-start;
+	}
+	.site-header .is-menu-open .wp-block-navigation__container { gap: 1rem !important; }
+	.site-header .is-menu-open .wp-block-navigation-item__content {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		min-width: 96px;
+		min-height: 48px;
+		font-size: 1rem;
+	}
+}
+
+/* Photo essays use the journal's floating-print treatment in the header. */
+.tc-photo-header {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+	align-items: center;
+	gap: clamp(2rem, 5vw, 4rem);
+	max-width: 980px !important;
+	margin-block-end: 3rem;
+}
+.tc-photo-header:not(:has(.tc-photo-header__image)) { display: block; max-width: 720px !important; }
+.tc-photo-header .tc-single-header { margin: 0; min-width: 0; }
+.tc-photo-header__image {
+	width: 100%;
+	margin: 0 !important;
+	border-radius: 18px;
+	overflow: hidden;
+	transform: rotate(-4deg);
+	box-shadow: 0 24px 48px rgba(24, 28, 29, 0.26);
+	outline: 6px solid var(--tc-white);
+}
+.tc-photo-header__image img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+@media (max-width: 600px) {
+	.tc-photo-header { grid-template-columns: minmax(0, 1fr) 100px; gap: 1rem; }
+	.tc-photo-header__image { border-radius: 12px; outline-width: 4px; }
+}
+
+/* Editorial photos share the journal's rounded, framed print. */
+.tc-home-hero__portrait,
+.tc-home-journal .tc-journal-lead__media,
+.tc-format--trip .tc-format-hero {
+	border-radius: 18px;
+	outline: 6px solid var(--tc-white);
+	outline-offset: 0;
+	box-shadow: 0 24px 48px rgba(24, 28, 29, 0.26);
+	overflow: hidden;
+}
+.tc-home-hero__portrait img,
+.tc-home-journal .tc-journal-lead__media img,
+.tc-format--trip .tc-format-hero img { border-radius: 0; }
+.tc-home-journal .tc-journal-lead__media { transform: rotate(-2deg); }
+:root[data-theme="dark"] .tc-home-hero__portrait,
+:root[data-theme="dark"] .tc-home-journal .tc-journal-lead__media,
+:root[data-theme="dark"] .tc-format--trip .tc-format-hero,
+:root[data-theme="dark"] .tc-photo-header__image { outline-color: #1d2626; }
+@media (max-width: 781px) {
+	.tc-home-journal .tc-journal-lead__media { transform: none; }
+}
+
+/* Editorial panels share the square field-journal surface. */
+.tc-bikepacking-kit { border-radius: 0; box-shadow: none; }
+
+/* The Instagram collage uses the same framed prints as the journal. */
+.tc-home-wild .polaroid {
+	padding: 0;
+	border-radius: 18px;
+	outline: 6px solid var(--tc-white);
+	box-shadow: 0 24px 48px rgba(24, 28, 29, 0.26);
+}
+.tc-home-wild .polaroid__frame { border-radius: 18px; }
+.tc-home-wild .polaroid:focus-visible { outline: 3px solid var(--tc-primary); outline-offset: 9px; }
+:root[data-theme="dark"] .tc-home-wild .polaroid { outline-color: #1d2626; }
+:root[data-theme="dark"] .tc-home-wild .polaroid:focus-visible { outline-color: var(--tc-primary); }
+
+/* Photo-essay galleries use the journal print treatment without changing their layout. */
+.tc-format--photo .tc-format-content :is(.wp-block-gallery, .wp-block-jetpack-tiled-gallery) img {
+	border: 6px solid var(--tc-white);
+	border-radius: 18px;
+	box-shadow: 0 24px 48px rgba(24, 28, 29, 0.26);
+}
+:root[data-theme="dark"] .tc-format--photo .tc-format-content :is(.wp-block-gallery, .wp-block-jetpack-tiled-gallery) img {
+	border-color: #1d2626;
+}
+.tc-format--photo .tc-format-content :is(.wp-block-gallery, .wp-block-jetpack-tiled-gallery) a:has(img) { background: none; }
+.tc-format--photo .tc-format-content .tiled-gallery__item { overflow: visible; }
+.tc-format--photo .tc-format-content :is(.wp-block-gallery, .wp-block-jetpack-tiled-gallery) :is(a, img):focus-visible {
+	outline: 3px solid var(--tc-primary);
+	outline-offset: 3px;
+}
+
+/* Keep archive media flush with square editorial cards. */
+.tc-timeline-card .tc-timeline-card__media { margin: 0 !important; border-radius: 0; box-shadow: none; outline: 0; }
+
+/* Contrast and shape consistency on detail, archive and search pages. */
+:root[data-theme="dark"] .tc-gear-detail-card__badge--daily-driver { color: #151b19; }
+:root[data-theme="dark"] .tc-bio__card-length,
+:root[data-theme="dark"] .tc-bio__now .tc-now__label,
+:root[data-theme="dark"] .tc-timeline-card__length,
+:root[data-theme="dark"] .tc-timeline-card__meta .wp-block-post-date { color: var(--tc-on-surface-secondary); }
+.tc-archive--search .wp-block-query-no-results { padding: 2rem 0; }
+.tc-archive--search .tc-archive__empty { border-radius: 0; box-shadow: none; }
+:root[data-theme="dark"] .tc-archive--search .tc-archive__empty { box-shadow: none; }
+:root[data-theme="dark"] .tc-finish__line { background: repeating-conic-gradient(#b4f1d4 0 25%, #151b19 0 50%) 0 0 / 14px 14px; opacity: 0.9; }
+
+/* Maintain readable contrast for primary controls. */
+:root:not([data-theme="dark"]) .tc-cta-pill--primary:not(:hover):not(:focus-visible),
+:root:not([data-theme="dark"]) .wp-block-button:not(.is-style-outline):not(.is-style-soft):not(.tc-bio__team) > .wp-block-button__link:not(:hover):not(:focus-visible),
+:root:not([data-theme="dark"]) .wp-element-button:not(.wp-block-button__link):not(:hover):not(:focus-visible),
+:root:not([data-theme="dark"]) input.wp-element-button:not(:hover):not(:focus-visible) {
+	background: #14584a !important;
+	color: #f5fbfa !important;
+}
+
+/* Frosted navigation keeps the field-journal colors while content moves beneath it. */
+.site-header .nav-pill,
+.wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill,
+:root[data-theme="dark"] .wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill {
+	background: linear-gradient(115deg, rgba(247, 246, 240, .55), rgba(247, 246, 240, .28) 50%, rgba(247, 246, 240, .48));
+	backdrop-filter: blur(28px) saturate(1.3);
+	-webkit-backdrop-filter: blur(28px) saturate(1.3);
+	border-color: rgba(255, 255, 255, .65);
+	box-shadow: 0 4px 18px rgba(16, 36, 31, .12), inset 0 1px 0 rgba(255, 255, 255, .55);
+}
+:root[data-theme="dark"] .site-header .nav-pill,
+:root[data-theme="dark"] .wp-site-blocks:has(.tc-home-hero) .site-header .nav-pill,
+:root:not([data-theme="dark"]) .is-over-dark .nav-pill,
+:root:not([data-theme="dark"]) .wp-site-blocks:has(.tc-home-hero) .is-over-dark .nav-pill {
+	background: linear-gradient(115deg, rgba(16, 36, 31, .68), rgba(16, 36, 31, .4) 50%, rgba(16, 36, 31, .62));
+	border-color: rgba(220, 247, 235, .4);
+	box-shadow: 0 4px 18px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .12);
+}
+.site-header .wp-block-navigation .wp-block-navigation__submenu-container {
+	background: rgba(247, 246, 240, .88);
+	backdrop-filter: blur(16px) saturate(1.15);
+	-webkit-backdrop-filter: blur(16px) saturate(1.15);
+}
+:root[data-theme="dark"] .site-header .wp-block-navigation .wp-block-navigation__submenu-container {
+	background: rgba(16, 36, 31, .9);
+}
+
+
+/* Previous tighter fade: 36px vertical / 40px horizontal, with 32% / 68%
+   vertical and 8% / 92% horizontal mask stops. */
+/* Fade the blur gradually around the floating navigation. */
+.site-header::before {
+	content: "";
+	display: block;
+	position: absolute;
+	z-index: -1;
+	inset: -110px -120px;
+	max-width: 1268px;
+	margin-inline: auto;
+	pointer-events: none;
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .65) 40%, rgba(0, 0, 0, .65) 60%, transparent), linear-gradient(to right, transparent, #000 20%, #000 80%, transparent);
+	mask-composite: intersect;
+	-webkit-mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .65) 40%, rgba(0, 0, 0, .65) 60%, transparent), linear-gradient(to right, transparent, #000 20%, #000 80%, transparent);
+	-webkit-mask-composite: source-in;
+}
+
+/* A single image gets room to breathe before the story behind it. */
+.tc-single-photo {
+	padding-block: clamp(2rem, 5vw, 5rem);
+}
+.tc-single-photo__heading {
+	margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+.tc-single-photo__label {
+	color: var(--wp--preset--color--primary-dark);
+	font-size: .75rem;
+	font-weight: 700;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+}
+.tc-single-photo__heading .wp-block-post-title {
+	margin-block: .5rem;
+}
+.tc-single-photo__heading .wp-block-post-date {
+	font-size: .9rem;
+}
+.tc-single-photo__content {
+	display: flex;
+	flex-direction: column;
+}
+.tc-single-photo__content > .wp-block-image {
+	order: -1;
+	align-self: flex-start;
+	flex-shrink: 0;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+	width: min(1120px, calc(100vw - 48px));
+	max-width: none !important;
+	margin: 0 0 clamp(2rem, 4vw, 3rem) !important;
+}
+.tc-single-photo__content > .wp-block-image img {
+	display: block;
+	width: auto;
+	max-width: 100%;
+	max-height: 85vh;
+	margin-inline: auto;
+	object-fit: contain;
+}
+.tc-single-photo__content > :not(.wp-block-image) {
+	width: min(720px, 100%);
+	margin-inline: auto;
+}

@@ -1,0 +1,21 @@
+.embedded-film,.embedded-film body{height:100%;overflow:hidden;background:#edf1e8}
+.embedded-film main,.embedded-film .player-main{max-width:none;margin:0;padding:0;height:100%}
+.embedded-film .film-shell{height:100%;display:flex;flex-direction:column;border:0;border-radius:0}
+.embedded-film .film{min-height:0;max-height:none;aspect-ratio:auto;flex:1}
+.embedded-film .transport{flex:none;padding:9px 14px;gap:12px}
+.embedded-film .chapters,.embedded-film .film-nav,.embedded-film .sample-note{display:none}
+.embedded-film .start-overlay span{margin-top:0}
+
+.embedded-film .replay{display:none!important}
+.embedded-film .transport{background:#f7f6f0;background-image:url('../../assets/images/field-grain.svg');background-size:120px;border-color:#d4dfd0;padding:8px 14px}
+.embedded-film .scrubber{appearance:none;-webkit-appearance:none;height:24px;background:transparent;accent-color:#14584a}
+.embedded-film .scrubber::-webkit-slider-runnable-track{height:3px;border-radius:3px;background:linear-gradient(to right,#14584a var(--progress,0%),#d4dfd0 var(--progress,0%))}
+.embedded-film .scrubber::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:9px;height:9px;border-radius:50%;background:#14584a;margin-top:-3px}
+.embedded-film .scrubber::-moz-range-track{height:3px;background:#d4dfd0;border-radius:3px}.embedded-film .scrubber::-moz-range-progress{height:3px;background:#14584a}.embedded-film .scrubber::-moz-range-thumb{height:9px;width:9px;background:#14584a;border:0;border-radius:50%}
+.embedded-film .time{font-size:10px;color:#718472;min-width:0}.embedded-film .fullscreen svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.5}
+.embedded-film[data-theme=dark] .transport{background-color:#10241f;color:#b4f1d4;border-color:#2d4a3d}.embedded-film[data-theme=dark] .transport button,.embedded-film[data-theme=dark] .time{color:#b4f1d4}.embedded-film[data-theme=dark] .play-toggle svg{fill:#b4f1d4}
+.embedded-film[data-theme=dark] .ambient{background:radial-gradient(ellipse at center,#dce5d4,#b9ccb8)}
+.embedded-film[data-theme=dark] .scrubber::-webkit-slider-runnable-track{background:linear-gradient(to right,#b4f1d4 var(--progress,0%),#355245 var(--progress,0%))}.embedded-film[data-theme=dark] .scrubber::-webkit-slider-thumb{background:#b4f1d4}
+
+.embedded-film .time{flex:none;white-space:nowrap}.embedded-film .scrubber{flex:1;width:0;min-width:0}
+@media(max-width:480px){.embedded-film .transport{gap:8px;padding:8px 10px}}

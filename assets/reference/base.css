@@ -1,0 +1,4451 @@
+/**
+ * The Cannon — base styles
+ *
+ * Global custom properties, header pill, ambient glow, and utility classes.
+ * Block-level design handled via theme.json and template parts.
+ */
+
+/* =========================================================
+   Root tokens (mirrors theme.json for non-block contexts)
+   ========================================================= */
+:root {
+	color-scheme: light;
+
+	--tc-primary:               #18805e;
+	--tc-primary-dark:          #14584a;
+	--tc-accent:                #53d8ad;
+	--tc-on-surface:            #151b19;
+	--tc-on-surface-secondary:  #3c4a45;
+	--tc-outline:               #62706c;
+	--tc-outline-variant:       #dce9df;
+	--tc-surface:               #f7f6f0;
+	--tc-surface-low:           #e8f0e9;
+	--tc-surface-container:     #dce9df;
+	--tc-white:                 #ffffff;
+	--tc-dark:                  #151b19;
+	--tc-intervals:             #18805e;
+	--tc-intervals-dark:        #14584a;
+	--tc-strava:                #fc4c02;
+	--tc-strava-dark:           #9a2e00;
+	--tc-accent-dark:           #8d5b00;
+
+	--tc-radius-pill:           9999px;
+	--tc-radius-xl:             24px;
+	--tc-radius-lg:             16px;
+	--tc-radius-md:             12px;
+	--tc-radius-sm:             8px;
+
+	--tc-shadow-ambient:        0 4px 24px rgba(24, 28, 29, 0.07);
+	--tc-shadow-card:           0 2px 12px rgba(24, 28, 29, 0.08);
+	--tc-shadow-elevated:       0 8px 32px rgba(24, 28, 29, 0.12);
+
+	/* Glow palettes (default + section overrides) */
+	--tc-glow-teal:             rgba(28, 193, 163, 0.24);
+	--tc-glow-gold:             rgba(120, 223, 183, 0.22);
+	--tc-glow-soft:             rgba(255, 255, 255, 0.1);
+	--tc-glow-orange:           rgba(252, 76, 2, 0.26);
+	--tc-glow-orange-soft:      rgba(255, 145, 89, 0.16);
+	/* Light mode uses a cut of the painting with the near-black strokes lifted
+	   to mint; dark mode keeps the original, where those strokes disappear. */
+	--tc-cover-art-image:       url("../images/the-cannon-site-cover-light-1200x630.webp");
+	--tc-cover-art-image-dark:  url("../images/the-cannon-site-cover-profile-bg-1200x630.webp");
+}
+
+:root[data-theme="dark"] {
+	color-scheme: dark;
+
+	--tc-primary:               #37ddbf;
+	--tc-primary-dark:          #8af2df;
+	--tc-accent:                #78dfb7;
+	--tc-on-surface:            #f5fbfa;
+	--tc-on-surface-secondary:  #bfd0cc;
+	--tc-outline:               #8fa29e;
+	--tc-outline-variant:       #2b3836;
+	--tc-surface:               #0f1515;
+	--tc-surface-low:           #151d1d;
+	--tc-surface-container:     #202b2a;
+	--tc-white:                 #ffffff;
+	--tc-dark:                  #070b0b;
+	--tc-intervals:             #37ddbf;
+	--tc-intervals-dark:        #8af2df;
+	--tc-strava-dark:           #ff8a4f;
+	--tc-accent-dark:           #b4f1d4;
+
+	--tc-shadow-ambient:        0 4px 24px rgba(0, 0, 0, 0.28);
+	--tc-shadow-card:           0 2px 14px rgba(0, 0, 0, 0.28);
+	--tc-shadow-elevated:       0 12px 38px rgba(0, 0, 0, 0.38);
+
+	--wp--preset--color--primary: #37ddbf;
+	--wp--preset--color--primary-dark: #8af2df;
+	--wp--preset--color--primary-container: #123f38;
+	--wp--preset--color--accent: #78dfb7;
+	--wp--preset--color--accent-alt: #b4f1d4;
+	--wp--preset--color--on-surface: #f5fbfa;
+	--wp--preset--color--on-surface-secondary: #bfd0cc;
+	--wp--preset--color--outline: #8fa29e;
+	--wp--preset--color--outline-variant: #2b3836;
+	--wp--preset--color--surface: #0f1515;
+	--wp--preset--color--surface-container-low: #151d1d;
+	--wp--preset--color--surface-container: #202b2a;
+	--wp--preset--color--surface-container-lowest: #111818;
+	--wp--preset--color--surface-dark: #070b0b;
+}
+
+/* =========================================================
+   Base reset
+   ========================================================= */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	position: relative;
+	background-color: var(--tc-surface);
+	background-image: linear-gradient(180deg, #f7f6f0 0%, #ffffff 62%, #f7f6f0 100%);
+}
+
+:root[data-theme="dark"] body {
+	background-color: var(--tc-surface);
+	background-image: radial-gradient(circle at 50% -10%, rgba(28, 193, 163, 0.12) 0%, rgba(28, 193, 163, 0) 36%), linear-gradient(180deg, #0f1515 0%, #111818 58%, #0b1010 100%);
+	color: var(--tc-on-surface);
+}
+
+body::before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: clamp(520px, 46vw, 760px);
+	background:
+		linear-gradient(180deg, rgba(247, 250, 251, 0.78) 0%, rgba(247, 250, 251, 0.54) 38%, rgba(247, 250, 251, 0.28) 68%, rgba(247, 250, 251, 0) 100%),
+		linear-gradient(90deg, rgba(247, 250, 251, 0.38) 0%, rgba(247, 250, 251, 0.08) 48%, rgba(247, 250, 251, 0.34) 100%),
+		var(--tc-cover-art-image) center 28% / cover no-repeat;
+	filter: saturate(1.02) contrast(0.98);
+	opacity: 0.48;
+	pointer-events: none;
+	z-index: 0;
+	mask-image: linear-gradient(180deg, black 0%, black 68%, transparent 100%);
+	-webkit-mask-image: linear-gradient(180deg, black 0%, black 68%, transparent 100%);
+}
+
+:root[data-theme="dark"] body::before {
+	background:
+		linear-gradient(180deg, rgba(15, 21, 21, 0.88) 0%, rgba(15, 21, 21, 0.72) 42%, rgba(15, 21, 21, 0.36) 72%, rgba(15, 21, 21, 0) 100%),
+		linear-gradient(90deg, rgba(15, 21, 21, 0.5) 0%, rgba(15, 21, 21, 0.16) 48%, rgba(15, 21, 21, 0.5) 100%),
+		var(--tc-cover-art-image-dark) center 28% / cover no-repeat;
+	filter: saturate(0.88) contrast(1.06);
+	opacity: 0.38;
+	mix-blend-mode: screen;
+}
+
+body::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+	background-repeat: repeat;
+	background-size: 170px 170px;
+	mix-blend-mode: multiply;
+	/* Fade grain into the glow zone; spills naturally into the hero content area */
+	mask-image: radial-gradient(ellipse 120% 70% at 50% -10%, black 20%, transparent 80%);
+	-webkit-mask-image: radial-gradient(ellipse 120% 70% at 50% -10%, black 20%, transparent 80%);
+	opacity: 0.32;
+	pointer-events: none;
+	z-index: 0;
+}
+
+:root[data-theme="dark"] body::after {
+	mix-blend-mode: screen;
+	opacity: 0.12;
+}
+
+.wp-site-blocks {
+	position: relative;
+	z-index: 1;
+}
+
+:root {
+	--tc-shell-max-width: 980px;
+}
+
+main#wp--skip-link--target,
+footer.wp-block-template-part {
+	width: 100%;
+}
+
+main#wp--skip-link--target > .is-layout-constrained,
+footer.wp-block-template-part .is-layout-constrained {
+	--wp--style--global--content-size: min(var(--tc-shell-max-width), calc(100vw - 48px));
+	--wp--style--global--wide-size: min(var(--tc-shell-max-width), calc(100vw - 48px));
+}
+
+main#wp--skip-link--target > .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)),
+footer.wp-block-template-part .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+	max-width: min(var(--tc-shell-max-width), calc(100vw - 48px));
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+main#wp--skip-link--target > .is-layout-constrained > .alignwide,
+footer.wp-block-template-part .is-layout-constrained > .alignwide {
+	max-width: min(var(--tc-shell-max-width), calc(100vw - 48px));
+}
+
+img,
+video {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+html,
+body {
+	overflow-x: clip;
+}
+
+/* Brand-safe accessibility defaults from UX pass. */
+a,
+button,
+[role="button"],
+.wp-block-button__link,
+.wp-element-button {
+	cursor: pointer;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+.wp-block-button__link:focus-visible,
+.wp-element-button:focus-visible {
+	outline: 3px solid var(--tc-primary);
+	outline-offset: 2px;
+	border-radius: 6px;
+}
+
+/* Interaction baseline: improve hit areas on dense content templates. */
+.wp-block-post-date a,
+.wp-block-post-author-name a,
+.wp-block-post-terms a,
+.wp-block-comments a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.wp-block-post-navigation-link a,
+.wp-block-comments-pagination a,
+.wp-block-post-comments-form .form-submit .submit,
+#commentform .form-submit .submit {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	padding: 0 14px;
+	border-radius: var(--tc-radius-pill);
+}
+
+/* =========================================================
+   Template-owned block styles
+   ========================================================= */
+.tc-landing-main {
+	gap: 0;
+}
+
+.tc-content-flow {
+	--wp--style--block-gap: var(--wp--preset--spacing--32, 2rem);
+}
+
+.tc-content-flow > * + * {
+	margin-block-start: var(--wp--preset--spacing--32, 2rem);
+}
+
+.tc-page-title.wp-block-post-title,
+.tc-single-header__title.wp-block-post-title,
+.tc-gear-single-title.wp-block-post-title,
+.tc-not-found h1 {
+	color: var(--tc-on-surface);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--hero);
+	font-weight: 900;
+	letter-spacing: 0;
+	line-height: 1.05;
+}
+
+.tc-gear-single-excerpt.wp-block-post-excerpt,
+.tc-archive__description,
+.tc-not-found__lede {
+	color: var(--tc-on-surface-secondary);
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-size: var(--wp--preset--font-size--lg);
+	font-weight: 400;
+	line-height: 1.6;
+}
+
+.tc-gear-single-excerpt.wp-block-post-excerpt {
+	line-height: 1.65;
+}
+
+/* =========================================================
+   Utility: tc-glass — reusable glassmorphism surface
+   Match the nav pill frosted-glass aesthetic.
+   ========================================================= */
+.tc-glass {
+	background:
+		linear-gradient(115deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 48%, rgba(255, 255, 255, 0.48) 100%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(243, 250, 248, 0.30) 100%);
+	backdrop-filter: blur(16px) saturate(1.1);
+	-webkit-backdrop-filter: blur(16px) saturate(1.1);
+	border: 1px solid rgba(255, 255, 255, 0.52);
+	box-shadow:
+		0 4px 18px rgba(17, 24, 22, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* =========================================================
+   Ambient teal glow (decorative ellipse, shared across pages)
+   ========================================================= */
+.wp-site-blocks {
+	position: relative;
+}
+
+/* A pre-computed stand-in for the old 1089×393 ellipse under blur(500px):
+   the same Gaussian falloff, painted as a gradient instead of a full-page filter. */
+.wp-site-blocks::before {
+	--tc-glow: var(--tc-primary);
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 1283px;
+	background: radial-gradient(
+		1475px 1283px at 50% 0,
+		color-mix(in srgb, var(--tc-glow) 10%, transparent) 0%,
+		color-mix(in srgb, var(--tc-glow) 8.8%, transparent) 20%,
+		color-mix(in srgb, var(--tc-glow) 6.1%, transparent) 40%,
+		color-mix(in srgb, var(--tc-glow) 3.2%, transparent) 60%,
+		color-mix(in srgb, var(--tc-glow) 1.35%, transparent) 80%,
+		transparent 100%
+	);
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* =========================================================
+   Site header — glassmorphism pill nav
+   ========================================================= */
+header.wp-block-template-part {
+	position: sticky;
+	top: 0;
+	z-index: 120;
+}
+
+.admin-bar header.wp-block-template-part {
+	top: var(--wp-admin--admin-bar--height, 32px);
+}
+
+.site-header {
+	position: relative;
+	isolation: isolate;
+	top: auto;
+	z-index: 40;
+	display: flex;
+	justify-content: center;
+	padding: 0 24px;
+	margin-bottom: -12px;
+	overflow: visible;
+}
+
+.site-header::before {
+	content: none;
+}
+
+.site-header::after {
+	content: none;
+}
+
+.site-header-band {
+	position: relative;
+	isolation: isolate;
+	z-index: 1;
+	width: 100%;
+	padding-top: clamp(0.875rem, 2.2vw, 1.875rem);
+	padding-bottom: clamp(0.875rem, 2.2vw, 1.875rem);
+}
+
+.site-header-band::before,
+.site-header-band::after {
+	content: "";
+	position: absolute;
+	pointer-events: none;
+	z-index: -1;
+}
+
+.site-header-band::before {
+	content: none;
+}
+
+.site-header-band::after {
+	content: none;
+}
+
+.nav-pill {
+	position: relative;
+	top: 0;
+	z-index: 50;
+	isolation: isolate;
+	width: 100%;
+	max-width: 980px;
+	height: 52px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: clamp(0.75rem, 2vw, 1.5rem);
+	padding: 0 24px;
+	border-radius: var(--tc-radius-pill);
+	border: 1px solid rgba(255, 255, 255, 0.52);
+	background:
+		linear-gradient(115deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 48%, rgba(255, 255, 255, 0.48) 100%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(243, 250, 248, 0.30) 100%);
+	backdrop-filter: blur(16px) saturate(1.1);
+	-webkit-backdrop-filter: blur(16px) saturate(1.1);
+	box-shadow:
+		0 4px 18px rgba(17, 24, 22, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.nav-pill::before,
+.nav-pill::after {
+	content: none;
+}
+
+.tc-theme-toggle {
+	position: relative;
+	flex: 0 0 auto;
+	display: inline-grid;
+	place-items: center;
+	z-index: 1;
+	width: 34px;
+	height: 34px;
+	margin-left: 4px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--tc-radius-pill);
+	background: transparent;
+	color: var(--tc-on-surface);
+	box-shadow: none;
+	transition: color 0.15s ease;
+}
+
+.tc-theme-toggle:hover,
+.tc-theme-toggle:focus-visible {
+	background: transparent;
+	color: var(--tc-on-surface);
+}
+
+.tc-theme-toggle__icon {
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	color: currentColor;
+	transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.tc-theme-toggle__icon--sun {
+	width: 22px;
+	height: 22px;
+	border-radius: 0;
+	background: currentColor;
+	--tc-sun-icon-mask: url("data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2024%2024%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22black%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%225.55%22%2F%3E%3Crect%20x%3D%2210.9%22%20y%3D%221.55%22%20width%3D%222.2%22%20height%3D%223.7%22%20rx%3D%221.1%22%2F%3E%3Crect%20x%3D%2210.9%22%20y%3D%221.55%22%20width%3D%222.2%22%20height%3D%223.7%22%20rx%3D%221.1%22%20transform%3D%22rotate(45%2012%2012)%22%2F%3E%3Crect%20x%3D%2210.9%22%20y%3D%221.55%22%20width%3D%222.2%22%20height%3D%223.7%22%20rx%3D%221.1%22%20transform%3D%22rotate(90%2012%2012)%22%2F%3E%3Crect%20x%3D%2210.9%22%20y%3D%221.55%22%20width%3D%222.2%22%20height%3D%223.7%22%20rx%3D%221.1%22%20transform%3D%22rotate(135%2012%2012)%22%2F%3E%3Crect%20x%3D%2210.9%22%20y%3D%221.55%22%20width%3D%222.2%22%20height%3D%223.7%22%20rx%3D%221.1%22%20transform%3D%22rotate(180%2012%2012)%22%2F%3E%3Crect%20x%3D%2210.9%22%20y%3D%221.55%22%20width%3D%222.2%22%20height%3D%223.7%22%20rx%3D%221.1%22%20transform%3D%22rotate(225%2012%2012)%22%2F%3E%3Crect%20x%3D%2210.9%22%20y%3D%221.55%22%20width%3D%222.2%22%20height%3D%223.7%22%20rx%3D%221.1%22%20transform%3D%22rotate(270%2012%2012)%22%2F%3E%3Crect%20x%3D%2210.9%22%20y%3D%221.55%22%20width%3D%222.2%22%20height%3D%223.7%22%20rx%3D%221.1%22%20transform%3D%22rotate(315%2012%2012)%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+	-webkit-mask: var(--tc-sun-icon-mask) center / contain no-repeat;
+	mask: var(--tc-sun-icon-mask) center / contain no-repeat;
+	filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 24%, transparent));
+	opacity: 0;
+	transform: rotate(24deg) scale(0.7);
+}
+
+.tc-theme-toggle__icon--sun::before {
+	content: none;
+}
+
+.tc-theme-toggle__icon--sun::after {
+	content: none;
+}
+
+.tc-theme-toggle__icon--moon {
+	border-radius: 50%;
+	box-shadow: inset -6px -4px 0 1px currentColor;
+	opacity: 1;
+	transform: rotate(-18deg) scale(1);
+}
+
+:root[data-theme="dark"] .tc-theme-toggle__icon--sun {
+	opacity: 1;
+	transform: rotate(0deg) scale(1);
+}
+
+:root[data-theme="dark"] .tc-theme-toggle__icon--moon {
+	opacity: 0;
+	transform: rotate(-18deg) scale(0.7);
+}
+
+.site-header .wp-block-navigation .wp-block-navigation__submenu-container {
+	z-index: 60;
+	margin-top: 0;
+	padding: 8px;
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.74);
+	background-color: rgba(246, 251, 250, 0.88);
+	background:
+		linear-gradient(115deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.7) 52%, rgba(255, 255, 255, 0.8) 100%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(243, 250, 248, 0.64) 100%);
+	backdrop-filter: blur(12px) saturate(1.04);
+	-webkit-backdrop-filter: blur(12px) saturate(1.04);
+	box-shadow:
+		0 7px 16px rgba(17, 24, 22, 0.11),
+		inset 0 1px 0 rgba(255, 255, 255, 0.64);
+}
+
+.site-header .wp-block-navigation .wp-block-navigation__submenu-container::before {
+	content: "";
+	position: absolute;
+	top: 1px;
+	left: 12px;
+	right: 12px;
+	height: 32%;
+	border-radius: 999px;
+	background: radial-gradient(130% 145% at 50% 0%, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.15) 42%, rgba(255, 255, 255, 0) 100%);
+	pointer-events: none;
+	opacity: 0.5;
+}
+
+.site-header .wp-block-navigation .wp-block-navigation__submenu-container a {
+	border-radius: 10px;
+	padding: 8px 12px;
+	transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.site-header .wp-block-navigation .wp-block-navigation__submenu-container a:hover {
+	background: rgba(255, 255, 255, 0.42);
+	color: var(--tc-primary);
+}
+
+.tc-site-logo {
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.site-header .tc-site-logo:not([style*="width"]) {
+	width: 56px;
+}
+
+.tc-site-logo .custom-logo-link {
+	display: inline-flex;
+	align-items: center;
+	text-decoration: none;
+}
+
+.tc-site-logo .custom-logo {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 0 !important;
+}
+
+/* Nav links */
+.site-header .wp-block-navigation a {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--tc-on-surface);
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+.site-header .tc-header-nav .wp-block-navigation__container {
+	gap: var(--wp--preset--spacing--24);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+
+	body::before {
+		filter: none;
+	}
+}
+.site-header .wp-block-navigation a:hover {
+	text-decoration: none;
+}
+
+.site-header .wp-block-navigation .wp-block-navigation-item {
+	border-radius: 999px;
+}
+
+.site-header .wp-block-navigation .current-menu-item > a,
+.site-header .wp-block-navigation a[aria-current="page"] {
+	font-weight: 700;
+	text-decoration: none;
+}
+
+/* Sliding glassy pill — positioned by nav-magic-line.js */
+.nav-hover-pill {
+	position: absolute;
+	z-index: 0;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.18);
+	box-shadow:
+		0 0 0 1px rgba(255, 255, 255, 0.18) inset,
+		0 2px 8px rgba(0, 0, 0, 0.06);
+	backdrop-filter: blur(8px);
+	pointer-events: none;
+	transition: left 0.22s ease, top 0.22s ease, width 0.22s ease, height 0.22s ease, opacity 0.15s ease;
+}
+
+.site-header .wp-block-navigation .wp-block-navigation-item__content {
+	padding: 0 4px;
+}
+
+.nav-pill > .wp-block-navigation {
+	position: relative;
+	z-index: 1;
+	margin-left: auto;
+}
+
+/* Mobile hamburger — hide icon label, show icon only */
+.site-header .wp-block-navigation__responsive-container-open {
+	color: var(--tc-on-surface);
+	background: transparent;
+	border: none;
+	padding: 0;
+}
+
+/* Mobile nav dropdown panel */
+@media (max-width: 768px) {
+	main#wp--skip-link--target > .is-layout-constrained,
+	footer.wp-block-template-part .is-layout-constrained {
+		--wp--style--global--content-size: calc(100vw - 24px);
+		--wp--style--global--wide-size: calc(100vw - 24px);
+	}
+
+	main#wp--skip-link--target > .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)),
+	footer.wp-block-template-part .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)),
+	main#wp--skip-link--target > .is-layout-constrained > .alignwide,
+	footer.wp-block-template-part .is-layout-constrained > .alignwide {
+		max-width: calc(100vw - 24px);
+	}
+
+	.site-header {
+		padding: 0 16px;
+		margin-bottom: 0;
+	}
+
+	.nav-pill {
+		min-width: 0;
+	}
+
+	body::before {
+		height: 500px;
+		opacity: 0.4;
+		background:
+			linear-gradient(180deg, rgba(247, 250, 251, 0.84) 0%, rgba(247, 250, 251, 0.62) 42%, rgba(247, 250, 251, 0.24) 72%, rgba(247, 250, 251, 0) 100%),
+			linear-gradient(90deg, rgba(247, 250, 251, 0.42) 0%, rgba(247, 250, 251, 0.1) 48%, rgba(247, 250, 251, 0.38) 100%),
+			var(--tc-cover-art-image) center 24% / cover no-repeat;
+	}
+
+	.nav-pill {
+		top: 0;
+		max-width: 100%;
+		height: 48px;
+		padding: 0 16px;
+		border-radius: 16px;
+		backdrop-filter: blur(16px) saturate(1.1);
+		-webkit-backdrop-filter: blur(16px) saturate(1.1);
+	}
+}
+
+/* =========================================================
+   Section eyebrow labels
+   ========================================================= */
+.tc-eyebrow {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 1rem;
+	font-weight: 900;
+	letter-spacing: 0.08em;
+	line-height: 1;
+	text-transform: uppercase;
+	color: var(--tc-primary);
+}
+
+/* Tighten the gap when an eyebrow sits directly below a heading. */
+.wp-block-heading:has(+ .tc-eyebrow),
+.wp-block-post-title:has(+ .tc-eyebrow) {
+	margin-block-end: 0 !important;
+}
+
+.wp-block-heading + .tc-eyebrow,
+.wp-block-post-title + .tc-eyebrow {
+	margin-block-start: 0.375rem !important;
+}
+
+@keyframes hero-photo-enter {
+	from {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* =========================================================
+   Homepage hero
+   ========================================================= */
+
+/* Keep editor canvas layout aligned with frontend for the hero photo stack. */
+
+@keyframes hero-signature-ambient-enter {
+	from {
+		opacity: 0;
+		translate: 0 16px;
+	}
+	to {
+		opacity: 0.7;
+		translate: 0 0;
+	}
+}
+
+@keyframes hero-signature-portrait-enter {
+	from {
+		opacity: 0;
+		translate: 0 16px;
+	}
+	to {
+		opacity: 1;
+		translate: 0 0;
+	}
+}
+
+@media (max-width: 768px) {
+	.site-header-band::before {
+		content: none;
+	}
+
+	.site-header-band::after {
+		top: 1.1rem;
+		width: 64vw;
+		height: 76px;
+		opacity: 0.52;
+	}
+}
+
+/* =========================================================
+   Homepage section polish
+   ========================================================= */
+
+/* Light-surface cards */
+
+/* Dark-surface cards */
+.tc-archive-card {
+	--tc-glow-primary: rgba(118, 255, 223, 0.28);
+	--tc-glow-secondary: rgba(255, 214, 133, 0.24);
+	--tc-glow-overlay: rgba(255, 255, 255, 0.14);
+	--tc-glow-elevation: 0 16px 36px rgba(7, 12, 13, 0.28);
+}
+
+/* Dark-surface cards */
+
+/* Archive cards: white background, needs brighter glow for visibility */
+.tc-archive-card {
+	--tc-glow-primary: rgba(28, 193, 163, 0.48);
+	--tc-glow-secondary: rgba(120, 223, 183, 0.44);
+	--tc-glow-overlay: rgba(255, 255, 255, 0.2);
+	--tc-glow-ring: rgba(28, 193, 163, 0.18);
+	--tc-glow-elevation: 0 14px 32px rgba(24, 28, 29, 0.14);
+}
+/* Recent Rides activity cards: warm brand glow */
+
+.tc-archive-card::before {
+	content: "";
+	position: absolute;
+	inset: -24%;
+	background:
+		radial-gradient(circle at var(--tc-glow-x, 50%) var(--tc-glow-y, 50%), var(--tc-glow-primary) 0%, rgba(255, 255, 255, 0.04) 36%, rgba(255, 255, 255, 0) 62%),
+		radial-gradient(circle at calc(var(--tc-glow-x, 50%) + 14%) calc(var(--tc-glow-y, 50%) + 12%), var(--tc-glow-secondary) 0%, rgba(255, 255, 255, 0.03) 34%, rgba(255, 255, 255, 0) 64%);
+	opacity: 0;
+	transform: scale(0.9) rotate(-2deg);
+	filter: blur(18px);
+	pointer-events: none;
+	transition: opacity 0.46s cubic-bezier(0.65, 0, 0.35, 1), transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+	z-index: 0;
+}
+
+.tc-archive-card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(145deg, var(--tc-glow-overlay) 0%, rgba(255, 255, 255, 0.03) 44%, rgba(255, 255, 255, 0) 72%);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.46s cubic-bezier(0.65, 0, 0.35, 1);
+	z-index: 0;
+}
+
+.tc-archive-card > * {
+	position: relative;
+	z-index: 1;
+}
+
+.tc-archive-card:hover,
+.tc-archive-card:focus-within,
+.tc-archive-card.is-pointer-glow-active {
+	transform: translateY(-1px);
+	box-shadow: var(--tc-glow-elevation), 0 0 0 1px var(--tc-glow-ring);
+}
+
+.tc-archive-card:hover::before,
+.tc-archive-card:focus-within::before,
+.tc-archive-card.is-pointer-glow-active::before {
+	opacity: 0.42;
+	transform: scale(1) rotate(0deg);
+}
+
+.tc-archive-card:hover::after,
+.tc-archive-card:focus-within::after,
+.tc-archive-card.is-pointer-glow-active::after {
+	opacity: 0.24;
+}
+
+.latest-card-footer {
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--wp--preset--spacing--8);
+}
+
+/* ===== Ice Cream Endurance team card — brand redesign ===== */
+/* Brand tokens */
+
+/* Outer container */
+
+/* Logo stays on top of any glow */
+
+/* Wrapper around just the card — glow lives here */
+
+/* Logo itself */
+
+/* Content padding area */
+
+/* "RIDE WITH US" eyebrow */
+
+/* Team name */
+
+/* Description */
+
+/* CTA stack */
+
+/* Primary button: pink-to-cyan gradient */
+
+/* Outline button: lavender */
+
+/* Override glow vars for the team card to use brand purple + cyan */
+
+.tc-gear-detail-card {
+	display: grid;
+	gap: var(--wp--preset--spacing--20);
+	padding: clamp(20px, 3vw, 28px);
+	border: 1px solid rgba(24, 28, 29, 0.08);
+	border-radius: 22px;
+	background: rgba(255, 255, 255, 0.72);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.64);
+}
+
+.tc-gear-detail-card__badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wp--preset--spacing--8);
+}
+
+.tc-gear-detail-card__badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 32px;
+	padding: 0 12px;
+	border-radius: var(--tc-radius-pill);
+	font-family: var(--wp--preset--font-family--instrument-sans, sans-serif);
+	font-size: var(--wp--preset--font-size--xs, 0.75rem);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.tc-gear-detail-card__badge--status {
+	background: rgba(28, 193, 163, 0.14);
+	color: var(--tc-primary-dark);
+}
+
+/* Daily Driver — gold pill matching the /gear/ listing treatment */
+.tc-gear-detail-card__badge--daily-driver {
+	background: var(--wp--preset--color--accent);
+	color: var(--wp--preset--color--on-surface);
+}
+
+.tc-gear-detail-card__badge--retired {
+	background: var(--wp--preset--color--outline-variant);
+	color: var(--wp--preset--color--on-surface-secondary);
+}
+
+.tc-gear-detail-card__meta {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--wp--preset--spacing--16) var(--wp--preset--spacing--24);
+	margin: 0;
+	padding: 0;
+}
+
+.tc-gear-detail-card__row {
+	display: grid;
+	gap: 4px;
+	min-width: 0;
+}
+
+.tc-gear-detail-card__row dt {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--instrument-sans, sans-serif);
+	font-size: var(--wp--preset--font-size--xs, 0.75rem);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--tc-outline);
+}
+
+.tc-gear-detail-card__row dd {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--instrument-sans, sans-serif);
+	font-size: var(--wp--preset--font-size--md, 1rem);
+	line-height: 1.55;
+	color: var(--tc-on-surface);
+	word-break: break-word;
+}
+
+.tc-gear-detail-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wp--preset--spacing--12);
+}
+
+.tc-gear-detail-card__button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	padding: 0 18px;
+	border-radius: var(--tc-radius-pill);
+	background: linear-gradient(135deg, var(--tc-primary) 0%, var(--tc-primary-dark) 100%);
+	color: var(--tc-white);
+	font-family: var(--wp--preset--font-family--inter, sans-serif);
+	font-size: var(--wp--preset--font-size--sm, 0.875rem);
+	font-weight: 700;
+	text-decoration: none;
+	box-shadow: 0 10px 22px rgba(0, 107, 89, 0.18);
+	transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+}
+
+.tc-gear-detail-card__button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 14px 28px rgba(0, 107, 89, 0.2);
+	opacity: 0.98;
+}
+
+@media (max-width: 782px) {
+
+	.tc-gear-detail-card__meta {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Gear detail card inside the sidebar panel — strip standalone card chrome */
+.tc-sidebar-gear-details .tc-gear-detail-card {
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	gap: var(--wp--preset--spacing--16);
+}
+
+/* Browse gear sidebar section */
+.tc-sidebar-gear-browse .wp-block-buttons {
+	margin-top: var(--wp--preset--spacing--8);
+}
+
+.tc-sidebar-gear-browse .wp-block-button__link {
+	font-size: var(--wp--preset--font-size--xs) !important;
+	font-weight: 700 !important;
+	letter-spacing: 0.06em !important;
+	text-transform: uppercase !important;
+}
+
+/* Single gear page — extra bottom breathing room */
+.single-tc_gear .tc-single-layout {
+	padding-block-end: 8rem;
+}
+
+/* Push prev/next nav down when post content is empty */
+.tc-single-main .tc-post-nav {
+	margin-block-start: var(--wp--preset--spacing--64);
+}
+
+/* =========================================================
+   Sidebar card — reusable glass surface for post-adjacent cards
+   (introduced with tc-sidebar-gear; generalized for future cards)
+   ========================================================= */
+.tc-sidebar-card {
+	margin-top: var(--wp--preset--spacing--40, 40px);
+	padding: clamp(20px, 3vw, 28px);
+	border: 1px solid rgba(24, 28, 29, 0.08);
+	border-radius: 22px;
+	box-shadow: var(--tc-shadow-card);
+}
+
+.tc-sidebar-card.tc-glass {
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(241, 244, 245, 0.94) 100%),
+		linear-gradient(120deg, rgba(28, 193, 163, 0.08) 0%, rgba(120, 223, 183, 0.06) 100%);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+
+/* =========================================================
+   Gear Used in This Post — sidebar card variant
+   ========================================================= */
+.tc-sidebar-gear__eyebrow {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--instrument-sans, sans-serif);
+	font-size: var(--wp--preset--font-size--xs, 0.75rem);
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--tc-primary-dark);
+}
+
+.tc-sidebar-gear__heading {
+	margin: 6px 0 20px;
+	font-family: var(--wp--preset--font-family--inter, sans-serif);
+	font-weight: 900;
+	font-size: var(--wp--preset--font-size--xl, 1.5rem);
+	font-style: italic;
+	line-height: 1.1;
+	color: var(--tc-on-surface);
+}
+
+.tc-sidebar-gear__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 14px;
+}
+
+.tc-sidebar-gear__item {
+	margin: 0;
+	padding: 0;
+}
+
+.tc-sidebar-gear__link {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 10px;
+	margin: -10px;
+	border-radius: var(--tc-radius-md);
+	color: inherit;
+	text-decoration: none;
+	transition: background-color 0.16s ease, transform 0.16s ease;
+}
+
+.tc-sidebar-gear__link:hover,
+.tc-sidebar-gear__link:focus-visible {
+	background: rgba(28, 193, 163, 0.08);
+	transform: translateX(2px);
+}
+
+.tc-sidebar-gear__link:focus-visible {
+	outline: 2px solid var(--tc-primary);
+	outline-offset: 2px;
+}
+
+.tc-sidebar-gear__thumb {
+	flex: 0 0 auto;
+	width: 56px;
+	height: 56px;
+	border-radius: var(--tc-radius-sm);
+	overflow: hidden;
+	background: rgba(24, 28, 29, 0.06);
+	box-shadow: inset 0 0 0 1px rgba(24, 28, 29, 0.06);
+}
+
+.tc-sidebar-gear__thumb-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.tc-sidebar-gear__thumb-fallback {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(135deg, rgba(28, 193, 163, 0.22) 0%, rgba(120, 223, 183, 0.18) 100%);
+}
+
+.tc-sidebar-gear__meta {
+	display: grid;
+	gap: 2px;
+	min-width: 0;
+}
+
+.tc-sidebar-gear__brand {
+	font-family: var(--wp--preset--font-family--instrument-sans, sans-serif);
+	font-size: var(--wp--preset--font-size--xs, 0.75rem);
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--tc-outline);
+}
+
+.tc-sidebar-gear__name {
+	font-family: var(--wp--preset--font-family--inter, sans-serif);
+	font-size: var(--wp--preset--font-size--md, 1rem);
+	font-weight: 600;
+	line-height: 1.35;
+	color: var(--tc-on-surface);
+	word-break: break-word;
+}
+
+.tc-sidebar-gear__link:hover .tc-sidebar-gear__name,
+.tc-sidebar-gear__link:focus-visible .tc-sidebar-gear__name {
+	color: var(--tc-primary-dark);
+}
+
+/* Activity feed blocks: card stacking + header */
+.thecannon-intervals-feed {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--16, 16px);
+}
+
+.thecannon-intervals-feed__cards {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--16, 16px);
+}
+
+.thecannon-intervals-feed__header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.thecannon-intervals-feed__header-label {
+	font-family: var(--wp--preset--font-family--instrument-sans, sans-serif);
+	font-weight: 700;
+	font-size: var(--wp--preset--font-size--sm, 0.875rem);
+	letter-spacing: 0.04em;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.thecannon-intervals-feed__header-icon {
+	flex: 0 0 auto;
+	color: var(--tc-intervals);
+}
+
+.thecannon-intervals-feed__attribution {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--instrument-sans, sans-serif);
+	font-size: var(--wp--preset--font-size--xs, 0.75rem);
+	font-weight: 600;
+	line-height: 1.4;
+	color: rgba(255, 255, 255, 0.54);
+}
+
+/* Treat provenance and the profile as one quiet, editorial footer beneath the ride cards. */
+
+/* =========================================================
+   Homepage visible-only pass (brand-aligned)
+   ========================================================= */
+
+.tc-cta-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	border-radius: 9999px;
+	border: 1px solid transparent;
+	font-weight: 700;
+	text-decoration: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.tc-cta-pill--primary {
+	background: var(--tc-primary);
+	color: var(--tc-white) !important;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 4px 12px rgba(28, 193, 163, 0.18);
+}
+
+.tc-cta-pill--ghost {
+	background: color-mix(in srgb, var(--tc-accent) 46%, white);
+	color: var(--tc-on-surface) !important;
+	border-color: transparent;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.56) inset, 0 7px 18px rgba(24, 28, 29, 0.1);
+}
+
+.tc-cta-pill--ghost:hover,
+.tc-cta-pill--ghost:focus-visible {
+	background: color-mix(in srgb, var(--tc-accent) 58%, white);
+	border-color: transparent;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.48) inset, 0 9px 22px rgba(24, 28, 29, 0.12);
+	transform: translateY(-1px);
+}
+
+.tc-cta-button .wp-block-button__link,
+.tc-cta-button .wp-element-button {
+	border-radius: 9999px;
+	font-weight: 700;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.tc-cta-button--primary .wp-block-button__link,
+.tc-cta-button--primary .wp-element-button {
+	background: color-mix(in srgb, var(--tc-primary) 88%, white);
+	color: var(--tc-on-surface);
+	border-color: transparent;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset, 0 8px 20px rgba(0, 107, 89, 0.16);
+}
+
+.tc-cta-pill--primary:hover {
+	transform: translateY(-1px);
+	background: color-mix(in srgb, var(--tc-primary) 90%, black);
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 6px 16px rgba(28, 193, 163, 0.24);
+}
+
+.tc-cta-pill--primary:focus-visible {
+	transform: translateY(-1px);
+	background: color-mix(in srgb, var(--tc-primary) 90%, black);
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 6px 16px rgba(28, 193, 163, 0.24);
+}
+
+.tc-cta-button .wp-block-button__link:hover,
+.tc-cta-button .wp-element-button:hover,
+.tc-cta-button .wp-block-button__link:focus-visible,
+.tc-cta-button .wp-element-button:focus-visible {
+	transform: translateY(-1px);
+	box-shadow: 0 12px 24px rgba(24, 28, 29, 0.2);
+}
+
+/* Shared card base */
+
+/* Ghost number watermark */
+
+/* Feature card */
+
+/* Secondary cards */
+
+/* Divider */
+
+/* Footer row: date + read link */
+
+/* Keep general section copy readable on dark, without affecting card internals. */
+
+@media (max-width: 768px) {
+
+	.tc-cta-pill {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tc-cta-pill:hover,
+.tc-cta-pill:focus-visible,
+.tc-cta-button .wp-block-button__link:hover,
+.tc-cta-button .wp-element-button:hover,
+.tc-cta-button .wp-block-button__link:focus-visible,
+.tc-cta-button .wp-element-button:focus-visible {
+		translate: none;
+	}
+
+	.tc-cta-pill,
+.tc-cta-button .wp-block-button__link,
+.tc-cta-button .wp-element-button {
+		transition: none;
+	}
+}
+
+/* =========================================================
+   Ghost / outline button variant
+   ========================================================= */
+.wp-block-button.is-style-outline:not(.tc-cta-button--dark-outline) .wp-element-button,
+.wp-block-button.is-style-outline:not(.tc-cta-button--dark-outline) .wp-block-button__link {
+	background: transparent;
+	border: 2px solid currentColor;
+	color: var(--tc-primary);
+}
+
+.wp-block-button .wp-block-button__link,
+.wp-block-button .wp-element-button {
+	font-weight: 700;
+}
+
+.wp-block-button.is-style-outline:not(.tc-cta-button--dark-outline) .wp-element-button:hover,
+.wp-block-button.is-style-outline:not(.tc-cta-button--dark-outline) .wp-block-button__link:hover {
+	background: var(--tc-primary);
+	color: var(--tc-white);
+}
+
+/* =========================================================
+   Card base
+   ========================================================= */
+
+/* =========================================================
+   Custom social-link block brand colors (core/social-link)
+   Mirrors the pattern used by WordPress core for built-in services.
+   ========================================================= */
+
+/* Strava — filled / has-background style */
+:where(.wp-block-social-links:not(.is-style-logos-only)) .wp-social-link-strava {
+	background-color: #fc4c02;
+	color: #fff;
+}
+
+/* Strava — logos-only style */
+:where(.wp-block-social-links.is-style-logos-only) .wp-social-link-strava {
+	color: #fc4c02;
+}
+
+/* Ice Cream Endurance — filled / has-background style */
+:where(.wp-block-social-links:not(.is-style-logos-only)) .wp-social-link-ice-cream-endurance {
+	background-color: #53d8ad;
+	color: #151b19;
+}
+
+/* Ice Cream Endurance — logos-only style */
+:where(.wp-block-social-links.is-style-logos-only) .wp-social-link-ice-cream-endurance {
+	color: #53d8ad;
+}
+
+/* =========================================================
+   Social icon links
+   ========================================================= */
+
+/* =========================================================
+   Footer
+   ========================================================= */
+.site-footer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--16);
+	padding: var(--wp--preset--spacing--48) var(--wp--preset--spacing--24) var(--wp--preset--spacing--40);
+	background: var(--tc-surface-low);
+}
+
+footer.wp-block-template-part {
+	margin-top: 0 !important;
+}
+
+.site-footer__social {
+	gap: var(--wp--preset--spacing--20);
+}
+
+.site-footer__meta {
+	gap: var(--wp--preset--spacing--8);
+}
+
+.site-footer__mark,
+.site-footer__muted,
+.wp-block-thecannon-current-year {
+	margin: 0;
+}
+
+.site-footer__mark {
+	color: var(--tc-primary);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 18px;
+	font-weight: 900;
+}
+
+.site-footer__muted,
+.wp-block-thecannon-current-year {
+	color: color-mix(in srgb, var(--tc-on-surface) 45%, transparent);
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-size: var(--wp--preset--font-size--md);
+}
+
+/* Strip wrapper margins from shortcode block so year aligns in the flex row */
+.site-footer .wp-block-shortcode {
+	margin: 0;
+	padding: 0;
+	display: flex;
+	align-items: center;
+}
+
+/* =========================================================
+   Polaroid collage (Around the Web section)
+   ========================================================= */
+/* Old absolute-positioned polaroid collage — replaced by grid layout in .section-around-web.
+   Kept here only as a baseline; all active styles are scoped under .section-around-web above. */
+
+/* =========================================================
+   Timeline (About page)
+   ========================================================= */
+/* =========================================================
+   Journey timeline — alternating layout
+   ========================================================= */
+.tc-timeline {
+	position: relative;
+	padding-left: 32px;
+	margin-top: var(--wp--preset--spacing--32, 2rem);
+}
+
+.tc-timeline::before {
+	content: '';
+	position: absolute;
+	left: 7px;
+	top: 8px;
+	bottom: 8px;
+	width: 4px;
+	background: var(--tc-outline-variant);
+	border-radius: 2px;
+}
+
+/* Alternating centre-spine layout */
+.tc-timeline--alternating {
+	position: relative;
+	padding-left: 0;
+	margin-top: var(--wp--preset--spacing--48, 3rem);
+}
+
+.tc-timeline--alternating::before {
+	left: 50%;
+	transform: translateX(-50%);
+	top: 0;
+	bottom: 0;
+	width: 2px;
+}
+
+.tc-timeline--alternating .tc-timeline__item {
+	display: grid;
+	grid-template-columns: 1fr 28px 1fr;
+	align-items: start;
+	gap: 0 24px;
+	padding-bottom: var(--wp--preset--spacing--48, 3rem);
+}
+
+.tc-timeline--alternating .tc-timeline__marker {
+	position: static;
+	left: auto;
+	top: auto;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--tc-primary);
+	border: 3px solid white;
+	box-shadow: 0 0 0 2px var(--tc-primary);
+	flex-shrink: 0;
+	/* Place marker on the title line (not the year eyebrow):
+	   year block height + half of title line-height - half marker size. */
+	margin-top: calc((0.65rem * 1.2 + 4px) + ((var(--wp--preset--font-size--md) * 1.4 - 14px) / 2));
+	justify-self: center;
+}
+
+.tc-timeline--alternating .tc-timeline__content--left {
+	text-align: right;
+}
+
+.tc-timeline--alternating .tc-timeline__content--right {
+	text-align: left;
+}
+
+.tc-timeline__item {
+	position: relative;
+	padding-bottom: var(--wp--preset--spacing--32, 2rem);
+	display: flex;
+	gap: 20px;
+	align-items: flex-start;
+}
+
+.tc-timeline__marker {
+	position: absolute;
+	left: -28px;
+	top: 4px;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--tc-primary);
+	border: 3px solid var(--tc-white);
+	box-shadow: 0 0 0 2px var(--tc-primary);
+	flex-shrink: 0;
+}
+
+.tc-timeline__year {
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-weight: 600;
+	font-size: 0.65rem;
+	line-height: 1.2;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--tc-outline);
+	margin: 0 0 4px;
+}
+
+.tc-timeline__year-link {
+	color: inherit;
+	text-decoration: none;
+	border-bottom: 1px solid transparent;
+}
+
+.tc-timeline__year-link:hover {
+	border-bottom-color: currentColor;
+}
+
+.tc-timeline__label {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--md);
+	font-weight: 700;
+	color: var(--tc-primary);
+	line-height: 1.4;
+	margin: 0;
+}
+
+.tc-timeline__desc {
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-size: var(--wp--preset--font-size--sm);
+	color: var(--tc-on-surface-secondary);
+	line-height: 1.6;
+	margin-top: 6px;
+}
+
+/* Card treatment for alternating timeline entries */
+.tc-timeline--alternating .tc-timeline__content {
+	background:
+		linear-gradient(115deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 48%, rgba(255, 255, 255, 0.48) 100%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(243, 250, 248, 0.30) 100%);
+	backdrop-filter: blur(16px) saturate(1.1);
+	-webkit-backdrop-filter: blur(16px) saturate(1.1);
+	border: 1px solid rgba(255, 255, 255, 0.52);
+	box-shadow:
+		0 4px 18px rgba(17, 24, 22, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+	border-radius: 16px;
+	padding: 20px 24px;
+}
+
+/* =========================================================
+   Developer Workbench shelf grid
+   ========================================================= */
+.tc-shelf-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	margin-top: var(--wp--preset--spacing--48, 3rem);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.tc-shelf {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding: 20px 24px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tc-shelf:last-child {
+	border-bottom: none;
+}
+
+.tc-shelf__label {
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-size: var(--wp--preset--font-size--xs);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.45);
+	min-width: 140px;
+	white-space: nowrap;
+}
+
+.tc-shelf__index {
+	font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+	font-size: 0.65rem;
+	color: rgba(255, 255, 255, 0.25);
+	letter-spacing: 0;
+	text-transform: none;
+	font-weight: 400;
+	margin-right: 4px;
+}
+
+.tc-shelf__items {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.tc-shelf__chip {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--xs);
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.8);
+	background: rgba(255, 255, 255, 0.07);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 6px;
+	padding: 4px 10px;
+}
+
+/* Per-shelf chip color theming */
+.tc-shelf--dev .tc-shelf__chip {
+	color: #a5b4fc;
+	background: rgba(99, 102, 241, 0.12);
+	border-color: rgba(99, 102, 241, 0.3);
+}
+
+.tc-shelf--ride .tc-shelf__chip {
+	color: #fdba74;
+	background: rgba(252, 76, 2, 0.12);
+	border-color: rgba(252, 76, 2, 0.3);
+}
+
+.tc-shelf--station .tc-shelf__chip {
+	color: #6ee7b7;
+	background: rgba(16, 185, 129, 0.12);
+	border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* =========================================================
+   Gear chips (Bikes page)
+   ========================================================= */
+.tc-gear-chip {
+	display: inline-block;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--xs);
+	font-weight: 500;
+	color: var(--tc-on-surface-secondary);
+	background: var(--tc-outline-variant);
+	border-radius: 6px;
+	padding: 4px 10px;
+}
+
+/* =========================================================
+   Placeholder image scaffold (content TODO)
+   ========================================================= */
+
+/* Keep legacy About post content from wrapping into a narrow strip beside floated images. */
+
+/* =========================================================
+   About page — 65/35 story + journey split
+   =========================================================
+
+   The About page breaks the default 720px content rhythm on purpose:
+   the intro stays narrow (default constrained width), then the body
+   widens to 1100px so the story and the journey timeline can sit
+   side-by-side at a 65/35 ratio. Stacks on narrow screens.
+   ========================================================= */
+
+/* Journey sidebar — stays in view on tall pages and collapses the
+   centre-spine alternating timeline into a single left-spine layout
+   so it fits the narrow 35% column. */
+
+/* Stack the split on narrow screens so the journey sits below the story. */
+
+/* =========================================================
+   Comment form — frosty glass fields
+   ========================================================= */
+.wp-block-post-comments-form input[type="text"],
+.wp-block-post-comments-form input[type="email"],
+.wp-block-post-comments-form input[type="url"],
+.wp-block-post-comments-form textarea,
+#commentform input[type="text"],
+#commentform input[type="email"],
+#commentform input[type="url"],
+#commentform textarea {
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.36) 100%);
+	backdrop-filter: blur(10px) saturate(1.08);
+	-webkit-backdrop-filter: blur(10px) saturate(1.08);
+	border: 1px solid rgba(255, 255, 255, 0.52);
+	border-radius: var(--tc-radius-md);
+	box-shadow:
+		0 2px 10px rgba(24, 28, 29, 0.05),
+		inset 0 1px 0 rgba(255, 255, 255, 0.62),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+	color: var(--tc-on-surface);
+	transition:
+		border-color 0.18s ease,
+		box-shadow 0.18s ease,
+		background 0.18s ease;
+}
+
+.wp-block-post-comments-form textarea,
+#commentform textarea {
+	border-radius: var(--tc-radius-lg);
+}
+
+.wp-block-post-comments-form input[type="text"]:focus,
+.wp-block-post-comments-form input[type="email"]:focus,
+.wp-block-post-comments-form input[type="url"]:focus,
+.wp-block-post-comments-form textarea:focus,
+#commentform input[type="text"]:focus,
+#commentform input[type="email"]:focus,
+#commentform input[type="url"]:focus,
+#commentform textarea:focus {
+	outline: none;
+	border-color: rgba(28, 193, 163, 0.48);
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.46) 100%);
+	box-shadow:
+		0 2px 12px rgba(24, 28, 29, 0.06),
+		0 0 0 3px rgba(28, 193, 163, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.72),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================================
+   Writing / single-post reading experience
+   ========================================================= */
+
+/* Generous line-height for comfortable long-form reading */
+.wp-block-post-content > p,
+.wp-block-post-content > ul,
+.wp-block-post-content > ol,
+.wp-block-post-content li {
+	line-height: 1.75;
+}
+
+/* Post headings use the homepage's tight display tracking, a touch looser so they stay comfortable mid-read. */
+.wp-block-post-content h2 {
+	letter-spacing: -0.03em;
+	line-height: 1.05;
+}
+
+.wp-block-post-content h3 {
+	letter-spacing: -0.02em;
+	line-height: 1.15;
+}
+
+.wp-block-post-content h4,
+.wp-block-post-content h5,
+.wp-block-post-content h6 {
+	letter-spacing: 0em;
+	line-height: 1.3;
+}
+
+/* Blockquote: editorial pull-quote treatment */
+.wp-block-post-content .wp-block-quote {
+	position: relative;
+	padding: var(--wp--preset--spacing--24, 1.5rem);
+	margin-left: 0;
+	border-radius: var(--tc-radius-lg);
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(241, 244, 245, 0.54) 100%),
+		radial-gradient(circle at 12% 0%, rgba(28, 193, 163, 0.12) 0%, rgba(28, 193, 163, 0) 52%);
+	box-shadow: inset 0 0 0 1px rgba(28, 193, 163, 0.16);
+	color: var(--tc-on-surface-secondary);
+	font-style: italic;
+}
+
+.wp-block-post-content .wp-block-quote::before {
+	content: "";
+	position: absolute;
+	top: 14px;
+	right: 16px;
+	width: 38px;
+	height: 28px;
+	border-radius: 999px;
+	background:
+		radial-gradient(circle at 26% 50%, rgba(28, 193, 163, 0.32) 0 4px, transparent 5px),
+		radial-gradient(circle at 72% 50%, rgba(120, 223, 183, 0.42) 0 4px, transparent 5px);
+	opacity: 0.72;
+	pointer-events: none;
+}
+
+.wp-block-post-content .wp-block-quote p {
+	margin: 0;
+	line-height: 1.75;
+}
+
+/* Post navigation prev/next — flex row with pill background */
+.tc-post-nav {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--wp--preset--spacing--16, 1rem);
+}
+
+.tc-post-nav .wp-block-post-navigation-link {
+	flex: 1;
+}
+
+.tc-post-nav .wp-block-post-navigation-link:last-child {
+	text-align: right;
+}
+
+/* Background pill for post nav links */
+.wp-block-post-navigation-link a {
+	background: var(--tc-surface-low);
+	border: 1px solid var(--tc-outline-variant);
+	color: var(--tc-primary);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--sm);
+	font-weight: 500;
+	text-decoration: none;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+
+.wp-block-post-navigation-link a:hover {
+	background: var(--tc-primary);
+	color: var(--tc-white);
+	border-color: var(--tc-primary);
+}
+
+/* =========================================================
+   Single post — 2/3 + 1/3 layout
+   ========================================================= */
+
+.tc-single-layout {
+	padding-inline: 24px;
+}
+
+.tc-single-layout > :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+	max-width: 980px !important;
+}
+
+/* Columns wrapper: fills up to 980px (matches nav pill), sidebar sticks to top */
+.tc-single-columns.wp-block-columns {
+	align-items: flex-start;
+}
+
+/* Force 70/30 split regardless of WP inline flex-basis */
+.tc-single-columns .tc-single-main {
+	flex-basis: 70% !important;
+	min-width: 0;
+}
+
+.tc-single-columns .tc-post-sidebar {
+	flex-basis: 30% !important;
+	min-width: 0;
+}
+
+/* Sidebar column: sticky so it stays visible while scrolling the post */
+.tc-post-sidebar {
+	position: sticky;
+	top: calc(var(--tc-header-height, 200px) + 2rem);
+	align-self: flex-start;
+	max-height: calc(100vh - var(--tc-header-height, 200px) - 4rem);
+	overflow-y: auto;
+}
+
+.tc-sidebar-panel {
+	border-radius: var(--tc-radius-lg);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 0 !important;
+	position: relative;
+	background:
+		linear-gradient(115deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 48%, rgba(255, 255, 255, 0.48) 100%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(243, 250, 248, 0.30) 100%);
+	backdrop-filter: blur(16px) saturate(1.1);
+	-webkit-backdrop-filter: blur(16px) saturate(1.1);
+	border: 1px solid rgba(255, 255, 255, 0.52);
+	box-shadow:
+		0 4px 18px rgba(17, 24, 22, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Featured image at the top of the sidebar — preserve full gear silhouettes */
+.tc-sidebar-featured-image {
+	margin: 0 !important;
+	display: block;
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+	background: var(--wp--preset--color--surface-container-lowest);
+	border-bottom: 1px solid var(--wp--preset--color--outline-variant);
+}
+
+.tc-sidebar-featured-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain !important;
+	display: block;
+}
+
+/* Gear status badges overlay the featured image (bottom-left of image).
+   Section is the containing block; badge bottom is 16px above section top,
+   which equals 16px inside the image from its bottom edge. */
+.tc-sidebar-gear-details {
+	position: relative;
+}
+
+.tc-sidebar-gear-details .tc-gear-detail-card__badges {
+	position: absolute;
+	bottom: calc(100% + 16px);
+	left: 16px;
+	margin: 0;
+	z-index: 2;
+}
+
+.tc-sidebar-gear-details .tc-gear-detail-card__badge {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.tc-sidebar-section {
+	padding: 1rem 1.25rem;
+	gap: 0.5rem !important;
+}
+
+/* Kill WordPress default flow margins inside sidebar sections */
+.tc-sidebar-section > * {
+	margin-block-start: 0 !important;
+	margin-block-end: 0 !important;
+}
+
+.tc-sidebar-divider {
+	border: none !important;
+	height: 1px !important;
+	background: rgba(255, 255, 255, 0.12) !important;
+	margin: 0 !important;
+}
+
+/* Section label headings */
+.tc-sidebar-label {
+	font-family: var(--wp--preset--font-family--inter) !important;
+	font-weight: 700 !important;
+	font-size: var(--wp--preset--font-size--xs) !important;
+	letter-spacing: 0.08em !important;
+	text-transform: uppercase !important;
+	color: var(--tc-outline) !important;
+	margin: 0 0 0.75rem 0 !important;
+}
+
+/* Author section: tighten post-author block */
+
+/* Recent posts list */
+.tc-sidebar-recent .wp-block-latest-posts {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.tc-sidebar-recent .wp-block-latest-posts li {
+	padding-block: 0.5rem;
+	border-bottom: 1px solid var(--tc-outline-variant);
+	line-height: 1.35;
+}
+
+.tc-sidebar-recent .wp-block-latest-posts li:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.tc-sidebar-recent .wp-block-latest-posts a {
+	color: var(--tc-on-surface);
+	text-decoration: none;
+	font-size: var(--wp--preset--font-size--sm);
+	font-weight: 500;
+	transition: color 0.15s ease;
+}
+
+.tc-sidebar-recent .wp-block-latest-posts a:hover {
+	color: var(--tc-primary);
+}
+
+.tc-sidebar-recent .wp-block-latest-posts__post-date {
+	display: block;
+	font-size: 0.7rem;
+	color: var(--tc-outline);
+	margin-top: 2px;
+}
+
+/* Categories list */
+.tc-sidebar-categories .wp-block-categories {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.tc-sidebar-categories .wp-block-categories li {
+	padding-block: 0.4rem;
+	border-bottom: 1px solid var(--tc-outline-variant);
+}
+
+.tc-sidebar-categories .wp-block-categories li:last-child {
+	border-bottom: none;
+}
+
+.tc-sidebar-categories .wp-block-categories a {
+	color: var(--tc-primary);
+	font-size: var(--wp--preset--font-size--sm);
+	text-decoration: none;
+	font-weight: 500;
+	transition: opacity 0.15s ease;
+}
+
+.tc-sidebar-categories .wp-block-categories a:hover {
+	opacity: 0.75;
+}
+
+/* Responsive: stack sidebar below content on mobile */
+@media (max-width: 768px) {
+	.tc-single-columns.wp-block-columns {
+		flex-direction: column !important;
+	}
+
+	.tc-single-columns .wp-block-column {
+		width: 100% !important;
+		flex-basis: 100% !important;
+	}
+
+	.tc-post-sidebar {
+		position: static;
+		margin-top: var(--wp--preset--spacing--48, 3rem);
+	}
+}
+
+/* =========================================================
+   Archive / index — empty state & pagination
+   ========================================================= */
+
+/* No-results empty state */
+.wp-block-query-no-results {
+	text-align: center;
+	padding: var(--wp--preset--spacing--80, 5rem) var(--wp--preset--spacing--32, 2rem);
+	color: var(--tc-outline);
+}
+
+/* Refine archive/query pagination numbers */
+.wp-block-query-pagination-numbers .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 8px;
+	border-radius: var(--tc-radius-sm);
+	color: var(--tc-on-surface-secondary);
+	transition: background 0.15s ease, color 0.15s ease;
+	text-decoration: none;
+}
+
+.wp-block-query-pagination-numbers .page-numbers.current {
+	background: var(--tc-primary);
+	color: var(--tc-white);
+}
+
+.wp-block-query-pagination-numbers .page-numbers:hover:not(.current) {
+	background: var(--tc-surface-low);
+	color: var(--tc-primary);
+}
+
+.wp-block-query-pagination-previous a,
+.wp-block-query-pagination-next a {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--tc-primary);
+	font-weight: 500;
+	text-decoration: none;
+	transition: opacity 0.15s ease;
+}
+
+.wp-block-query-pagination-previous a:hover,
+.wp-block-query-pagination-next a:hover {
+	opacity: 0.75;
+}
+
+/* ─── Scroll Reveal ──────────────────────────────────────────────────────── */
+/* Only hide when JS is there to bring it back. */
+.tc-js .tc-reveal {
+opacity: 0;
+transform: translateY(20px);
+transition:
+opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+transition-delay: var(--tc-reveal-delay, 0ms);
+}
+
+.tc-js .tc-reveal.is-revealed {
+opacity: 1;
+transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+.tc-js .tc-reveal {
+opacity: 1;
+transform: none;
+transition: none;
+}
+}
+
+/* =========================================================
+   Blog archive (.tc-archive)
+   ========================================================= */
+.tc-archive {
+  padding-top: clamp(56px, 7vw, 96px) !important;
+  padding-bottom: clamp(56px, 7vw, 96px) !important;
+}
+
+.tc-archive > :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+  max-width: 980px !important;
+}
+
+.tc-archive__header {
+  border-bottom: 1px solid rgba(24, 28, 29, 0.08);
+  padding-bottom: var(--wp--preset--spacing--40, 2rem);
+  margin-bottom: var(--wp--preset--spacing--56, 3rem) !important;
+}
+
+.tc-archive__header h1 {
+  color: var(--tc-on-surface);
+  font-family: var(--wp--preset--font-family--inter);
+  /* The homepage's section title size, so archive and search heads match it. */
+  font-size: var(--tc-section-title, clamp(2.5rem, 2rem + 2.5vw, 4rem)) !important;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 0;
+  margin-top: 0 !important;
+}
+
+.tc-archive__description {
+  max-width: 62ch;
+}
+
+/* ---- Dark archive card (matches homepage feature card style) ---- */
+.tc-archive-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  overflow: hidden;
+  color: var(--wp--preset--color--on-surface) !important;
+  position: relative;
+  isolation: isolate;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.5s cubic-bezier(0.65, 0, 0.35, 1),
+    box-shadow 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.tc-archive-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(28, 193, 163, 0.18);
+}
+
+/* Featured image — full bleed, no radius */
+.tc-archive-card .wp-block-post-featured-image {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.tc-archive-card .wp-block-post-featured-image img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  border-radius: 0 !important;
+}
+
+/* Posts without a featured image: subtle teal tint header strip */
+.tc-archive-card:not(:has(.wp-block-post-featured-image img)) {
+  border-top: 3px solid var(--wp--preset--color--primary);
+}
+
+/* Post title */
+.tc-archive-card .wp-block-post-title {
+  margin: 0 !important;
+  font-family: var(--wp--preset--font-family--inter);
+  font-size: clamp(1.1rem, 0.95rem + 0.75vw, 1.45rem) !important;
+  font-weight: 900;
+  line-height: 1.2 !important;
+  letter-spacing: 0;
+}
+
+.tc-archive-card .wp-block-post-title a {
+  text-decoration: none;
+  color: var(--wp--preset--color--on-surface) !important;
+}
+
+.tc-archive-card .wp-block-post-title a:hover {
+  color: var(--wp--preset--color--primary) !important;
+}
+
+/* Excerpt */
+.tc-archive-card .wp-block-post-excerpt {
+  margin: 0 !important;
+  font-family: var(--wp--preset--font-family--instrument-sans);
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(24, 28, 29, 0.62) !important;
+  font-size: var(--wp--preset--font-size--sm) !important;
+}
+
+.tc-archive-card .wp-block-post-excerpt .wp-block-post-excerpt__more-link {
+  display: none;
+}
+
+/* Divider */
+.tc-archive-card .latest-card-divider {
+  margin: 2px 0 !important;
+  border-color: rgba(24, 28, 29, 0.1) !important;
+}
+
+/* Footer row: date + read link */
+.tc-archive-card .latest-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.tc-archive-card .latest-card-footer .wp-block-post-date {
+  margin: 0;
+  font-family: var(--wp--preset--font-family--inter);
+  font-size: var(--wp--preset--font-size--xs) !important;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(24, 28, 29, 0.45) !important;
+}
+
+.tc-archive-card .latest-card-footer .wp-block-read-more {
+  margin: 0 0 0 auto;
+  font-family: var(--wp--preset--font-family--inter);
+  font-size: var(--wp--preset--font-size--xs) !important;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--wp--preset--color--on-surface) !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.tc-archive-card .latest-card-footer .wp-block-read-more:hover {
+  color: var(--wp--preset--color--primary) !important;
+}
+
+/* Pagination */
+
+.tc-archive__pagination.wp-block-query-pagination {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.54) 0%, rgba(255, 255, 255, 0.24) 48%, rgba(255, 255, 255, 0.4) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.44) 0%, rgba(243, 250, 248, 0.26) 100%);
+  backdrop-filter: blur(18px) saturate(1.12);
+  -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  box-shadow:
+    0 6px 16px rgba(17, 24, 22, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.tc-archive__pagination .wp-block-query-pagination-previous,
+.tc-archive__pagination .wp-block-query-pagination-next,
+.tc-archive__pagination .wp-block-query-pagination-numbers .page-numbers {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  min-width: 36px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  font-family: var(--wp--preset--font-family--inter);
+  font-size: var(--wp--preset--font-size--sm) !important;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  color: var(--wp--preset--color--on-surface) !important;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.tc-archive__pagination .wp-block-query-pagination-previous:hover,
+.tc-archive__pagination .wp-block-query-pagination-next:hover,
+.tc-archive__pagination .wp-block-query-pagination-numbers .page-numbers:hover {
+  background: rgba(28, 193, 163, 0.1);
+  color: var(--wp--preset--color--primary) !important;
+}
+
+.tc-archive__pagination .wp-block-query-pagination-numbers .page-numbers.current {
+  background: var(--wp--preset--color--primary);
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+.tc-archive__pagination .wp-block-query-pagination-numbers .page-numbers.dots {
+  pointer-events: none;
+  color: rgba(24, 28, 29, 0.35) !important;
+  min-width: unset;
+  padding: 0 6px;
+}
+
+/* Empty state */
+.tc-archive__empty .wp-block-paragraph {
+  opacity: 0.6;
+}
+
+/* =============================================================
+   GEAR PAGE — /gear/
+   ============================================================= */
+
+/* Hero */
+.section-gear-hero {
+  text-align: left;
+  padding-block: 48px 32px;
+}
+
+/* THE STABLE section */
+.section-gear-stable {
+  padding-block: 32px 80px;
+}
+
+/* Bike Fleet — Card mode grid */
+.tc-bike-fleet-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.tc-bike-card {
+  background: var(--wp--preset--color--surface-container-low);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.tc-bike-card:hover,
+.tc-bike-card:focus-within {
+  transform: translateY(-3px);
+  box-shadow: var(--wp--preset--shadow--elevated);
+}
+
+.tc-bike-card__image {
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  background: var(--wp--preset--color--surface-container-lowest);
+  overflow: hidden;
+}
+
+.tc-bike-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.tc-bike-card__placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, var(--wp--preset--color--primary) 0%, #0e9e87 100%);
+  opacity: 0.15;
+}
+
+.tc-bike-card__body {
+  padding: 20px 24px 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Daily Driver pill tag — gold pill, dark text, no size change to card */
+.tc-bike-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  height: 22px;
+  padding: 0 10px;
+  font-family: var(--wp--preset--font-family--inter);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wp--preset--color--on-surface);
+  background: var(--wp--preset--color--accent);
+  border-radius: 9999px;
+  margin: 0 0 10px;
+}
+
+.tc-bike-card__name {
+  font-family: var(--wp--preset--font-family--inter);
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--wp--preset--color--primary);
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.tc-bike-card--featured .tc-bike-card__name {
+  font-style: italic;
+}
+
+/* Full-card click target via the title link */
+.tc-bike-card__name a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.tc-bike-card__name a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.tc-bike-card__name a:focus-visible {
+  outline: none;
+}
+
+.tc-bike-card:focus-within {
+  outline: 2px solid var(--wp--preset--color--primary);
+  outline-offset: 3px;
+}
+
+.tc-bike-card__excerpt {
+  font-size: 0.875rem;
+  color: var(--wp--preset--color--on-surface-secondary);
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.tc-bike-card__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wp--preset--color--on-surface-secondary);
+  margin: 0 0 10px;
+}
+
+/* Bikepacking editorial section */
+
+/* Gear sections (gravel / road / mtb) */
+
+/* Dev Stack — dark section */
+.section-gear-devstack {
+  padding-block: 80px;
+}
+
+.section-gear-devstack > h2.wp-block-heading {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: clamp(2rem, 1.5rem + 2vw, 3.25rem) !important;
+	font-weight: 900;
+	letter-spacing: 0;
+	line-height: 1.04 !important;
+	margin-bottom: 0 !important;
+}
+
+.section-gear-devstack > .tc-eyebrow {
+	color: var(--tc-primary) !important;
+	margin-block: 0.375rem 0 !important;
+}
+
+/* ── Bike card inline kit chips ─────────────────────── */
+.tc-bike-card__kit {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding: 14px 0 20px;
+  border-top: 1px solid var(--wp--preset--color--outline-variant);
+  position: relative;
+  z-index: 2;
+}
+
+.tc-bike-card__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: var(--wp--preset--color--surface-container-lowest);
+  color: var(--wp--preset--color--on-surface-secondary);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tc-bike-card__chip--link:hover,
+.tc-bike-card__chip--link:focus-visible {
+  background: color-mix(in oklch, var(--wp--preset--color--primary) 14%, var(--wp--preset--color--surface-container-lowest));
+  color: var(--wp--preset--color--primary-dark);
+  outline: none;
+}
+
+.tc-bike-card__chip--link:focus-visible {
+  box-shadow: 0 0 0 2px var(--wp--preset--color--primary);
+}
+
+/* ── Dev stack chip color variants — brand-aligned ──── */
+/* Battle Station → teal tint (the daily workstation, primary) */
+.tc-gear-chips--station .tc-gear-chip {
+  background: color-mix(in oklch, var(--wp--preset--color--primary) 18%, transparent);
+  color: var(--wp--preset--color--primary-container);
+  border: 1px solid color-mix(in oklch, var(--wp--preset--color--primary) 36%, transparent);
+}
+
+.tc-gear-chips--station .tc-gear-chip--link:hover,
+.tc-gear-chips--station .tc-gear-chip--link:focus-visible {
+  background: color-mix(in oklch, var(--wp--preset--color--primary) 32%, transparent);
+  color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--wp--preset--color--primary);
+}
+
+/* Software → gold tint (tools of the trade, accent) */
+.tc-gear-chips--dev .tc-gear-chip {
+  background: color-mix(in oklch, var(--wp--preset--color--accent) 16%, transparent);
+  color: color-mix(in oklch, white 72%, var(--wp--preset--color--accent));
+  border: 1px solid color-mix(in oklch, var(--wp--preset--color--accent) 38%, transparent);
+}
+
+.tc-gear-chips--dev .tc-gear-chip--link:hover,
+.tc-gear-chips--dev .tc-gear-chip--link:focus-visible {
+  background: color-mix(in oklch, var(--wp--preset--color--accent) 32%, transparent);
+  color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--wp--preset--color--accent);
+}
+
+/* Bikes → neutral white (the headliners, let the names breathe) */
+.tc-gear-chips--bikes .tc-gear-chip {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.tc-gear-chips--bikes .tc-gear-chip--link:hover,
+.tc-gear-chips--bikes .tc-gear-chip--link:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+}
+
+/* Chips in the dark Workbench — 44px target, slightly roomier */
+.tc-gear-chips--station .tc-gear-chip,
+.tc-gear-chips--dev .tc-gear-chip,
+.tc-gear-chips--bikes .tc-gear-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  font-family: var(--wp--preset--font-family--inter);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Responsive: stack cards to 1 column on mobile */
+@media (max-width: 640px) {
+  .tc-bike-fleet-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================================
+   BIKEPACKING KIT — editorial gear cloud on /gear/
+
+   Sits between the Stable (bike cards) and the Workbench (dark
+   dev stack section). The intro keeps the editorial voice while
+   the gear links loosen into a small old-school word cloud.
+   ============================================================= */
+
+.tc-bikepacking-kit {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  max-width: 1080px;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background: var(--wp--preset--color--surface-container-lowest);
+  border: 1px solid var(--wp--preset--color--outline-variant);
+  border-radius: 24px;
+  box-shadow: var(--wp--preset--shadow--ambient);
+}
+
+.tc-bikepacking-kit__intro {
+  display: grid;
+  gap: 12px;
+}
+
+.tc-bikepacking-kit__intro > :first-child {
+  margin-top: 0;
+}
+
+.tc-bikepacking-kit__eyebrow {
+  color: var(--wp--preset--color--primary);
+  margin: 0;
+}
+
+.tc-bikepacking-kit__heading {
+  font-family: var(--wp--preset--font-family--inter);
+  font-weight: 900;
+  font-style: normal;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 0.98;
+  color: var(--wp--preset--color--on-surface);
+  margin: 0;
+  max-width: 9ch;
+}
+
+.tc-bikepacking-kit__lede {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--wp--preset--color--on-surface-secondary);
+  margin: 0;
+  max-width: 34rem;
+}
+
+.tc-bikepacking-kit__cloud-wrap {
+  min-width: 0;
+}
+
+.tc-bikepacking-kit__cloud {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.tc-bikepacking-kit__cloud-item {
+  display: flex;
+}
+
+.tc-bikepacking-kit__cloud-item:nth-child(1) {
+  flex-basis: 100%;
+  justify-content: center;
+}
+
+.tc-bikepacking-kit__cloud-item:nth-child(1) .tc-bikepacking-kit__link {
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  --tc-cloud-tilt: -1.5deg;
+}
+
+.tc-bikepacking-kit__cloud-item:nth-child(2) .tc-bikepacking-kit__link {
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  --tc-cloud-tilt: 1deg;
+  --tc-cloud-bg: color-mix(in oklch, var(--wp--preset--color--accent) 20%, var(--wp--preset--color--surface-container-lowest));
+  --tc-cloud-border: color-mix(in oklch, var(--wp--preset--color--accent) 42%, transparent);
+}
+
+.tc-bikepacking-kit__cloud-item:nth-child(3) .tc-bikepacking-kit__link {
+  font-size: clamp(0.9375rem, 1.3vw, 1.125rem);
+  --tc-cloud-tilt: -0.75deg;
+}
+
+.tc-bikepacking-kit__cloud-item:nth-child(4) .tc-bikepacking-kit__link {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  --tc-cloud-tilt: 1.5deg;
+}
+
+.tc-bikepacking-kit__link {
+  --tc-cloud-bg: color-mix(in oklch, var(--wp--preset--color--primary) 9%, var(--wp--preset--color--surface-container-lowest));
+  --tc-cloud-border: color-mix(in oklch, var(--wp--preset--color--primary) 36%, transparent);
+  --tc-cloud-tilt: 0deg;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--tc-cloud-border);
+  border-radius: 9999px;
+  background-color: var(--tc-cloud-bg);
+  color: var(--wp--preset--color--on-surface);
+  text-decoration: none;
+  font-family: var(--wp--preset--font-family--inter);
+  font-weight: 800;
+  line-height: 1;
+  transform: rotate(var(--tc-cloud-tilt));
+  box-shadow: 0 10px 24px rgba(24, 28, 29, 0.08);
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.tc-bikepacking-kit__link:hover,
+.tc-bikepacking-kit__link:focus-visible {
+  border-color: var(--wp--preset--color--primary);
+  background-color: var(--wp--preset--color--primary);
+  color: var(--wp--preset--color--on-surface);
+  transform: translateY(-2px) rotate(var(--tc-cloud-tilt));
+  outline: none;
+}
+
+.tc-bikepacking-kit__link:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--wp--preset--color--primary) 26%, transparent);
+}
+
+.tc-bikepacking-kit__link--static {
+  cursor: default;
+}
+
+.tc-bikepacking-kit__link--static:hover,
+.tc-bikepacking-kit__link--static:focus-visible {
+  border-color: var(--tc-cloud-border);
+  background-color: var(--tc-cloud-bg);
+  color: var(--wp--preset--color--on-surface);
+  transform: rotate(var(--tc-cloud-tilt));
+}
+
+@media (max-width: 780px) {
+  .tc-bikepacking-kit {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 32px;
+    border-radius: 16px;
+  }
+
+  .tc-bikepacking-kit__heading {
+    max-width: 12ch;
+  }
+
+  .tc-bikepacking-kit__cloud {
+    justify-content: flex-start;
+  }
+
+  .tc-bikepacking-kit__cloud-item:nth-child(1) {
+    flex-basis: auto;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .tc-bikepacking-kit__cloud {
+    gap: 10px;
+  }
+
+  .tc-bikepacking-kit__link,
+  .tc-bikepacking-kit__cloud-item:nth-child(n) .tc-bikepacking-kit__link {
+    font-size: 0.9375rem;
+    transform: none;
+  }
+}
+
+/* =========================================================
+   Single post — vertical rhythm
+   ========================================================= */
+.tc-single-layout {
+	padding-top: 0;
+	padding-bottom: var(--wp--preset--spacing--96, 6rem);
+}
+
+.tc-single-divider {
+	border: none !important;
+	border-top: 1px solid var(--wp--preset--color--outline-variant, #dce9df) !important;
+	margin-top: var(--wp--preset--spacing--32, 2rem) !important;
+	margin-bottom: var(--wp--preset--spacing--32, 2rem) !important;
+}
+
+/* =========================================================
+   About page — sections
+   ========================================================= */
+
+.tc-about-page {
+	--tc-about-wide: min(1180px, calc(100vw - 48px));
+}
+
+.section-about-editorial {
+	padding-top: clamp(48px, 6vw, 88px);
+	padding-bottom: clamp(72px, 8vw, 112px);
+}
+
+.section-about-editorial > .about-editorial-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 65fr) minmax(300px, 35fr);
+	gap: clamp(32px, 5vw, 72px);
+	align-items: start;
+}
+
+.about-story-column {
+	min-width: 0;
+}
+
+.about-page-content > :where(:not(.alignleft):not(.alignright):not(.alignfull)),
+.about-copy > :where(:not(.alignleft):not(.alignright):not(.alignfull):not(.about-photo--inline)),
+.about-note > :where(:not(.alignleft):not(.alignright):not(.alignfull)),
+.about-journey-rail__header > :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+	margin-right: 0 !important;
+	margin-left: 0 !important;
+}
+
+.about-title {
+	max-width: 12ch;
+	margin: 0;
+	font-size: clamp(2.25rem, 1.7rem + 2.7vw, 4rem);
+	font-weight: 900;
+	letter-spacing: 0;
+	line-height: 0.98;
+}
+
+.about-title + .tc-eyebrow {
+	margin-block-start: 0.75rem !important;
+}
+
+.about-kicker {
+	max-width: 52ch;
+	margin-top: clamp(2rem, 5vw, 4.5rem);
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-size: clamp(1.125rem, 0.975rem + 0.6vw, 1.3125rem);
+	font-weight: 400;
+	line-height: 1.65;
+	color: var(--tc-on-surface);
+}
+
+.about-kicker strong,
+.about-kicker em {
+	color: inherit;
+	font-style: normal;
+	font-weight: 800;
+}
+
+.about-copy-grid {
+	display: block;
+	max-width: 820px;
+	margin-top: var(--wp--preset--spacing--48, 3rem);
+}
+
+.about-copy {
+	display: flow-root;
+	max-width: 62ch;
+	color: var(--tc-on-surface-secondary);
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-size: clamp(1.0625rem, 0.96rem + 0.42vw, 1.25rem);
+	line-height: 1.75;
+}
+
+.about-copy > p {
+	max-width: 62ch;
+	margin: 0;
+}
+
+.about-copy > p + p {
+	margin-top: var(--wp--preset--spacing--24, 1.5rem);
+}
+
+.about-page-content > :first-child {
+	margin-top: 0;
+}
+
+.about-photo {
+	margin: 0;
+	overflow: hidden;
+	border-radius: var(--tc-radius-lg);
+	background: var(--tc-surface-low);
+	box-shadow: 0 12px 36px rgba(24, 28, 29, 0.12);
+}
+
+.about-photo img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.about-photo--portrait {
+	aspect-ratio: 4 / 5;
+	transform: rotate(-1.4deg);
+}
+
+.about-photo--inline {
+	float: left;
+	width: clamp(128px, 26%, 190px);
+	margin: 0;
+	margin-top: 0.36rem;
+	margin-right: clamp(1.75rem, 3vw, 2.25rem) !important;
+	margin-bottom: var(--wp--preset--spacing--32, 2rem);
+}
+
+.about-photo--inline + p + p {
+	clear: both;
+}
+
+.about-notes {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--wp--preset--spacing--12, 0.75rem);
+	max-width: 820px;
+	margin-top: var(--wp--preset--spacing--48, 3rem);
+	padding-top: var(--wp--preset--spacing--24, 1.5rem);
+	border-top: 1px solid rgba(24, 28, 29, 0.12);
+}
+
+.about-note {
+	display: grid;
+	gap: var(--wp--preset--spacing--8, 0.5rem);
+	align-content: start;
+	margin-block-start: 0 !important;
+}
+
+.about-note h2 {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 0.96rem;
+	font-weight: 840;
+	line-height: 1.25;
+}
+
+.about-note p {
+	margin: 0;
+	color: var(--tc-on-surface-secondary);
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-size: 0.86rem;
+	line-height: 1.45;
+}
+
+.about-journey-rail {
+	position: sticky;
+	top: 104px;
+	display: grid;
+	gap: var(--wp--preset--spacing--24, 1.5rem);
+	padding: var(--wp--preset--spacing--24, 1.5rem);
+	border-radius: var(--tc-radius-xl);
+	border: 1px solid rgba(255, 255, 255, 0.52);
+	background:
+		linear-gradient(115deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 48%, rgba(255, 255, 255, 0.48) 100%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(243, 250, 248, 0.30) 100%);
+	backdrop-filter: blur(16px) saturate(1.1);
+	-webkit-backdrop-filter: blur(16px) saturate(1.1);
+	color: var(--tc-on-surface);
+	box-shadow:
+		0 4px 18px rgba(17, 24, 22, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.about-journey-rail__header {
+	display: grid;
+	gap: var(--wp--preset--spacing--8, 0.5rem);
+}
+
+.about-journey-rail__header h2 {
+	margin: 0 !important;
+	color: var(--tc-on-surface);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: clamp(1.35rem, 1.05rem + 1.05vw, 1.85rem);
+	font-weight: 900;
+	letter-spacing: 0;
+	line-height: 1.02;
+}
+
+.about-journey-rail__header .tc-eyebrow {
+	justify-self: start;
+	margin: 0 !important;
+}
+
+.about-journey-rail .tc-timeline {
+	margin-top: 0;
+	padding-left: 0;
+}
+
+.about-journey-rail .tc-timeline--alternating {
+	display: grid;
+	gap: var(--wp--preset--spacing--16, 1rem);
+	margin-top: 0;
+}
+
+.about-journey-rail .tc-timeline--alternating::before {
+	top: 10px;
+	bottom: 10px;
+	left: 6px;
+	width: 1px;
+	transform: none;
+	background: rgba(24, 28, 29, 0.14);
+}
+
+.about-journey-rail .tc-timeline--alternating .tc-timeline__item {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0;
+	padding-left: var(--wp--preset--spacing--24, 1.5rem);
+	padding-bottom: 0;
+}
+
+.about-journey-rail .tc-timeline--alternating .tc-timeline__spacer {
+	display: none;
+}
+
+.about-journey-rail .tc-timeline--alternating .tc-timeline__marker {
+	position: absolute;
+	top: 0.42em;
+	left: 0;
+	width: 13px;
+	height: 13px;
+	margin-top: 0;
+	border: 0;
+	background: var(--tc-primary);
+	box-shadow: 0 0 0 4px rgba(28, 193, 163, 0.16);
+}
+
+.about-journey-rail .tc-timeline--alternating .tc-timeline__content {
+	position: relative;
+	margin-left: calc(-1 * var(--wp--preset--spacing--8, 0.5rem));
+	padding: var(--wp--preset--spacing--8, 0.5rem);
+	border: 0;
+	border-radius: var(--tc-radius-sm);
+	background: transparent;
+	box-shadow: none;
+	text-align: left;
+	transition:
+		background-color 160ms ease,
+		transform 160ms ease;
+}
+
+.about-journey-rail .tc-timeline--alternating .tc-timeline__content:hover,
+.about-journey-rail .tc-timeline--alternating .tc-timeline__content:focus-within {
+	background: rgba(255, 255, 255, 0.5);
+	transform: translateX(2px);
+}
+
+.about-journey-rail .tc-timeline__year {
+	color: var(--tc-on-surface-secondary);
+}
+
+.about-journey-rail .tc-timeline__label {
+	color: var(--tc-on-surface);
+	font-size: 0.96rem;
+	line-height: 1.25;
+}
+
+.about-journey-rail .tc-timeline__label a {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-color: var(--wp--preset--color--primary);
+	text-underline-offset: 0.2em;
+}
+
+.about-journey-rail .tc-timeline__label a::after {
+	content: none;
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	border-radius: var(--tc-radius-sm);
+}
+
+.about-journey-rail .tc-timeline__year-link {
+	position: relative;
+	z-index: 2;
+}
+
+.about-journey-rail .tc-timeline__label a:focus-visible {
+	outline: 2px solid var(--tc-primary);
+	outline-offset: 3px;
+}
+
+.about-journey-rail .tc-timeline__desc {
+	color: var(--tc-on-surface-secondary);
+	font-size: 0.84rem;
+	line-height: 1.55;
+}
+
+.section-about-workbench {
+	margin-top: 0;
+}
+
+@media (max-width: 900px) {
+	.tc-about-page {
+		--tc-about-wide: min(760px, calc(100vw - 32px));
+	}
+
+	.section-about-editorial {
+		padding-top: var(--wp--preset--spacing--48, 3rem);
+	}
+
+	.section-about-editorial > .about-editorial-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.about-title {
+		max-width: 8ch;
+		font-size: clamp(2.85rem, 13vw, 4.6rem);
+	}
+
+	.about-journey-rail {
+		position: relative;
+		top: auto;
+	}
+
+	.about-notes {
+		grid-template-columns: 1fr;
+	}
+
+	.about-photo--inline {
+		width: clamp(128px, 36%, 190px);
+	}
+}
+
+@media (max-width: 640px) {
+	.about-photo--inline {
+		float: none;
+		width: min(100%, 260px);
+		margin: 0 0 var(--wp--preset--spacing--24, 1.5rem);
+	}
+}
+
+/* =========================================================
+   Devstack separator (gear + about pages)
+   ========================================================= */
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .tc-bike-fleet-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Shared page intro rhythm: match the homepage hero's proximity to the nav. */
+.tc-archive,
+.section-about-editorial,
+.section-gear-hero {
+	padding-top: 0 !important;
+}
+
+/* =========================================================
+   Single post header — CANNON-625
+   Composed editorial unit: eyebrow (category) → title → meta row.
+   Replaces the old stack + divider layout. No rule between the
+   header and the content — whitespace carries the transition.
+   Stays within the 720px content column (no breakout); the typography
+   and vertical rhythm do the heavy lifting.
+   ========================================================= */
+.tc-single-header {
+	/* breathing room before the content block, in place of the old divider */
+	margin-block-end: var(--wp--preset--spacing--48, 3rem);
+}
+
+/* Title: inline styles carry font/size/weight. Reset the default WP
+   title margin so the eyebrow-to-title spacing is intentional. */
+.tc-format-title.wp-block-post-title,
+.tc-single-header__title.wp-block-post-title {
+	margin: 0;
+	max-width: 22ch;
+	/* Long titles (4+ lines) still read cleanly at this measure;
+	short titles (1 line) sit comfortably above the meta row. */
+}
+
+/* Shared editorial format shell. Photo essays keep the original image ratio
+   and WordPress responsive image/loading behavior, with no extra image JS. */
+.tc-format {
+	padding-inline: 24px;
+	padding-block: var(--wp--preset--spacing--48, 3rem);
+}
+
+.tc-format-hero {
+	margin-block: var(--wp--preset--spacing--48, 3rem);
+}
+
+.tc-format-hero img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.tc-format-content {
+	min-width: 0;
+}
+
+.tc-format-label {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--xs, 0.8125rem);
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: inherit;
+	margin-block: 0;
+}
+
+/* A ride recap is an editorial snapshot, not a dashboard or a live feed. */
+.tc-ride-recap {
+	margin-block: 0 var(--wp--preset--spacing--40, 2.5rem);
+	padding: var(--wp--preset--spacing--24, 1.5rem);
+	border: 1px solid var(--wp--preset--color--outline-variant, #d7e0dd);
+	border-radius: 12px;
+	background: var(--wp--preset--color--surface-container-low, #e8f0e9);
+}
+
+.tc-ride-recap > .tc-format-label {
+	margin-block-end: 0.8rem;
+	color: var(--wp--preset--color--primary, #18805e);
+}
+
+.tc-ride-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+	gap: 0.9rem 1.25rem;
+	margin: 0;
+}
+
+.tc-ride-stat {
+	min-width: 0;
+}
+
+.tc-ride-stat dt {
+	margin: 0 0 0.2rem;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--xs, 0.8125rem);
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--tc-on-surface-secondary, #3c4a45);
+}
+
+.tc-ride-stat dd {
+	margin: 0;
+	font-weight: 700;
+	color: var(--tc-on-surface, #151b19);
+}
+
+.tc-ride-stat a,
+.tc-ride-recap > p a {
+	color: var(--wp--preset--color--primary, #18805e);
+	text-underline-offset: 0.2em;
+}
+
+.tc-ride-recap > p:last-child {
+	margin: 1rem 0 0;
+}
+
+/* Override the site's narrow shell only within this editorial exception. */
+main#wp--skip-link--target.tc-format > .tc-format-content > :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+	max-width: min(860px, 100%);
+}
+
+main#wp--skip-link--target.tc-format > .tc-format-content > .alignwide {
+	max-width: 100%;
+}
+
+.tc-format > .tc-single-header,
+.tc-format > .tc-format-footer {
+	max-width: 720px;
+}
+
+.tc-format--photo .tc-format-content .wp-block-gallery {
+	gap: var(--wp--preset--spacing--24, 1.5rem);
+}
+
+.tc-format--photo .tc-format-content figcaption {
+	font-size: var(--wp--preset--font-size--sm, 0.9375rem);
+	line-height: 1.6;
+}
+
+/* Keep image captions below the photograph, including linked captions. */
+.tc-format--photo .wp-block-gallery.has-nested-images figure.wp-block-image figcaption {
+	position: static;
+	background: none;
+	color: var(--tc-on-surface-secondary, #3c4a45);
+	max-height: none;
+	padding: 0.75rem 0 0;
+	text-align: start;
+}
+
+.tc-format--photo .wp-block-gallery.has-nested-images figure.wp-block-image {
+	justify-content: flex-start;
+}
+
+.tc-format-footer {
+	margin-block-start: var(--wp--preset--spacing--48, 3rem);
+}
+
+@media (max-width: 600px) {
+	.tc-format {
+		padding-inline: 20px;
+	}
+
+	.tc-format--photo .wp-block-gallery.has-nested-images figure.wp-block-image:not(#individual-image) {
+		width: 100%;
+		flex-grow: 0;
+	}
+}
+
+/* Link posts retain their own canonical URL, while the title leads to the
+   original source. The source row makes that editorial handoff explicit. */
+.tc-link-post-source {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--xs, 0.8125rem);
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-decoration: none;
+}
+
+.tc-link-post-source--card {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	width: fit-content;
+	color: var(--wp--preset--color--primary);
+	text-transform: uppercase;
+}
+
+.tc-link-post-source--card:hover,
+.tc-link-post-source--card:focus-visible {
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+
+.tc-link-post-source--single {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.45rem 0.75rem;
+	margin-block-start: var(--wp--preset--spacing--16, 1rem);
+	color: var(--tc-on-surface-secondary, #3c4a45);
+}
+
+.tc-link-post-source__label {
+	font-weight: 500;
+}
+
+.tc-link-post-source__link {
+	color: var(--wp--preset--color--primary);
+	text-decoration: none;
+}
+
+.tc-link-post-source__link:hover,
+.tc-link-post-source__link:focus-visible,
+.tc-link-post-source__permalink:hover,
+.tc-link-post-source__permalink:focus-visible {
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+
+.tc-link-post-source__permalink {
+	color: inherit;
+	font-weight: 500;
+}
+
+/* Byline: slightly heavier, full-contrast — it's the most "human" bit.
+   A tiny teal dot after the name echoes the gold-on-R²-wordmark idea:
+   a small kinetic punctuation that says "this is a person's site". */
+
+@media (max-width: 640px) {
+	.tc-single-header {
+		margin-block-end: var(--wp--preset--spacing--32, 2rem);
+	}
+
+	.tc-single-header__title.wp-block-post-title {
+		max-width: none;
+	}
+}
+
+/* =========================================================
+   Comments section — single post
+   -----------------------------------------------------------
+   Structure (see templates/single.html):
+     .tc-comments (wp:comments)
+       .tc-comments-header (.tc-comments-title h2 + eyebrow)
+       ol.wp-block-comment-template
+         li
+           .tc-comment-body (avatar + .tc-comment-main)
+             .tc-comment-main
+               .tc-comment-meta (author + date)
+               .tc-comment-content (p…)
+               .tc-comment-reply a (pill CTA)
+           ol.children li … (threaded replies)
+       .tc-comments-pagination
+       .tc-comments-form (wp:post-comments-form — frosty fields above)
+
+   Empty state: when a post is open for comments but has none,
+   WP skips the comment-template and renders the form directly.
+   We inject a "Be the first to comment" lead-in via ::before on
+   the form when it directly follows the header (no list between).
+   ========================================================= */
+
+/* Section shell: breathing room above, editorial column width */
+.tc-comments.wp-block-comments {
+	margin-block-start: var(--wp--preset--spacing--64, 4rem);
+	padding-block-start: var(--wp--preset--spacing--48, 3rem);
+	border-top: 1px solid var(--tc-outline-variant);
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--40, 2.5rem);
+}
+
+/* Heading block — eyebrow follows the h2, matching the homepage hero rhythm. */
+.tc-comments-header {
+	display: flex;
+	flex-direction: column;
+}
+
+.tc-comments-header .tc-eyebrow {
+	margin: 0.375rem 0 0;
+}
+
+.tc-comments .tc-comments-title,
+.tc-comments .wp-block-comments-title {
+	color: var(--tc-on-surface);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--xl);
+	font-weight: 900;
+	line-height: 1.1;
+	margin: 0;
+	letter-spacing: 0;
+}
+
+/* -----------------------------------------------------------
+   Comment list — glass card wrapper + list reset
+   ----------------------------------------------------------- */
+.tc-comments .wp-block-comment-template {
+	list-style: none;
+	margin: 0;
+	padding: var(--wp--preset--spacing--32, 2rem);
+	border-radius: var(--tc-radius-xl, 24px);
+	background:
+		linear-gradient(115deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.28) 48%, rgba(255, 255, 255, 0.48) 100%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(243, 250, 248, 0.30) 100%);
+	backdrop-filter: blur(16px) saturate(1.1);
+	-webkit-backdrop-filter: blur(16px) saturate(1.1);
+	border: 1px solid rgba(255, 255, 255, 0.52);
+	box-shadow:
+		0 4px 18px rgba(17, 24, 22, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.tc-comments .wp-block-comment-template > li {
+	padding-block: var(--wp--preset--spacing--32, 2rem);
+	border-top: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.tc-comments .wp-block-comment-template > li:first-child {
+	border-top: none;
+	padding-block-start: 0;
+}
+
+.tc-comments .wp-block-comment-template > li:last-child {
+	padding-block-end: 0;
+}
+
+/* -----------------------------------------------------------
+   Comment body — avatar + content, flex row
+   ----------------------------------------------------------- */
+.tc-comment-body.wp-block-group {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--wp--preset--spacing--20, 1.25rem);
+	padding-block-end: var(--wp--preset--spacing--20, 1.25rem);
+}
+
+.tc-comment-body .tc-comment-avatar,
+.tc-comment-body .wp-block-avatar {
+	flex: 0 0 auto;
+	margin: 0;
+	line-height: 0;
+}
+
+.tc-comment-body .wp-block-avatar img {
+	border-radius: var(--tc-radius-pill);
+	box-shadow: 0 2px 8px rgba(24, 28, 29, 0.08);
+	display: block;
+}
+
+.tc-comment-main.wp-block-group {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+/* Meta row: author name + gold-dot separator + date */
+.tc-comment-meta.wp-block-group {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.5rem 0.75rem;
+	margin: 0;
+}
+
+.tc-comment-meta .tc-comment-author,
+.tc-comment-meta .wp-block-comment-author-name {
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 800;
+	color: var(--tc-on-surface);
+	font-size: 1rem;
+	line-height: 1.3;
+}
+
+.tc-comment-meta .tc-comment-author a,
+.tc-comment-meta .wp-block-comment-author-name a {
+	color: inherit;
+	text-decoration: none;
+	min-height: 0;
+	padding: 0;
+}
+
+.tc-comment-meta .tc-comment-author a:hover,
+.tc-comment-meta .tc-comment-author a:focus-visible,
+.tc-comment-meta .wp-block-comment-author-name a:hover,
+.tc-comment-meta .wp-block-comment-author-name a:focus-visible {
+	color: var(--tc-primary);
+}
+
+.tc-comment-meta .tc-comment-author::after,
+.tc-comment-meta .wp-block-comment-author-name::after {
+	content: "";
+	display: inline-block;
+	width: 4px;
+	height: 4px;
+	margin-left: 0.75rem;
+	border-radius: 50%;
+	background: var(--tc-primary);
+	vertical-align: middle;
+	transform: translateY(-2px);
+}
+
+.tc-comment-meta .tc-comment-date,
+.tc-comment-meta .wp-block-comment-date {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--instrument-sans);
+	font-size: var(--wp--preset--font-size--xs);
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.tc-comment-meta .tc-comment-date a,
+.tc-comment-meta .wp-block-comment-date a {
+	color: var(--tc-outline);
+	text-decoration: none;
+	min-height: 0;
+	padding: 0;
+}
+
+.tc-comment-meta .tc-comment-date a:hover,
+.tc-comment-meta .tc-comment-date a:focus-visible {
+	color: var(--tc-primary);
+}
+
+/* Comment content — editorial column */
+.tc-comment-content.wp-block-comment-content {
+	margin: 0;
+	color: var(--tc-on-surface);
+}
+
+.tc-comment-content.wp-block-comment-content > p {
+	margin: 0 0 0.75rem 0;
+	line-height: 1.65;
+}
+
+.tc-comment-content.wp-block-comment-content > p:last-child {
+	margin-bottom: 0;
+}
+
+.tc-comment-content.wp-block-comment-content a {
+	color: var(--tc-primary-dark);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+	min-height: 0;
+	padding: 0;
+}
+
+.tc-comment-content.wp-block-comment-content a:hover,
+.tc-comment-content.wp-block-comment-content a:focus-visible {
+	color: var(--tc-primary);
+}
+
+/* Reply link — small teal pill, matches site CTA language */
+.tc-comment-reply.wp-block-comment-reply-link {
+	margin-top: 0.25rem;
+}
+
+.tc-comment-reply.wp-block-comment-reply-link a,
+.wp-block-comment-reply-link a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 6px 14px;
+	min-height: 32px;
+	border-radius: var(--tc-radius-pill);
+	background: transparent;
+	border: 1px solid color-mix(in srgb, var(--tc-primary) 40%, transparent);
+	color: var(--tc-primary-dark);
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 600;
+	font-size: var(--wp--preset--font-size--sm);
+	text-decoration: none;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease,
+		transform 0.15s ease;
+}
+
+.tc-comment-reply.wp-block-comment-reply-link a::before,
+.wp-block-comment-reply-link a::before {
+	content: "↩";
+	font-size: 0.9em;
+	line-height: 1;
+}
+
+.tc-comment-reply.wp-block-comment-reply-link a:hover,
+.tc-comment-reply.wp-block-comment-reply-link a:focus-visible,
+.wp-block-comment-reply-link a:hover,
+.wp-block-comment-reply-link a:focus-visible {
+	background: var(--tc-primary);
+	border-color: var(--tc-primary);
+	color: var(--tc-white);
+	transform: translateY(-1px);
+}
+
+/* -----------------------------------------------------------
+   Threaded replies — indent + left rail as parent→reply cue
+   ----------------------------------------------------------- */
+.tc-comments .wp-block-comment-template ol.children {
+	margin-top: var(--wp--preset--spacing--24, 1.5rem);
+	padding-left: clamp(20px, 3.5vw, 44px);
+	position: relative;
+	border-left: 1.5px solid rgba(28, 193, 163, 0.3);
+}
+
+.tc-comments .wp-block-comment-template ol.children > li {
+	padding-block: var(--wp--preset--spacing--32, 2rem);
+	border-top: 1px solid rgba(28, 193, 163, 0.12);
+	position: relative;
+}
+
+.tc-comments .wp-block-comment-template ol.children > li:first-child {
+	border-top: none;
+	padding-block-start: var(--wp--preset--spacing--24, 1.5rem);
+}
+
+/* Small horizontal connector from the rail to each reply's avatar */
+.tc-comments .wp-block-comment-template ol.children > li::before {
+	content: "";
+	position: absolute;
+	left: calc(-1 * clamp(20px, 3.5vw, 44px));
+	top: calc(var(--wp--preset--spacing--32, 2rem) + 22px);
+	width: clamp(14px, 2.5vw, 28px);
+	height: 1.5px;
+	background: rgba(28, 193, 163, 0.3);
+}
+
+.tc-comments .wp-block-comment-template ol.children > li:first-child::before {
+	top: calc(var(--wp--preset--spacing--24, 1.5rem) + 22px);
+}
+
+/* Slightly smaller avatars for replies to reinforce hierarchy */
+.tc-comments .wp-block-comment-template ol.children .wp-block-avatar img {
+	width: 36px;
+	height: 36px;
+}
+
+/* -----------------------------------------------------------
+   Comments pagination — match post-navigation pill style
+   ----------------------------------------------------------- */
+.tc-comments-pagination.wp-block-comments-pagination {
+	display: flex;
+	align-items: center;
+	gap: var(--wp--preset--spacing--16, 1rem);
+	margin-block-start: var(--wp--preset--spacing--24, 1.5rem);
+	padding-block-start: var(--wp--preset--spacing--24, 1.5rem);
+	border-top: 1px solid var(--tc-outline-variant);
+	flex-wrap: wrap;
+}
+
+.tc-comments-pagination .wp-block-comments-pagination-numbers {
+	display: flex;
+	gap: 0.35rem;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.tc-comments-pagination a,
+.tc-comments-pagination .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px;
+	min-width: 36px;
+	padding: 0 14px;
+	border-radius: var(--tc-radius-pill);
+	background: var(--tc-surface-low);
+	border: 1px solid var(--tc-outline-variant);
+	color: var(--tc-primary-dark);
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 600;
+	font-size: var(--wp--preset--font-size--sm);
+	text-decoration: none;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+
+.tc-comments-pagination a:hover,
+.tc-comments-pagination a:focus-visible {
+	background: var(--tc-primary);
+	color: var(--tc-white);
+	border-color: var(--tc-primary);
+}
+
+.tc-comments-pagination .page-numbers.current {
+	background: var(--tc-primary);
+	color: var(--tc-white);
+	border-color: var(--tc-primary);
+}
+
+.tc-comments-pagination .page-numbers.dots {
+	background: transparent;
+	border-color: transparent;
+	color: var(--tc-outline);
+}
+
+/* -----------------------------------------------------------
+   Empty state — "Be the first to comment"
+   When a post is open for comments but has none, the header
+   group + form are the only direct children of .tc-comments.
+   Inject a soft lead-in before the form.
+   ----------------------------------------------------------- */
+.tc-comments > .tc-comments-header + .wp-block-post-comments-form::before {
+	content: "Be the first to comment.";
+	display: block;
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 900;
+	font-size: var(--wp--preset--font-size--lg, 1.125rem);
+	color: var(--tc-on-surface);
+	padding: var(--wp--preset--spacing--24, 1.5rem) 0;
+	margin-bottom: var(--wp--preset--spacing--20, 1.25rem);
+	border-top: 1px dashed var(--tc-outline-variant);
+	border-bottom: 1px dashed var(--tc-outline-variant);
+	text-align: center;
+	letter-spacing: 0;
+}
+
+/* -----------------------------------------------------------
+   Comment form — labels, heading, submit
+   (Frosty-glass input styles live in the block above this one.)
+   ----------------------------------------------------------- */
+.tc-comments-form.wp-block-post-comments-form,
+.wp-block-post-comments-form {
+	margin-block-start: var(--wp--preset--spacing--24, 1.5rem);
+}
+
+.wp-block-post-comments-form .comment-reply-title,
+.wp-block-post-comments-form #reply-title {
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 900;
+	font-size: var(--wp--preset--font-size--xl, 1.5rem);
+	line-height: 1.15;
+	letter-spacing: 0;
+	color: var(--tc-on-surface);
+	margin: 0 0 var(--wp--preset--spacing--20, 1.25rem) 0;
+}
+
+/* Eyebrow below the "Leave a Reply" heading to mirror .tc-comments-header. */
+.wp-block-post-comments-form .comment-reply-title::after,
+.wp-block-post-comments-form #reply-title::after {
+	content: "JOIN IN";
+	display: block;
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: 1rem;
+	font-weight: 900;
+	letter-spacing: 0.08em;
+	line-height: 1;
+	text-transform: uppercase;
+	color: var(--tc-primary);
+	margin-top: 0.375rem;
+}
+
+.wp-block-post-comments-form .comment-form,
+#commentform {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--16, 1rem);
+}
+
+.wp-block-post-comments-form .comment-form p,
+#commentform p {
+	margin: 0;
+}
+
+.wp-block-post-comments-form .comment-form label,
+#commentform label {
+	display: block;
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 600;
+	font-size: var(--wp--preset--font-size--sm, 0.875rem);
+	color: var(--tc-on-surface-secondary);
+	margin-bottom: 0.35rem;
+}
+
+.wp-block-post-comments-form .logged-in-as,
+#commentform .logged-in-as {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--sm, 0.875rem);
+	color: var(--tc-on-surface-secondary);
+}
+
+.wp-block-post-comments-form .logged-in-as a,
+#commentform .logged-in-as a {
+	color: var(--tc-primary-dark);
+	font-weight: 600;
+}
+
+.wp-block-post-comments-form .comment-notes,
+#commentform .comment-notes,
+.wp-block-post-comments-form .comment-form-cookies-consent,
+#commentform .comment-form-cookies-consent {
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--sm, 0.875rem);
+	color: var(--tc-on-surface-secondary);
+}
+
+.wp-block-post-comments-form .required-field-message,
+#commentform .required-field-message {
+	font-style: italic;
+	color: var(--tc-outline);
+	font-size: var(--wp--preset--font-size--xs, 0.75rem);
+}
+
+/* Submit: reuse site's primary pill CTA */
+.wp-block-post-comments-form .form-submit,
+#commentform .form-submit {
+	margin-block-start: 0.5rem;
+}
+
+.wp-block-post-comments-form .form-submit .submit,
+#commentform .form-submit .submit {
+	background: var(--tc-primary);
+	border: 1px solid var(--tc-primary);
+	color: var(--tc-white);
+	font-family: var(--wp--preset--font-family--inter);
+	font-weight: 700;
+	font-size: var(--wp--preset--font-size--sm, 0.875rem);
+	letter-spacing: 0.01em;
+	padding: 0 24px;
+	box-shadow: 0 2px 10px rgba(28, 193, 163, 0.25);
+	cursor: pointer;
+	transition:
+		background 0.15s ease,
+		transform 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+.wp-block-post-comments-form .form-submit .submit:hover,
+#commentform .form-submit .submit:hover {
+	background: color-mix(in srgb, var(--tc-primary) 90%, black);
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(28, 193, 163, 0.3);
+}
+
+.wp-block-post-comments-form .form-submit .submit:focus-visible,
+#commentform .form-submit .submit:focus-visible {
+	outline: 3px solid var(--tc-primary);
+	outline-offset: 2px;
+}
+
+/* -----------------------------------------------------------
+   Responsive — tighten avatar gap, shrink reply indent on mobile
+   ----------------------------------------------------------- */
+@media (max-width: 600px) {
+	.tc-comment-body.wp-block-group {
+		gap: 0.85rem;
+	}
+
+	.tc-comment-body .wp-block-avatar img {
+		width: 36px;
+		height: 36px;
+	}
+
+	.tc-comments .wp-block-comment-template ol.children {
+		padding-left: 16px;
+	}
+
+	.tc-comments .wp-block-comment-template ol.children > li::before {
+		left: -16px;
+		width: 10px;
+	}
+}
+
+/* =========================================================
+   Delight pass: kinetic editorial details
+   ========================================================= */
+.tc-site-logo .custom-logo-link {
+	position: relative;
+	border-radius: var(--tc-radius-pill);
+	transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), filter 0.22s ease;
+}
+
+.tc-site-logo .custom-logo-link:hover,
+.tc-site-logo .custom-logo-link:focus-visible {
+	transform: translateY(-1px) rotate(-1.5deg);
+	filter: drop-shadow(0 6px 12px rgba(120, 223, 183, 0.28));
+}
+
+.tc-site-logo .custom-logo-link[data-cannon-note]::after {
+	content: attr(data-cannon-note);
+	position: absolute;
+	top: calc(100% + 10px);
+	left: 0;
+	z-index: 20;
+	width: max-content;
+	max-width: min(260px, calc(100vw - 32px));
+	padding: 7px 11px;
+	border-radius: var(--tc-radius-pill);
+	background: var(--tc-on-surface);
+	color: var(--tc-white);
+	font-family: var(--wp--preset--font-family--instrument-sans, sans-serif);
+	font-size: var(--wp--preset--font-size--xs, 0.75rem);
+	font-weight: 700;
+	line-height: 1.3;
+	text-align: center;
+	box-shadow: 0 10px 24px rgba(24, 28, 29, 0.18);
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(0, -4px) scale(0.98);
+	transform-origin: left top;
+	transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tc-site-logo .custom-logo-link[data-cannon-note]:hover::after,
+.tc-site-logo .custom-logo-link[data-cannon-note]:focus-visible::after {
+	opacity: 1;
+	transform: translate(0, 0) scale(1);
+}
+
+.wp-site-blocks a:not(.wp-block-button__link):not(.custom-logo-link):not(.wp-block-social-link-anchor):not(.tc-bike-card__name a):not(.tc-bike-card__chip):not(.tc-gear-chip) {
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.18em;
+	transition: color 0.16s ease, text-decoration-color 0.16s ease, transform 0.16s ease;
+}
+
+.wp-block-post-content a:not(.wp-block-button__link) {
+	background-image: linear-gradient(90deg, rgba(28, 193, 163, 0.22), rgba(120, 223, 183, 0.2));
+	background-repeat: no-repeat;
+	background-position: 0 100%;
+	background-size: 100% 0.18em;
+	text-decoration: none;
+	transition: background-size 0.18s ease, color 0.18s ease;
+}
+
+.wp-block-post-content a:not(.wp-block-button__link):hover,
+.wp-block-post-content a:not(.wp-block-button__link):focus-visible {
+	background-size: 100% 0.55em;
+	color: var(--tc-primary-dark);
+}
+
+.wp-block-post-content .tc-related-gear__card-title a,
+.wp-block-post-content .tc-related-gear__card-title a:hover,
+.wp-block-post-content .tc-related-gear__card-title a:focus,
+.wp-block-post-content .tc-related-gear__card-title a:focus-visible {
+	background-image: none;
+	background-size: auto;
+	text-decoration: none;
+}
+
+.wp-block-post-content .tc-related-gear__card-title a:hover,
+.wp-block-post-content .tc-related-gear__card-title a:focus,
+.wp-block-post-content .tc-related-gear__card-title a:focus-visible {
+	color: #ffffff;
+}
+
+.tc-cta-pill:active,
+.wp-block-button__link:active,
+.wp-element-button:active,
+.tc-gear-detail-card__button:active,
+.tc-bike-card__chip--link:active,
+.tc-gear-chip--link:active {
+	transform: translateY(1px) scale(0.99);
+}
+
+.tc-archive-card .wp-block-post-featured-image img,
+.tc-bike-card__image img,
+.tc-sidebar-featured-image img {
+	transition: transform 0.48s cubic-bezier(0.22, 1, 0.36, 1), filter 0.32s ease;
+}
+
+.tc-archive-card:hover .wp-block-post-featured-image img,
+.tc-archive-card:focus-within .wp-block-post-featured-image img,
+.tc-bike-card:hover .tc-bike-card__image img,
+.tc-bike-card:focus-within .tc-bike-card__image img,
+.tc-sidebar-panel:hover .tc-sidebar-featured-image img {
+	transform: scale(1.035);
+	filter: saturate(1.06) contrast(1.03);
+}
+
+.tc-bike-card__eyebrow {
+	position: relative;
+	overflow: hidden;
+}
+
+.tc-bike-card__eyebrow::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(105deg, transparent 0 35%, rgba(255, 255, 255, 0.55) 48%, transparent 62% 100%);
+	transform: translateX(-120%);
+	transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tc-bike-card:hover .tc-bike-card__eyebrow::after,
+.tc-bike-card:focus-within .tc-bike-card__eyebrow::after {
+	transform: translateX(120%);
+}
+
+.tc-gear-chip--link,
+.tc-bike-card__chip--link {
+	transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tc-gear-chip--link:hover,
+.tc-gear-chip--link:focus-visible,
+.tc-bike-card__chip--link:hover,
+.tc-bike-card__chip--link:focus-visible {
+	transform: translateY(-1px);
+}
+
+.tc-timeline--alternating .tc-timeline__marker {
+	transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tc-timeline--alternating .tc-timeline__item:hover .tc-timeline__marker,
+.tc-timeline--alternating .tc-timeline__item:focus-within .tc-timeline__marker {
+	transform: scale(1.18);
+	background: var(--tc-accent);
+	box-shadow: 0 0 0 2px var(--tc-accent), 0 0 0 8px rgba(120, 223, 183, 0.16);
+}
+
+.site-footer .wp-block-social-links .wp-social-link {
+	transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.site-footer .wp-block-social-links .wp-social-link:hover,
+.site-footer .wp-block-social-links .wp-social-link:focus-within {
+	transform: translateY(-2px) rotate(-2deg);
+	box-shadow: 0 8px 18px rgba(24, 28, 29, 0.14);
+}
+
+.site-footer p:first-of-type {
+	transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), color 0.22s ease;
+}
+
+.site-footer:hover p:first-of-type {
+	color: var(--tc-accent) !important;
+	transform: rotate(-2deg) scale(1.04);
+}
+
+.tc-archive__empty {
+	position: relative;
+	padding: var(--wp--preset--spacing--64, 4rem) var(--wp--preset--spacing--24, 1.5rem);
+	border-radius: var(--tc-radius-xl);
+	background:
+		radial-gradient(circle at 50% 0%, rgba(120, 223, 183, 0.16) 0%, rgba(120, 223, 183, 0) 48%),
+		rgba(255, 255, 255, 0.58);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.62);
+}
+
+.tc-archive__empty::before {
+	content: "R2";
+	display: block;
+	margin: 0 auto var(--wp--preset--spacing--12, 0.75rem);
+	width: 44px;
+	height: 44px;
+	border-radius: var(--tc-radius-pill);
+	background: var(--tc-on-surface);
+	color: var(--tc-accent);
+	font-family: var(--wp--preset--font-family--inter);
+	font-size: var(--wp--preset--font-size--sm, 0.875rem);
+	font-weight: 900;
+	line-height: 44px;
+	letter-spacing: 0;
+	text-align: center;
+}
+
+.tc-not-found {
+	position: relative;
+	min-height: min(560px, 62vh);
+	padding: clamp(64px, 8vw, 112px) 24px;
+	text-align: center;
+}
+
+.tc-not-found::before {
+	content: "";
+	position: absolute;
+	top: clamp(32px, 5vw, 64px);
+	left: 50%;
+	width: min(420px, 78vw);
+	aspect-ratio: 1;
+	border-radius: 999px;
+	background:
+		radial-gradient(circle at 42% 36%, rgba(120, 223, 183, 0.2) 0%, rgba(120, 223, 183, 0) 34%),
+		radial-gradient(circle at 60% 62%, rgba(28, 193, 163, 0.2) 0%, rgba(28, 193, 163, 0) 42%);
+	transform: translateX(-50%);
+	filter: blur(8px);
+	pointer-events: none;
+	z-index: -1;
+}
+
+.tc-not-found .tc-eyebrow {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.tc-not-found__actions {
+	justify-content: center;
+	margin-top: var(--wp--preset--spacing--32, 2rem);
+}
+
+.tc-comments > .tc-comments-header + .wp-block-post-comments-form::before {
+	content: "Start the conversation.";
+	border-style: solid;
+	border-color: rgba(28, 193, 163, 0.18);
+	border-radius: var(--tc-radius-lg);
+	background: rgba(28, 193, 163, 0.06);
+}
+
+/* =========================================================
+   Dark mode
+   ========================================================= */
+:root[data-theme="dark"] .tc-glass,
+:root[data-theme="dark"] .nav-pill,
+:root[data-theme="dark"] .site-header .wp-block-navigation .wp-block-navigation__submenu-container,
+:root[data-theme="dark"] .tc-sidebar-panel,
+:root[data-theme="dark"] .about-journey-rail,
+:root[data-theme="dark"] .tc-comments .wp-block-comment-template,
+:root[data-theme="dark"] .tc-archive__pagination.wp-block-query-pagination {
+	border-color: rgba(255, 255, 255, 0.1);
+	background:
+		linear-gradient(115deg, rgba(31, 44, 43, 0.78) 0%, rgba(15, 22, 22, 0.52) 48%, rgba(30, 43, 42, 0.7) 100%),
+		linear-gradient(180deg, rgba(26, 37, 36, 0.78) 0%, rgba(12, 18, 18, 0.62) 100%);
+	box-shadow:
+		0 10px 28px rgba(0, 0, 0, 0.26),
+		inset 0 1px 0 rgba(255, 255, 255, 0.08),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme="dark"] .tc-theme-toggle {
+	background: transparent;
+	color: var(--tc-accent);
+	box-shadow: none;
+}
+
+:root[data-theme="dark"] .tc-theme-toggle:hover,
+:root[data-theme="dark"] .tc-theme-toggle:focus-visible {
+	background: transparent;
+	color: var(--tc-accent);
+}
+
+:root[data-theme="dark"] .tc-site-logo .custom-logo {
+	filter: brightness(0) invert(1);
+	transition: filter 0.22s ease;
+}
+
+:root[data-theme="dark"] .tc-site-logo .custom-logo-link:hover,
+:root[data-theme="dark"] .tc-site-logo .custom-logo-link:focus-visible {
+	filter: none;
+}
+
+:root[data-theme="dark"] .tc-site-logo .custom-logo-link:hover .custom-logo,
+:root[data-theme="dark"] .tc-site-logo .custom-logo-link:focus-visible .custom-logo {
+	filter: brightness(0) invert(1) drop-shadow(0 6px 12px rgba(55, 221, 191, 0.24));
+}
+
+:root[data-theme="dark"] .tc-site-logo .custom-logo-link[data-cannon-note]::after {
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(12, 18, 18, 0.96);
+	color: var(--tc-on-surface);
+	box-shadow:
+		0 10px 24px rgba(0, 0, 0, 0.32),
+		inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .site-header .wp-block-navigation a,
+:root[data-theme="dark"] .tc-archive-card .wp-block-post-title a,
+:root[data-theme="dark"] .tc-sidebar-recent .wp-block-latest-posts a,
+:root[data-theme="dark"] .about-journey-rail .tc-timeline__label a {
+	color: var(--tc-on-surface);
+}
+
+:root[data-theme="dark"] .nav-hover-pill,
+:root[data-theme="dark"] .site-header .wp-block-navigation .wp-block-navigation__submenu-container a:hover,
+:root[data-theme="dark"] .about-journey-rail .tc-timeline--alternating .tc-timeline__content:hover,
+:root[data-theme="dark"] .about-journey-rail .tc-timeline--alternating .tc-timeline__content:focus-within {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .tc-cta-pill--primary,
+:root[data-theme="dark"] .tc-cta-button--primary .wp-block-button__link,
+:root[data-theme="dark"] .tc-cta-button--primary .wp-element-button {
+	background: linear-gradient(135deg, #78efd8 0%, var(--tc-primary) 100%);
+	border-color: rgba(255, 255, 255, 0.16);
+	color: #061211 !important;
+	box-shadow:
+		0 1px 0 rgba(255, 255, 255, 0.36) inset,
+		0 12px 26px rgba(28, 193, 163, 0.22),
+		0 0 0 1px rgba(55, 221, 191, 0.1);
+}
+
+:root[data-theme="dark"] .tc-cta-pill--primary:hover,
+:root[data-theme="dark"] .tc-cta-pill--primary:focus-visible,
+:root[data-theme="dark"] .tc-cta-button--primary .wp-block-button__link:hover,
+:root[data-theme="dark"] .tc-cta-button--primary .wp-block-button__link:focus-visible,
+:root[data-theme="dark"] .tc-cta-button--primary .wp-element-button:hover,
+:root[data-theme="dark"] .tc-cta-button--primary .wp-element-button:focus-visible {
+	background: linear-gradient(135deg, #9af7e5 0%, #4fe4ca 100%);
+	color: #061211 !important;
+	box-shadow:
+		0 1px 0 rgba(255, 255, 255, 0.42) inset,
+		0 14px 30px rgba(55, 221, 191, 0.28),
+		0 0 0 1px rgba(138, 242, 223, 0.22);
+}
+
+:root[data-theme="dark"] .tc-cta-pill--ghost {
+	background:
+		linear-gradient(135deg, rgba(120, 223, 183, 0.2) 0%, rgba(120, 223, 183, 0.1) 100%),
+		rgba(12, 18, 18, 0.64);
+	border-color: rgba(120, 223, 183, 0.46);
+	color: #c8f4dc !important;
+	box-shadow:
+		0 1px 0 rgba(255, 255, 255, 0.08) inset,
+		0 12px 26px rgba(0, 0, 0, 0.24),
+		0 0 0 1px rgba(120, 223, 183, 0.08);
+}
+
+:root[data-theme="dark"] .tc-cta-pill--ghost:hover,
+:root[data-theme="dark"] .tc-cta-pill--ghost:focus-visible {
+	background:
+		linear-gradient(135deg, rgba(255, 213, 138, 0.28) 0%, rgba(120, 223, 183, 0.16) 100%),
+		rgba(12, 18, 18, 0.76);
+	border-color: rgba(255, 213, 138, 0.68);
+	color: #fff1d0 !important;
+	box-shadow:
+		0 1px 0 rgba(255, 255, 255, 0.12) inset,
+		0 14px 30px rgba(0, 0, 0, 0.28),
+		0 0 0 1px rgba(255, 213, 138, 0.14);
+}
+
+:root[data-theme="dark"] .wp-site-blocks {
+	background:
+		radial-gradient(circle at 50% 0%, rgba(28, 193, 163, 0.08) 0%, rgba(28, 193, 163, 0) 34%),
+		linear-gradient(180deg, rgba(15, 21, 21, 0) 0%, var(--tc-surface) 22%, var(--tc-surface) 100%);
+	color: var(--tc-on-surface);
+}
+
+:root[data-theme="dark"] .site-footer {
+	background: var(--tc-surface-low) !important;
+}
+
+:root[data-theme="dark"] .section-gear-stable {
+	color: var(--tc-on-surface);
+}
+
+:root[data-theme="dark"] .section-gear-devstack {
+	background:
+		radial-gradient(circle at 16% 0%, rgba(28, 193, 163, 0.16) 0%, rgba(28, 193, 163, 0) 36%),
+		linear-gradient(180deg, #0c1212 0%, #101818 100%) !important;
+	color: var(--tc-on-surface);
+}
+
+:root[data-theme="dark"] .section-gear-hero,
+:root[data-theme="dark"] .section-about-editorial {
+	color: var(--tc-on-surface);
+}
+
+:root[data-theme="dark"] .section-gear-devstack > h2.wp-block-heading,
+:root[data-theme="dark"] .section-gear-devstack > h3.wp-block-heading {
+	color: var(--tc-on-surface) !important;
+}
+
+:root[data-theme="dark"] .section-gear-devstack .tc-gear-chips--station .tc-gear-chip,
+:root[data-theme="dark"] .is-style-section-night .tc-gear-chips--station .tc-gear-chip {
+	background: rgba(55, 221, 191, 0.13);
+	border-color: rgba(55, 221, 191, 0.3);
+	color: #c8fff2;
+}
+
+:root[data-theme="dark"] .section-gear-devstack .tc-gear-chips--dev .tc-gear-chip,
+:root[data-theme="dark"] .is-style-section-night .tc-gear-chips--dev .tc-gear-chip {
+	background: rgba(120, 223, 183, 0.12);
+	border-color: rgba(120, 223, 183, 0.28);
+	color: #c8f4dc;
+}
+
+:root[data-theme="dark"] .section-gear-devstack .tc-gear-chips--bikes .tc-gear-chip,
+:root[data-theme="dark"] .is-style-section-night .tc-gear-chips--bikes .tc-gear-chip {
+	background: rgba(255, 255, 255, 0.08);
+	border-color: rgba(255, 255, 255, 0.18);
+	color: var(--tc-on-surface);
+}
+
+:root[data-theme="dark"] .tc-related-gear {
+	border-top-color: var(--tc-outline-variant);
+}
+
+:root[data-theme="dark"] .tc-related-gear__card-title a {
+	background: rgba(255, 255, 255, 0.08) !important;
+	border-color: rgba(255, 255, 255, 0.18) !important;
+	color: var(--tc-on-surface) !important;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme="dark"] .tc-related-gear__card-title a:hover,
+:root[data-theme="dark"] .tc-related-gear__card-title a:focus,
+:root[data-theme="dark"] .tc-related-gear__card-title a:focus-visible {
+	background: var(--tc-primary) !important;
+	border-color: var(--tc-primary) !important;
+	color: #061110 !important;
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(55, 221, 191, 0.34);
+	transform: translateY(-1px);
+}
+
+:root[data-theme="dark"] .tc-archive__header,
+:root[data-theme="dark"] .about-notes,
+:root[data-theme="dark"] .tc-single-divider,
+:root[data-theme="dark"] .tc-sidebar-recent .wp-block-latest-posts li,
+:root[data-theme="dark"] .tc-sidebar-categories .wp-block-categories li,
+:root[data-theme="dark"] .tc-comments.wp-block-comments,
+:root[data-theme="dark"] .tc-comments-pagination.wp-block-comments-pagination {
+	border-color: var(--tc-outline-variant) !important;
+}
+
+:root[data-theme="dark"] .tc-archive-card,
+:root[data-theme="dark"] .tc-bike-card,
+:root[data-theme="dark"] .tc-gear-detail-card,
+:root[data-theme="dark"] .tc-sidebar-card.tc-glass,
+:root[data-theme="dark"] .tc-archive__empty {
+	border-color: rgba(255, 255, 255, 0.08) !important;
+	background:
+		radial-gradient(circle at 8% 0%, rgba(28, 193, 163, 0.09) 0%, rgba(28, 193, 163, 0) 34%),
+		linear-gradient(145deg, rgba(23, 33, 32, 0.96) 0%, rgba(15, 22, 22, 0.96) 100%) !important;
+	color: var(--tc-on-surface) !important;
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.26);
+}
+
+:root[data-theme="dark"] .tc-archive-card .wp-block-post-excerpt,
+:root[data-theme="dark"] .tc-gear-detail-card__row dd,
+:root[data-theme="dark"] .about-copy,
+:root[data-theme="dark"] .about-note p,
+:root[data-theme="dark"] .about-journey-rail .tc-timeline__desc {
+	color: var(--tc-on-surface-secondary) !important;
+}
+
+:root[data-theme="dark"] .tc-archive-card .latest-card-footer .wp-block-post-date,
+:root[data-theme="dark"] .tc-sidebar-recent .wp-block-latest-posts__post-date,
+:root[data-theme="dark"] .tc-gear-detail-card__row dt,
+:root[data-theme="dark"] .tc-sidebar-label {
+	color: var(--tc-outline) !important;
+}
+
+:root[data-theme="dark"] .tc-archive-card .latest-card-divider,
+:root[data-theme="dark"] .tc-sidebar-divider {
+	border-color: var(--tc-outline-variant) !important;
+	background: var(--tc-outline-variant) !important;
+}
+
+:root[data-theme="dark"] .wp-block-post-navigation-link a,
+:root[data-theme="dark"] .tc-comments-pagination a,
+:root[data-theme="dark"] .tc-comments-pagination .page-numbers {
+	background: var(--tc-surface-container);
+	border-color: var(--tc-outline-variant);
+	color: var(--tc-primary-dark);
+}
+
+:root[data-theme="dark"] .wp-block-post-comments-form input:not([type="submit"]),
+:root[data-theme="dark"] .wp-block-post-comments-form textarea,
+:root[data-theme="dark"] #commentform input:not([type="submit"]),
+:root[data-theme="dark"] #commentform textarea {
+	background: rgba(255, 255, 255, 0.06);
+	border-color: rgba(255, 255, 255, 0.12);
+	color: var(--tc-on-surface);
+}
+
+:root[data-theme="dark"] .site-footer .wp-block-social-links .wp-social-link {
+	background-color: var(--tc-on-surface) !important;
+	color: var(--tc-surface) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tc-site-logo .custom-logo-link,
+.wp-block-post-content a:not(.wp-block-button__link),
+.tc-archive-card .wp-block-post-featured-image img,
+.tc-bike-card__image img,
+.tc-sidebar-featured-image img,
+.tc-gear-chip--link,
+.tc-bike-card__chip--link,
+.tc-timeline--alternating .tc-timeline__marker,
+.site-footer .wp-block-social-links .wp-social-link,
+.site-footer p:first-of-type {
+		transition: none;
+	}
+
+	.tc-site-logo .custom-logo-link:hover,
+.tc-site-logo .custom-logo-link:focus-visible,
+.tc-cta-pill:active,
+.wp-block-button__link:active,
+.wp-element-button:active,
+.tc-gear-detail-card__button:active,
+.tc-bike-card__chip--link:active,
+.tc-gear-chip--link:active,
+.tc-archive-card:hover .wp-block-post-featured-image img,
+.tc-archive-card:focus-within .wp-block-post-featured-image img,
+.tc-bike-card:hover .tc-bike-card__image img,
+.tc-bike-card:focus-within .tc-bike-card__image img,
+.tc-sidebar-panel:hover .tc-sidebar-featured-image img,
+.tc-gear-chip--link:hover,
+.tc-gear-chip--link:focus-visible,
+.tc-bike-card__chip--link:hover,
+.tc-bike-card__chip--link:focus-visible,
+.tc-timeline--alternating .tc-timeline__item:hover .tc-timeline__marker,
+.tc-timeline--alternating .tc-timeline__item:focus-within .tc-timeline__marker,
+.site-footer .wp-block-social-links .wp-social-link:hover,
+.site-footer .wp-block-social-links .wp-social-link:focus-within,
+.site-footer:hover p:first-of-type {
+		transform: none;
+		filter: none;
+	}
+}
